@@ -1,0 +1,47 @@
+name: Feedback de lab
+description: Cuéntanos cómo te fue en un lab, para mejorarlo para ti y para quienes vienen después.
+title: "Feedback: lab <ID>"
+labels: ["feedback"]
+body:
+  - type: input
+    id: lab
+    attributes:
+      label: Lab
+      description: El ID del sílabo (por ejemplo 1.2 o 1.P).
+    validations:
+      required: true
+  - type: dropdown
+    id: finished
+    attributes:
+      label: ¿Lo terminaste?
+      options:
+        - "Sí, sin mirar la solución"
+        - "Sí, después de mirar las pistas o la solución"
+        - "No, me trabé"
+    validations:
+      required: true
+  - type: input
+    id: time
+    attributes:
+      label: ¿Cuánto te tomó?
+      placeholder: "1 h 30 min"
+  - type: textarea
+    id: clear
+    attributes:
+      label: ¿Qué fue claro o útil?
+  - type: textarea
+    id: hard
+    attributes:
+      label: ¿Qué costó, confundió o estaba mal?
+      description: Pasos que fallaron, comandos que no funcionaron, explicaciones que faltaron.
+    validations:
+      required: true
+  - type: textarea
+    id: change
+    attributes:
+      label: ¿Qué cambiarías?
+  - type: input
+    id: environment
+    attributes:
+      label: Tu entorno
+      placeholder: "Windows 11, PowerShell, Python 3.13, SQLite 3.50"
