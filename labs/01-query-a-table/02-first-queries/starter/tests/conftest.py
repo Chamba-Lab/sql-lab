@@ -4,6 +4,7 @@ Every test gets a new in-memory database built from ../seed.sql, runs one file o
 ../queries/ and compares the columns (names and order) and the rows (in any order)
 with the expected result. Failure messages are in Spanish: learners read them.
 """
+import codecs
 import sqlite3
 import sys
 from collections import Counter
@@ -30,13 +31,32 @@ def db():
     con.close()
 
 
+def read_sql(filename):
+    """The text of one file of queries/, whatever encoding a Windows editor or shell used."""
+    data = (QUERIES / filename).read_bytes()
+    if data.startswith((codecs.BOM_UTF16_LE, codecs.BOM_UTF16_BE)):
+        return data.decode("utf-16")  # PowerShell 5.1 writes `>` and Out-File in UTF-16
+    try:
+        return data.decode("utf-8-sig")  # UTF-8, with or without a byte-order mark
+    except UnicodeDecodeError:
+        pass  # fail outside the except block, or pytest also prints the decoding traceback
+    pytest.fail(f"{filename}: no se pudo leer tu archivo porque no está guardado en UTF-8.\n"
+                "  Vuelve a guardarlo como UTF-8 (en VS Code, haz clic en la codificación "
+                "que aparece abajo a la derecha).", pytrace=False)
+
+
 def run_file(con, filename):
     """Run one file of queries/ and return (column names, rows)."""
-    sql = (QUERIES / filename).read_text(encoding="utf-8")
+    sql = read_sql(filename)
     try:
         cursor = con.execute(sql)
     except sqlite3.Error as error:
-        problem = f"{type(error).__name__}: {error}"
+        if isinstance(error, sqlite3.ProgrammingError) and "one statement" in str(error):
+            # Typical when the query of a prediction stays above the query of the task.
+            problem = ("Tu archivo tiene más de una consulta: deja solo una "
+                       "(¿quedó arriba la de la predicción?).")
+        else:
+            problem = f"{type(error).__name__}: {error}"
     else:
         problem = None
     if problem:

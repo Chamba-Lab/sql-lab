@@ -18,4 +18,4 @@ INSERT INTO menu_items (id, name, category, price, cost) VALUES
     (5, 'Sándwich de pollo',  'comida', 14.0, 6.25),
     (6, 'Empanada de carne',  'comida', 7.5,  3.0),
     (7, 'Torta de chocolate', 'postre', 11.0, 4.5),
-    (8, 'Alfajor',            'postre', 3.5,  1.25);
+    (8, 'Alfajor',            'postre', 3.7,  1.25);

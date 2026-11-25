@@ -126,7 +126,7 @@ Estos son todos sus datos:
 | 5 | Sándwich de pollo | comida | 14.0 | 6.25 |
 | 6 | Empanada de carne | comida | 7.5 | 3.0 |
 | 7 | Torta de chocolate | postre | 11.0 | 4.5 |
-| 8 | Alfajor | postre | 3.5 | 1.25 |
+| 8 | Alfajor | postre | 3.7 | 1.25 |
 
 ### Tus archivos
 ```text
@@ -170,6 +170,10 @@ La comparación revisa dos cosas: primero las **columnas**, su nombre y su orden
 
 Las filas se muestran como en la consola del lab 1.1: cada una como una tupla de Python, con los textos entre comillas.
 
+Cuando SQLite no puede ejecutar tu consulta, la línea siguiente copia su mensaje, que está en inglés. Los dos más comunes:
+- `near "FROM": syntax error` (*error de sintaxis cerca de `FROM`*): SQLite se perdió al llegar a `FROM`, así que el problema suele estar justo antes, como una coma de más al final de la lista del `SELECT`.
+- `no such column: nmae` (*no existe la columna `nmae`*): `nmae` no es una columna de la tabla. Revisa cómo la escribiste.
+
 [`TestSeed`](starter/tests/test_queries.py) es una prueba de guarda: pasa desde el comienzo y solo falla si alguien cambió `seed.sql`.
 
 ## ✅ Tareas
@@ -209,10 +213,10 @@ SELECT name price
 FROM menu_items;
 ```
 
-- [ ] Corre las pruebas y lee el fallo de `TestTask2Profit`. Compáralo con tu predicción.
-- [ ] Escribe la consulta de la tarea, con la resta y su alias, y vuelve a correr las pruebas.
+- [ ] Corre solo la prueba de esta tarea con `python -m pytest -k task2`. `-k` elige las pruebas cuyo nombre contiene ese texto; la última línea dice `1 failed, 4 deselected`, es decir, 1 falló y 4 no se eligieron. Lee el fallo y compáralo con tu predicción.
+- [ ] Reemplaza la consulta de la predicción por la de la tarea, con la resta y su alias, y vuelve a correr `python -m pytest -k task2`.
 
-**Criterio de éxito:** `TestTask2Profit` pasa: 3 pruebas pasan y 2 fallan.
+**Criterio de éxito:** `TestTask2Profit` pasa. Con todas las pruebas (`python -m pytest`), 3 pasan y 2 fallan.
 
 ### Tarea 3 · El precio con impuesto
 **Objetivo:** el nombre y el precio final de cada producto, con el 18 % de impuesto incluido y redondeado a dos decimales (céntimos): columnas `name` y `price_with_tax`. Sumar el 18 % es lo mismo que multiplicar por 1.18. **Lo valida:** [`TestTask3PriceWithTax`](starter/tests/test_queries.py)
@@ -224,10 +228,10 @@ SELECT name, price * 1.18 AS price_with_tax
 FROM menu_items;
 ```
 
-- [ ] Corre las pruebas y lee el fallo de `TestTask3PriceWithTax`, fila por fila.
-- [ ] Redondea el precio final a dos decimales y vuelve a correr las pruebas.
+- [ ] Corre `python -m pytest -k task3` y lee el fallo de `TestTask3PriceWithTax`, fila por fila.
+- [ ] Redondea el precio final a dos decimales y vuelve a correr `python -m pytest -k task3`.
 
-**Criterio de éxito:** `TestTask3PriceWithTax` pasa: 4 pruebas pasan y 1 falla.
+**Criterio de éxito:** `TestTask3PriceWithTax` pasa. Con todas las pruebas, 4 pasan y 1 falla.
 
 ### Tarea 4 · El margen
 **Objetivo:** el nombre y el margen de cada producto: qué porcentaje del precio es ganancia, redondeado a un decimal. Columnas `name` y `margin_pct`. **Lo valida:** [`TestTask4Margin`](starter/tests/test_queries.py)
@@ -241,8 +245,9 @@ SELECT name, price - cost AS profit, ROUND(profit * 100 / price, 1) AS margin_pc
 FROM menu_items;
 ```
 
-- [ ] Corre las pruebas y lee el fallo de `TestTask4Margin`.
-- [ ] Escribe la consulta de la tarea, solo con las columnas `name` y `margin_pct`, y vuelve a correr las pruebas.
+- [ ] Corre `python -m pytest -k task4` y lee el fallo de `TestTask4Margin`.
+- [ ] Reemplaza la consulta de la predicción por la de la tarea, solo con las columnas `name` y `margin_pct`, y vuelve a correr `python -m pytest -k task4`. Si te salen márgenes negativos, revisa en qué orden se hacen las operaciones.
+- [ ] Corre todas las pruebas con `python -m pytest -v`: `-v` muestra una línea por prueba, con su nombre y `PASSED` o `FAILED`.
 
 **Criterio de éxito:** `TestTask4Margin` pasa: las 5 pruebas pasan.
 
@@ -318,7 +323,7 @@ No puedes usar el alias `profit`, pero sí puedes repetir la resta. Usa parénte
 ## ✔️ Respuestas verificadas
 <details><summary>Abre esta sección solo después de terminar las tareas</summary>
 
-Verificado en Windows 11, en PowerShell 5.1 y Git Bash, con Python 3.12.16, 3.13.18, 3.14.4 y 3.15.2 (SQLite 3.50.4 y 3.53.1) y con Python 3.12.7 de Anaconda (SQLite 3.45.3). La salida fue la misma en todas las versiones.
+Verificado en Windows 11, en PowerShell 5.1 y Git Bash, con Python 3.12.16, 3.13.14, 3.13.18, 3.14.4 y 3.15.2 (SQLite 3.50.4 y 3.53.1) y con Python 3.12.7 de Anaconda (SQLite 3.45.3). La salida fue la misma en todas las versiones.
 
 ### Tarea 1 · Un nombre entre comillas simples es un texto
 ```text
@@ -358,15 +363,17 @@ La consulta de la tarea es `SELECT name, price - cost AS profit FROM menu_items;
     ('Té de manzanilla', 5.9)
     ('Jugo de naranja', 11.21)
     ('Torta de chocolate', 12.98)
+    ('Alfajor', 4.37)
   Obtenidas que no se esperaban:
     ('Té de manzanilla', 5.8999999999999995)
     ('Jugo de naranja', 11.209999999999999)
     ('Torta de chocolate', 12.979999999999999)
+    ('Alfajor', 4.366)
 ```
 
-5 × 1.18 debería dar 5.9, y da 5.8999999999999995. Las otras cinco filas salieron bien. **Un `REAL` guarda los números en binario, y la mayoría de los decimales, como 1.18, no tienen una forma exacta en binario**, igual que 1/3 no tiene una forma exacta en decimal (0.333…). La diferencia es mínima, pero basta para que 5.8999999999999995 no sea igual a 5.9. No es un error de SQLite: Python da lo mismo con `5.0 * 1.18`, y la [documentación de Python](https://docs.python.org/es/3/tutorial/floatingpoint.html) lo explica en detalle.
+Fallan cuatro filas, por dos razones distintas; las otras cuatro salieron bien. El alfajor da 3.7 × 1.18 = 4.366, un resultado correcto con tres decimales de verdad, y la tarea pide céntimos: hay que redondearlo a 4.37. Las otras tres son más raras: 5 × 1.18 debería dar 5.9, y da 5.8999999999999995. **Un `REAL` guarda los números en binario, y la mayoría de los decimales, como 1.18, no tienen una forma exacta en binario**, igual que 1/3 no tiene una forma exacta en decimal (0.333…). La diferencia es mínima, pero basta para que 5.8999999999999995 no sea igual a 5.9. No es un error de SQLite: Python da lo mismo con `5.0 * 1.18`, y la [documentación de Python](https://docs.python.org/es/3/tutorial/floatingpoint.html) lo explica en detalle.
 
-`ROUND` lo arregla para mostrar el resultado: `SELECT name, ROUND(price * 1.18, 2) AS price_with_tax FROM menu_items;`. El precio del té sale `5.9` y no `5.90` porque un número no guarda ceros a la derecha; darle formato a un número es otro tema.
+`ROUND` arregla las cuatro filas para mostrar el resultado: `SELECT name, ROUND(price * 1.18, 2) AS price_with_tax FROM menu_items;`. Redondear a tres decimales o más no basta, porque el alfajor sigue saliendo 4.366. El precio del té sale `5.9` y no `5.90` porque un número no guarda ceros a la derecha; darle formato a un número es otro tema.
 
 ### Tarea 4 · Un alias no existe dentro de su propio `SELECT`
 ```text

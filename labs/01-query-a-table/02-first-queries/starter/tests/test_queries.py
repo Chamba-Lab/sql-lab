@@ -18,7 +18,7 @@ class TestTask1Menu:
             ("Sándwich de pollo", "comida", 14.0),
             ("Empanada de carne", "comida", 7.5),
             ("Torta de chocolate", "postre", 11.0),
-            ("Alfajor", "postre", 3.5),
+            ("Alfajor", "postre", 3.7),
         ])
 
 
@@ -32,7 +32,7 @@ class TestTask2Profit:
             ("Sándwich de pollo", 7.75),
             ("Empanada de carne", 4.5),
             ("Torta de chocolate", 6.5),
-            ("Alfajor", 2.25),
+            ("Alfajor", 2.45),
         ])
 
 
@@ -46,7 +46,7 @@ class TestTask3PriceWithTax:
             ("Sándwich de pollo", 16.52),
             ("Empanada de carne", 8.85),
             ("Torta de chocolate", 12.98),
-            ("Alfajor", 4.13),
+            ("Alfajor", 4.37),
         ])
 
 
@@ -60,5 +60,5 @@ class TestTask4Margin:
             ("Sándwich de pollo", 55.4),
             ("Empanada de carne", 60.0),
             ("Torta de chocolate", 59.1),
-            ("Alfajor", 64.3),
+            ("Alfajor", 66.2),
         ])
