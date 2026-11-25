@@ -1,0 +1,27 @@
+# StudyForge configuration. Read by the workflows and by tools/verify.py.
+# Reference: https://github.com/Chamba-Lab/studyforge/blob/master/skills/studyforge/references/layout.md
+studyforge = "1.6.1"
+
+[path]
+title = "SQL con SQLite: de cero a listo para el trabajo"
+goal = "Consultar, diseñar y cuidar bases de datos relacionales con SQL, al nivel que piden un primer trabajo y sus pruebas técnicas"
+
+[language]
+content = "es"   # guides, concepts, READMEs. Code, folders and commits: always English.
+
+[learner]
+os = "windows"
+shells = ["powershell", "bash"]   # order in which guides show commands
+containers = "none"
+
+[dependencies]
+strategy = "shared-parent"   # one virtual environment from requirements.txt; projects declare their own (docs/decisions.md)
+
+# Every lab variant (starter/, solution/, demo/, reference/) has its own pyproject.toml
+# with the pytest configuration. Run with the virtual environment activated.
+[[stack]]
+id = "python"
+detect = "pyproject.toml"
+command = "python -m pytest -q -p no:cacheprovider --junitxml=.reports/junit.xml"
+reports = ".reports/junit.xml"
+timeout = 300
