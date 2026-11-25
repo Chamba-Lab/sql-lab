@@ -44,6 +44,8 @@ python -m pip install -r requirements.txt
 > [!TIP]
 > Si PowerShell dice que la ejecución de scripts está deshabilitada, permítela solo para esta ventana con `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass` y vuelve a activar el entorno.
 
+Si al final `pip` dice `[notice] A new release of pip is available`, puedes ignorarlo: avisa que hay una versión nueva de `pip`, y el curso funciona con la que trae tu Python.
+
 **Cada vez que abras una terminal nueva**, activa el entorno otra vez (la segunda línea de cada bloque). Sabrás que está activo porque el prompt empieza con `(.venv)`.
 
 ## 3. Comprueba todo

@@ -26,7 +26,7 @@ Sacar de una tabla justo los datos que te piden: elegir, filtrar, ordenar y tran
 
 | ID | Tema | Tipo de tema | Tipo de lab | Podrás… | Estado |
 |---|---|---|---|---|---|
-| 1.1 | [Tu primera base de datos](labs/01-query-a-table/01-first-database/README.md) | 🎯 `core` | 🔭 `exploration` | Abrir una base de datos, recorrer sus tablas, hacer tu primera consulta y explicar qué son una tabla, una fila y una columna | 🟨 `built` |
+| 1.1 | [Tu primera base de datos](labs/01-query-a-table/01-first-database/README.md) | 🎯 `core` | 🔭 `exploration` | Abrir una base de datos, recorrer sus tablas, hacer tu primera consulta y explicar qué son una tabla, una fila y una columna | ✅ `done` |
 | 1.2 | Primeras consultas | 🎯 `core` | 🧩 `challenge` | Elegir columnas, calcular valores nuevos y darles nombre; correr las pruebas del curso y leer un fallo | ⬜ `pending` |
 | 1.3 | Filtrar filas | 🎯 `core` | 🧩 `challenge` | Quedarte solo con las filas que cumplen una o varias condiciones | ⬜ `pending` |
 | 1.4 | El valor NULL | 🎯 `core` | 🧩 `challenge` | Tratar los datos que faltan sin que te den resultados equivocados | ⬜ `pending` |
@@ -53,13 +53,13 @@ Diseñar tablas que no se contradigan y cambiar datos sin romper nada.
 
 | ID | Tema | Tipo de tema | Tipo de lab | Podrás… | Estado |
 |---|---|---|---|---|---|
-| 3.1 | Modelar datos y normalizar | 🎯 `core` | 💭 `concept` | Pasar de una planilla a tablas bien repartidas y reconocer los datos repetidos que terminan contradiciéndose | ⬜ `pending` |
+| 3.1 | Modelar datos y normalizar | 🎯 `core` | 💭 `concept` | Pasar de una hoja de cálculo a tablas bien repartidas y reconocer los datos repetidos que terminan contradiciéndose | ⬜ `pending` |
 | 3.2 | Crear tablas y tipos | 🎯 `core` 🆕 `modern` | 🧩 `challenge` | Crear tablas con los tipos correctos y ver qué hace SQLite cuando un dato no calza | ⬜ `pending` |
 | 3.3 | Restricciones | 🎯 `core` | 🧩 `challenge` | Hacer que la base rechace por sí sola los datos inválidos | ⬜ `pending` |
 | 3.4 | Insertar, actualizar y borrar | 🎯 `core` 🆕 `modern` | 🧩 `challenge` | Agregar, cambiar y borrar datos sin tocar filas de más | ⬜ `pending` |
 | 3.5 | Transacciones | 🎯 `core` | 🧩 `challenge` | Hacer que varios cambios ocurran todos juntos o ninguno | ⬜ `pending` |
 | 3.6 | Cambiar el diseño de una tabla con datos | ➕ `elective` | 🧩 `challenge` | Agregar, renombrar o quitar columnas de una tabla que ya tiene datos, sin perderlos | ⬜ `pending` |
-| 3.P | Proyecto: la planilla de una biblioteca | 🎯 `core` | 🏗️ `project` | Convertir desde cero la planilla de Excel de una biblioteca en una base bien diseñada, con sus reglas y sus datos | ⬜ `pending` |
+| 3.P | Proyecto: la hoja de cálculo de una biblioteca | 🎯 `core` | 🏗️ `project` | Convertir desde cero la hoja de cálculo de Excel de una biblioteca en una base bien diseñada, con sus reglas y sus datos | ⬜ `pending` |
 
 ## Bloque 4 · Consultas analíticas
 Resolver las consultas de reportes y de pruebas técnicas: rankings, acumulados y tablas dinámicas.
@@ -141,3 +141,9 @@ Usar SQL desde Python de forma rápida y segura.
 - **Un starter vacío tiene que fallar por la razón correcta:** un archivo `.sql` con solo `-- TODO` no devuelve filas; la prueba debe fallar comparando resultados, no por un error de sintaxis.
 - **Compara resultados sin depender del orden** salvo cuando la tarea pide ordenar (lab 1.5 en adelante).
 - **Las pruebas sobre el plan de consulta (5.1, 5.2) buscan fragmentos** como `USING INDEX` o `SCAN`, nunca el texto completo, que cambia entre versiones de SQLite.
+- **Mensajes que cambian según la versión:** cita solo el comienzo estable (`Error: unknown command`) y di que el resto puede variar, o cita cada versión por separado. Antes de citar un mensaje, córrelo en todas las versiones de Python que hay a mano (3.12 a 3.15), no solo en las del CI.
+- **Tamaños de archivo:** si un paso depende del tamaño, da `ls` para PowerShell (columna `Length`) y `ls -l` para Bash (el número antes de la fecha); un `ls` sin `-l` en Bash muestra solo nombres.
+- **El 🔮 va antes del comando que lo revela,** también cuando el comando solo abre algo (el `Connected to …` de la consola ya responde la predicción).
+- **Explica cada palabra o archivo nuevo que el aprendiz ve,** aunque no lo use: un *pragma*, un `pyproject.toml`, el saludo de la consola. Una línea basta ("no lo toques, es para las pruebas").
+- **En las exploraciones, la línea de versiones verificadas va al comienzo de 🧪 Experimentos,** y no hay sección ✔️ si cada 👀 ya responde su predicción (como en el 1.1).
+- **Di "hoja de cálculo", no "planilla":** en Perú, "planilla" es la nómina de sueldos.

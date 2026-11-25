@@ -20,7 +20,7 @@ Solo las que alguien podría deshacer sin saber por qué. Si una cambia, se actu
 
 ## Diseño del camino (25 nov 2026)
 - **Cinco bloques, no cuatro.** El pedido era de unos cuatro bloques. Con cuatro, el último juntaba consultas analíticas y SQL desde una aplicación: dos focos y dos proyectos distintos. El dueño aceptó cinco.
-- **Para el nivel más bajo del grupo:** nunca usaron una base de datos. Saben Python básico y Excel (filtros, alguna tabla dinámica), por eso el 3.P parte de una planilla y el 4.5 traduce tablas dinámicas a SQL. Quienes ya hicieron un `SELECT` pasan rápido por 1.2 y 1.3; no se marcan como saltables porque cada uno trae una trampa de entrevista.
+- **Para el nivel más bajo del grupo:** nunca usaron una base de datos. Saben Python básico y Excel (filtros, alguna tabla dinámica), por eso el 3.P parte de una hoja de cálculo y el 4.5 traduce tablas dinámicas a SQL. Quienes ya hicieron un `SELECT` pasan rápido por 1.2 y 1.3; no se marcan como saltables porque cada uno trae una trampa de entrevista.
 - **Sin bloque 00.** El Python básico del grupo alcanza para el bloque 5. La terminal la usan poco: el primer lab que la necesita da un recordatorio y un enlace. pytest no es un prerrequisito: el aprendiz no escribe pruebas, y el 1.2 enseña a correrlas y a leer un fallo.
 - **En los bloques 1 a 4 el aprendiz escribe archivos `.sql`, y las pruebas los ejecutan** contra una base nueva en memoria por prueba. Así se practica SQL puro, sin Python de por medio, y la verificación es automática.
 - **SQL estándar primero.** Las particularidades de SQLite (tipos flexibles, fechas como texto, claves foráneas apagadas) se enseñan como trampas y se dice qué cambia en PostgreSQL y MySQL. Quedan fuera otros motores, los ORM, los triggers y JSON en SQL.

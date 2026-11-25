@@ -12,7 +12,7 @@
 - Reconocer los dos tropiezos más comunes al empezar: la instrucción sin `;` y el archivo mal escrito.
 
 ## 💡 Por qué importa
-Casi toda empresa guarda sus datos en bases de datos, no en planillas, y SQL es el idioma para pedírselos: lo vas a usar en reportes, en análisis y en el código de una aplicación. En este lab abres una base por primera vez, miras qué tiene adentro y le haces tu primera pregunta. Todo lo demás del curso parte de aquí.
+Casi toda empresa guarda sus datos en bases de datos, no en hojas de cálculo, y SQL es el idioma para pedírselos: lo vas a usar en reportes, en análisis y en el código de una aplicación. En este lab abres una base por primera vez, miras qué tiene adentro y le haces tu primera pregunta. Todo lo demás del curso parte de aquí.
 
 ## 📍 Dónde correr los comandos
 Los comandos se escriben en una **terminal**: la ventana donde escribes una orden y presionas Enter. En VS Code, ábrela con el menú *Terminal → Nuevo terminal* (*Terminal → New Terminal* si VS Code está en inglés); se abre en la carpeta del repositorio. Si nunca la usaste, la [guía de la terminal de VS Code](https://code.visualstudio.com/docs/terminal/basics) explica lo básico en cinco minutos.
@@ -32,7 +32,7 @@ La ruta que muestra `pwd` tiene que terminar en `demo`. Todos los comandos del l
 ## 🧠 Conceptos
 
 ### Una base de datos guarda tus datos y responde preguntas sobre ellos (*database*)
-En una planilla de Excel buscas a mano, filtras con el mouse y, si dos personas trabajan cada una con su copia del archivo, terminan con dos versiones distintas. Una **base de datos** guarda los datos organizados y deja que un programa, el **motor** (*database engine* o DBMS, *database management system*), los busque por ti: tú le haces una pregunta y el motor te devuelve la respuesta. Hay motores que corren como un servidor al que se conectan muchas personas, como PostgreSQL o MySQL. **SQLite** es un motor que no necesita servidor: viene dentro de Python, en el módulo `sqlite3`, y por eso no instalas nada más.
+En una hoja de cálculo de Excel buscas a mano, filtras con el mouse y, si dos personas trabajan cada una con su copia del archivo, terminan con dos versiones distintas. Una **base de datos** guarda los datos organizados y deja que un programa, el **motor** (*database engine* o DBMS, *database management system*), los busque por ti: tú le haces una pregunta y el motor te devuelve la respuesta. Hay motores que corren como un servidor al que se conectan muchas personas, como PostgreSQL o MySQL. **SQLite** es un motor que no necesita servidor: viene dentro de Python, en el módulo `sqlite3`, y por eso no instalas nada más.
 
 ### Las tablas se parecen a una hoja de cálculo, con reglas más estrictas (*table*, *row*, *column*)
 Los datos de una base viven en **tablas**. Una tabla se parece a una hoja de Excel: cada **fila** (*row*) es un registro, por ejemplo un producto, y cada **columna** (*column*) es un dato de ese registro, por ejemplo su precio. Una tabla `products` podría verse así:
@@ -57,7 +57,7 @@ SELECT * FROM products;
 Cada pregunta que le haces a la base se llama **consulta** (*query*). Una instrucción SQL (*statement*) termina en punto y coma. En el curso escribimos las palabras de SQL en mayúsculas (`SELECT`, `FROM`) para distinguirlas de los nombres de tablas y columnas.
 
 ### La base se describe a sí misma (*schema*, *shell*)
-Al abrir una base que no conoces, lo primero es saber qué tablas tiene. La descripción de las tablas de una base, con sus columnas y sus tipos, se llama **esquema** (*schema*). SQLite guarda el esquema en una tabla especial, `sqlite_schema`, que mantiene solo: tiene una fila por cada tabla que creas (y por otros objetos que verás más adelante, como los índices). Como es una tabla, se consulta con SQL. En vez de `*` puedes nombrar las columnas que quieres ver; el lab 1.2 trabaja esto a fondo:
+Al abrir una base que no conoces, lo primero es saber qué tablas tiene. La descripción de las tablas de una base, con sus columnas y sus tipos, se llama **esquema** (*schema*). SQLite guarda el esquema en una tabla especial, `sqlite_schema`, que mantiene solo: tiene una fila por cada tabla de la base (y por otros objetos que verás más adelante, como los índices). Como es una tabla, se consulta con SQL. En vez de `*` puedes nombrar las columnas que quieres ver; el lab 1.2 trabaja esto a fondo:
 
 ```sql
 SELECT name FROM sqlite_schema;
@@ -85,10 +85,12 @@ flowchart LR
 ```
 
 > [!NOTE]
-> [`demo/tests/`](demo/tests/test_build_db.py) comprueba que el script arma la base tal como la describe esta guía. No necesitas abrirlo; en el lab 1.2 aprendes a correr pruebas.
+> [`demo/tests/`](demo/tests/test_build_db.py) comprueba que el script arma la base tal como la describe esta guía, y [`demo/pyproject.toml`](demo/pyproject.toml) le dice a pytest dónde están esas pruebas. No necesitas abrirlos ni cambiarlos; en el lab 1.2 aprendes a correr pruebas.
 
 ## 🧪 Experimentos
 Antes de cada paso, escribe tu predicción en un papel o en un archivo de notas. Después corre el comando y compara: lo que importa es entender por qué acertaste o fallaste.
+
+Las salidas de los 👀 se verificaron en Windows 11 con Python 3.12.16 y 3.15.2 (SQLite 3.53.1), en PowerShell 5.1 y Git Bash; los experimentos 1 a 6 se repitieron con SQLite 3.45.3, la versión más antigua que admite el curso, con la misma salida. Donde la salida cambia según la versión de Python, el 👀 lo dice.
 
 ### Experimento 1 · Crear la base
 🔮 **Predict first:** el script crea una base con dos tablas. ¿Qué aparecerá en la carpeta `demo/`: un archivo por tabla, un solo archivo o una carpeta nueva?
@@ -97,7 +99,18 @@ PowerShell o Bash:
 
 ```bash
 python build_db.py
+```
+
+Para ver los archivos con su tamaño, en PowerShell:
+
+```powershell
 ls
+```
+
+En Bash, `ls` muestra solo los nombres; agrega `-l` para ver el tamaño:
+
+```bash
+ls -l
 ```
 
 <details><summary>👀 Qué deberías ver</summary>
@@ -106,7 +119,17 @@ ls
 Listo: jobs.db creado con 2 tablas.
 ```
 
-`ls` muestra un solo archivo nuevo, `jobs.db`, de 12288 bytes (12 KB), junto a `build_db.py`, `pyproject.toml` y `tests`.
+Hay un solo archivo nuevo, `jobs.db`, junto a `build_db.py`, `pyproject.toml` y `tests`. Pesa 12288 bytes (12 KB): en PowerShell, el tamaño está en la columna `Length`; en Bash, es el número que va antes de la fecha.
+
+```text
+-a----        25/11/2026     15:46          12288 jobs.db
+```
+
+```text
+-rw-r--r-- 1 tu-usuario 197609 12288 Nov 25 15:46 jobs.db
+```
+
+La primera línea es de PowerShell y la segunda de Bash; tus fechas, tu usuario y el número de grupo serán otros.
 
 **Toda la base, con sus dos tablas y sus filas, vive en ese único archivo.** Es una diferencia grande con PostgreSQL o MySQL, donde los datos están en un servidor. El archivo no es texto (sus primeros bytes dicen `SQLite format 3`): no lo abras ni lo edites en el editor; se lee con SQL. Si algo sale mal en los experimentos, vuelve a correr `python build_db.py`: borra la base y la crea de nuevo.
 </details>
@@ -142,9 +165,14 @@ Al abrir, la consola dice con qué versión de SQLite corre y qué archivo abri�
 ```text
 sqlite3 shell, running on SQLite version 3.53.1
 Connected to 'jobs.db'
+
+Each command will be run using execute() on the cursor.
+Type ".help" for more information; type ".quit" or CTRL-Z to quit.
 ```
 
-`.help` en Python 3.15 muestra los tres únicos comandos de esta consola; en Python 3.12 a 3.14 dice solo `Enter SQL code and press enter.`:
+La línea de `execute()` cuenta cómo la consola le pasa cada instrucción a la base desde Python (`execute()` y *cursor* son parte del módulo `sqlite3`, que usarás en el lab 5.3); por ahora no necesitas nada de eso. La última dice cómo salir: `.quit`, o la tecla CTRL-Z en Windows (en Linux y macOS dice CTRL-D). Usa `.quit`, que es igual en todos los sistemas.
+
+`.help` en Python 3.15 muestra los tres únicos comandos de esta consola (dice CTRL-D aunque estés en Windows); en Python 3.12 a 3.14 dice solo `Enter SQL code and press enter.`:
 
 ```text
 Enter SQL code or one of the below commands, and press enter.
@@ -163,11 +191,11 @@ La consulta devuelve dos filas, una por tabla:
 
 **`sqlite_schema` no aparece en su propia lista:** describe las tablas que tú creas, no a sí misma ([así lo dice su documentación](https://www.sqlite.org/schematab.html)). Cada fila del resultado se muestra como una tupla de Python, entre paréntesis; la coma final de `('jobs',)` es la forma en que Python escribe una tupla de un solo valor.
 
-Si vienes de un tutorial que usa `.tables` o `.schema`: esos comandos son de la consola oficial de SQLite, no de esta. En Python 3.13 o superior verás un error como `Error: unknown command: "tables"`. En Python 3.12 la consola lo toma como el comienzo de una instrucción SQL y muestra `...`; escribe `;` y Enter, y verás `OperationalError (SQLITE_ERROR): near ".": syntax error`.
+Si vienes de un tutorial que usa `.tables` o `.schema`: esos comandos son de la consola oficial de SQLite, no de esta. En Python 3.13 o superior verás un error que empieza con `Error: unknown command` y nombra `"tables"` (el resto del mensaje cambia según la versión). En Python 3.12 la consola lo toma como el comienzo de una instrucción SQL y muestra `...`; escribe `;` y Enter, y verás `OperationalError (SQLITE_ERROR): near ".": syntax error`.
 </details>
 
 ### Experimento 3 · Las columnas y sus tipos
-`pragma_table_info('<tabla>')` es una función de SQLite que se consulta como si fuera una tabla: devuelve una fila por cada columna de la tabla que le nombras. Su columna `name` tiene el nombre de cada columna, y `type`, su tipo.
+Un **pragma** es un comando propio de SQLite, que no es parte del SQL estándar, para ver o cambiar cómo funciona la base. `pragma_table_info('<tabla>')` es la versión de uno de ellos que se consulta como si fuera una tabla: devuelve una fila por cada columna de la tabla que le nombras. Su columna `name` tiene el nombre de cada columna, y `type`, su tipo.
 
 🔮 **Predict first:** la columna `posted_on` de `jobs` guarda la fecha de publicación de la oferta. ¿Qué tipo crees que tiene?
 
@@ -280,13 +308,13 @@ Sal de la consola:
 
 Ahora ábrela otra vez, pero escribe mal el nombre del archivo: `job.db`, sin la `s`. Y lista sus tablas, como en el experimento 2.
 
+🔮 **Predict first:** `job.db` no existe. ¿Qué crees que pasará al abrirlo y al listar sus tablas?
+
 PowerShell o Bash:
 
 ```bash
 python -m sqlite3 job.db
 ```
-
-🔮 **Predict first:** `job.db` no existe. ¿Qué crees que pasará al abrirlo y al listar sus tablas?
 
 ```sql
 SELECT name FROM sqlite_schema;
@@ -306,13 +334,7 @@ SELECT * FROM jobs;
 OperationalError (SQLITE_ERROR): no such table: jobs
 ```
 
-*no such table* (no existe la tabla) es el error que verás cuando el nombre de una tabla está mal escrito o cuando abriste otra base. Sal con `.quit` y mira la carpeta:
-
-PowerShell o Bash:
-
-```bash
-ls
-```
+*no such table* (no existe la tabla) es el error que verás cuando el nombre de una tabla está mal escrito o cuando abriste otra base. Sal con `.quit` y mira la carpeta con los tamaños, como en el experimento 1: `ls` en PowerShell, `ls -l` en Bash.
 
 Hay un archivo nuevo, `job.db`, de 0 bytes, junto a tu `jobs.db` de 12288. Lo mismo pasa si abres `jobs.db` desde otra carpeta, por ejemplo desde la raíz del repositorio: SQLite crea ahí un `jobs.db` vacío. **Cuando una base que debería tener datos aparece vacía, revisa primero el nombre del archivo y la carpeta en la que estás** (`pwd`).
 </details>
@@ -360,9 +382,6 @@ PowerShell o Bash:
 git restore build_db.py
 ```
 
-## ✔️ Respuestas verificadas
-Verificado en Windows 11 con Python 3.12.16 y 3.15.2 (SQLite 3.53.1), en PowerShell 5.1 y Git Bash; los experimentos 1 a 6 se repitieron con SQLite 3.45.3, la versión más antigua que admite el curso, con la misma salida. Cada 👀 de los experimentos tiene la respuesta de su predicción.
-
 ## 🎤 Autoevaluación
 1. Una compañera lleva el inventario de su tienda en Excel. ¿Qué cambiaría si lo pasara a una tabla de una base de datos? Da dos diferencias concretas.
 2. ¿Por qué se dice que SQL es un lenguaje declarativo? Compáralo con cómo resolverías lo mismo en Python.
@@ -374,7 +393,7 @@ Verificado en Windows 11 con Python 3.12.16 y 3.15.2 (SQLite 3.53.1), en PowerSh
 
 1. Cada columna tendría un nombre fijo y un tipo declarado, y todas las filas tendrían las mismas columnas: no habría celdas sueltas ni una columna "precio" con notas escritas al lado. Y varias personas o programas consultarían los mismos datos, en un solo lugar, pidiéndolos con SQL en vez de filtrar a mano cada uno su copia.
 2. Porque describes el resultado que quieres (`SELECT * FROM products;`) y el motor decide cómo conseguirlo. En Python escribes los pasos: abrir, recorrer con un `for`, imprimir.
-3. Que el nombre del archivo esté mal escrito o que estés en otra carpeta: en los dos casos SQLite crea una base vacía nueva. Lo distingues mirando la carpeta (`pwd` y `ls`): un archivo de 0 bytes que no esperabas es la pista. La otra causa es que la base realmente esté vacía.
+3. Que estés en otra carpeta o que el nombre del archivo esté mal escrito: en los dos casos SQLite crea sin avisar una base nueva y vacía. `pwd` te dice en qué carpeta estás; `ls` con los tamaños (`ls -l` en Bash) muestra si `ventas.db` pesa 0 bytes o si junto a él hay otro archivo con un nombre parecido. Si la carpeta y el nombre están bien, la base de verdad no tiene tablas.
 4. SQLite es una base en un solo archivo, sin servidor, dentro de la aplicación: sirve para una app móvil, un programa de escritorio o pruebas. PostgreSQL es un servidor al que se conectan muchos usuarios y aplicaciones a la vez: sirve para el sistema de una empresa.
 5. Ver el esquema: listar las tablas (`sqlite_schema` en SQLite, `information_schema.tables` en PostgreSQL o MySQL), después las columnas y tipos de las que importan, y recién entonces mirar algunas filas con `SELECT * FROM …`.
 </details>
