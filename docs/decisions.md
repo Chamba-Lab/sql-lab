@@ -12,6 +12,10 @@ Solo las que alguien podría deshacer sin saber por qué. Si una cambia, se actu
 ## Labs
 - **El 1.1 explora con la consola `python -m sqlite3` y no con la consola oficial `sqlite3` de sqlite.org**, aunque esta tiene `.tables`, `.schema` y salida en columnas: así nadie instala nada. Por eso las tablas se listan con `sqlite_schema` y las columnas con `pragma_table_info`.
 - **La `demo/` del 1.1 tiene pruebas** (`demo/tests/`) aunque es una exploración: comprueban que la base y la consola se comportan como la guía las cita (tablas, tipos, conteos, el archivo vacío al escribir mal el nombre), y así el CI las vuelve a comprobar en 3.12 y 3.15 y en Linux en cada cambio.
+- **El arnés de pruebas de los retos SQL se fijó en el 1.2** y los demás retos lo copian: `seed.sql` crea los datos en una base en memoria nueva por prueba, cada tarea es un archivo de `queries/`, y `check` compara primero columnas (nombre y orden: el alias es parte de la tarea) y después filas como multiconjunto (sin orden, pero cuenta repetidas). Los fallos salen con `pytest.fail(..., pytrace=False)`: el aprendiz ve solo un mensaje en español, sin el código de la prueba.
+- **El `conftest.py` pone la salida de pytest en UTF-8** (`sys.__stdout__.reconfigure`). Sin eso, Python 3.12 a 3.14 en Windows escriben los acentos mal cuando la salida va a un pipe o a un archivo (ver `docs/lessons.md`). No lo quites aunque en tu terminal se vea bien.
+- **Los datos de los retos usan decimales que el binario guarda exactos** (múltiplos de 0.25 en el 1.2) salvo donde la tarea enseña el ruido de punto flotante, y no dividen enteros hasta el 2.4, dueño de la división entera.
+- **Los ejemplos de Conceptos del 1.2 usan la tabla `jobs` del 1.1**, que el aprendiz ya conoce; las tareas usan datos nuevos (la carta de una cafetería). Así el ejemplo nunca es la respuesta de una tarea.
 - **`*.db` está en `.gitignore`.** Las bases de los labs se crean con scripts o en memoria; ningún archivo de base se versiona.
 
 ## Dependencias
