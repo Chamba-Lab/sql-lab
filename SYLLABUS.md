@@ -26,7 +26,7 @@ Sacar de una tabla justo los datos que te piden: elegir, filtrar, ordenar y tran
 
 | ID | Tema | Tipo de tema | Tipo de lab | Podrás… | Estado |
 |---|---|---|---|---|---|
-| 1.1 | Tu primera base de datos | 🎯 `core` | 🔭 `exploration` | Abrir una base de datos, recorrer sus tablas, hacer tu primera consulta y explicar qué son una tabla, una fila y una columna | ⬜ `pending` |
+| 1.1 | [Tu primera base de datos](labs/01-query-a-table/01-first-database/README.md) | 🎯 `core` | 🔭 `exploration` | Abrir una base de datos, recorrer sus tablas, hacer tu primera consulta y explicar qué son una tabla, una fila y una columna | 🟨 `built` |
 | 1.2 | Primeras consultas | 🎯 `core` | 🧩 `challenge` | Elegir columnas, calcular valores nuevos y darles nombre; correr las pruebas del curso y leer un fallo | ⬜ `pending` |
 | 1.3 | Filtrar filas | 🎯 `core` | 🧩 `challenge` | Quedarte solo con las filas que cumplen una o varias condiciones | ⬜ `pending` |
 | 1.4 | El valor NULL | 🎯 `core` | 🧩 `challenge` | Tratar los datos que faltan sin que te den resultados equivocados | ⬜ `pending` |
@@ -99,7 +99,7 @@ Usar SQL desde Python de forma rápida y segura.
 ## Mapa de construcción
 | ID | Owns | Builds on | Starts from |
 |---|---|---|---|
-| 1.1 | Relational model basics (database, table, row, column, type), SQL as a declarative language, the `python -m sqlite3` shell, listing tables via `sqlite_schema` | — | Minimal app: a small demo database built by a script |
+| 1.1 | Relational model basics (database, table, row, column, type), SQL as a declarative language, `SELECT * FROM` as a first query, the `python -m sqlite3` shell, listing tables via `sqlite_schema` and columns via `pragma_table_info` | — | Minimal app: a small demo database built by a script (`demo/build_db.py` → `jobs.db`) |
 | 1.2 | `SELECT … FROM`, expressions and arithmetic, `AS` aliases, how the course's tests run `.sql` files (`python -m pytest`, reading a failure) | 1.1 | Minimal app: one-table seed + `.sql` files with TODO |
 | 1.3 | `WHERE`, comparison operators, `AND`/`OR`/`NOT` and precedence, `IN`, `BETWEEN`, `LIKE` and its case rules | 1.2 | Minimal app |
 | 1.4 | `NULL`, `IS [NOT] NULL`, three-valued logic, `COALESCE`, `NULLIF` | 1.3 | Minimal app |
@@ -135,7 +135,8 @@ Usar SQL desde Python de forma rápida y segura.
 | 5.P | — | 5.1–5.5 (and the schema skills of block 3) | From scratch (brief) |
 
 ## Notas para los siguientes labs
-- **Antes del 1.1:** revisa en Python 3.12 y 3.15 qué comandos tiene de verdad la consola `python -m sqlite3` (empieza con `.help`). No es la consola `sqlite3` oficial y puede no tener `.tables` ni `.schema`; por eso el 1.1 lista las tablas consultando `sqlite_schema`.
+- **El 1.1 ya enseñó** (no lo repitas, enlázalo): tabla, fila, columna y tipo; SQL declarativo y el `;` final; `SELECT * FROM`; la consola `python -m sqlite3` (solo tiene `.help`, `.version` y `.quit`; imprime cada fila como una tupla de Python); `sqlite_schema` y `pragma_table_info`; que abrir un archivo mal escrito crea una base vacía. Nombrar columnas en vez de `*` se mencionó y queda para el 1.2. El 1.1 también da el recordatorio de la terminal y la comprobación con `pwd`; los labs siguientes solo nombran la carpeta.
+- **El 1.2 ya no necesita la consola:** el aprendiz escribe archivos `.sql` y los corre con las pruebas. Si un lab la usa, recuerda que en Python 3.12 un comando desconocido como `.tables` deja la consola esperando `;`, y que en 3.13+ da error.
 - **El 1.2 fija el mecanismo de pruebas** que copian los demás retos: un `conftest.py` que crea una base nueva en memoria desde los datos del lab y una función que ejecuta un archivo `.sql` y devuelve sus filas. Que la prueba diga qué archivo falló y muestre las filas esperadas y las obtenidas.
 - **Un starter vacío tiene que fallar por la razón correcta:** un archivo `.sql` con solo `-- TODO` no devuelve filas; la prueba debe fallar comparando resultados, no por un error de sintaxis.
 - **Compara resultados sin depender del orden** salvo cuando la tarea pide ordenar (lab 1.5 en adelante).

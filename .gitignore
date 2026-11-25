@@ -6,6 +6,7 @@ __pycache__/
 .coverage
 htmlcov/
 *.egg-info/
+*.db
 *.db-journal
 *.db-wal
 *.db-shm
