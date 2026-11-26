@@ -43,7 +43,7 @@ GROUP BY mode;
 | presencial | 5 |
 | remoto | 3 |
 
-Pero la pregunta pide solo las filas del resultado cuya cuenta llega a 4. La condición no es sobre una oferta: es sobre un grupo entero, y la cuenta de cada grupo recién existe después de agrupar.
+Pero la pregunta pide solo las filas del resultado cuya cuenta llega a 4. La condición no es sobre una oferta: es sobre un grupo entero.
 
 La idea: una segunda condición que se revisa después del `GROUP BY`, una vez por grupo, y que puede usar las funciones de agregado. Esa condición va en **`HAVING`**, justo después del `GROUP BY`:
 
@@ -85,7 +85,7 @@ El orden en que se escriben las partes es `SELECT … FROM … WHERE … GROUP B
 ### Una consulta agrupada dentro del `FROM`
 ¿Cuántas personas hicieron una postulación, cuántas hicieron dos y cuántas tres? Primero hay que contar las postulaciones de cada persona, y después agrupar ese resultado por la cuenta: son dos agrupaciones, una encima de la otra.
 
-La idea: escribir la primera consulta entre paréntesis en el `FROM` de la segunda, con un alias, y usar su resultado como si fuera una tabla:
+La idea: escribir la primera consulta entre paréntesis en el `FROM` de la segunda, con un alias, y usar su resultado como si fuera una tabla. El alias es el nombre de esa tabla, y los alias de las columnas de adentro (`AS applications`) son los nombres de sus columnas:
 
 ```sql
 SELECT applications, COUNT(*) AS candidates
@@ -274,7 +274,7 @@ HAVING COUNT(*) >= 2 AND a.status <> 'rechazada';
 ### Tarea 3 · Ofertas y postulaciones de cada empresa
 **Objetivo:** las 6 empresas, cada una con cuántas ofertas publicó (`jobs`) y cuántas postulaciones recibieron sus ofertas, entre todas (`applications`). Una empresa sin ofertas sale igual, con `0` y `0`. Columnas `company` (el nombre de la empresa), `jobs` y `applications`, 6 filas. **Lo valida:** [`TestTask3JobsAndApplicationsByCompany`](starter/tests/test_queries.py)
 
-🔮 **Predict first:** un compañero partió de la respuesta de la tarea 4 del lab 2.4 y le agregó la cuenta de ofertas. ¿En cuántas empresas crees que `jobs` sale con otro número que el de ofertas que de verdad publicó? Escribe tu predicción y después pon la consulta en [`queries/03_jobs_and_applications_by_company.sql`](starter/queries/03_jobs_and_applications_by_company.sql):
+🔮 **Predict first:** un compañero partió de la respuesta de la tarea 4 del lab 2.4 y le agregó la cuenta de ofertas. ¿Crees que pasa la prueba? Si no pasa, ¿en cuántas empresas crees que `jobs` sale con otro número? Escribe tu predicción y después pon la consulta en [`queries/03_jobs_and_applications_by_company.sql`](starter/queries/03_jobs_and_applications_by_company.sql):
 
 ```sql
 SELECT c.name AS company, COUNT(j.id) AS jobs, COUNT(a.id) AS applications
@@ -292,7 +292,7 @@ GROUP BY c.id, c.name;
 ### Tarea 4 · Sueldos ofrecidos y postulaciones de cada empresa
 **Objetivo:** cada empresa que tiene ofertas, con la suma de los sueldos de sus ofertas (`total_salary`; las que no dicen el sueldo no suman) y cuántas postulaciones recibieron sus ofertas, entre todas (`applications`). Columnas `company`, `total_salary` y `applications`, 5 filas. **Lo valida:** [`TestTask4SalaryAndApplicationsByCompany`](starter/tests/test_queries.py)
 
-🔮 **Predict first:** un compañero usó con la suma lo mismo que le funcionó con la cuenta de ofertas en la tarea 3. ¿Crees que pasa la prueba? Si no pasa, ¿en cuántas empresas sale otro `total_salary`? Escribe tu predicción y después pon la consulta en [`queries/04_salary_and_applications_by_company.sql`](starter/queries/04_salary_and_applications_by_company.sql):
+🔮 **Predict first:** un compañero adaptó a la suma su solución de la tarea 3. ¿Crees que pasa la prueba? Si no pasa, ¿en cuántas empresas sale otro `total_salary`? Escribe tu predicción y después pon la consulta en [`queries/04_salary_and_applications_by_company.sql`](starter/queries/04_salary_and_applications_by_company.sql):
 
 ```sql
 SELECT c.name AS company, SUM(DISTINCT j.salary_usd) AS total_salary, COUNT(a.id) AS applications
@@ -342,7 +342,7 @@ Andes Retail tiene 3 ofertas. ¿Cuántas filas hay para Andes Retail después de
 
 <details><summary>Pista 4 · El total de Agro Norte no coincide</summary>
 
-Mira las ofertas de Agro Norte en `jobs`. ¿Qué tienen en común sus sueldos? ¿Qué hace `DISTINCT` con dos valores iguales que vienen de dos ofertas distintas?
+Suma a mano los sueldos de las ofertas de Agro Norte en `jobs`. ¿Qué tienen en común? ¿Qué número da tu consulta, y qué parte de ella puede haber dejado fuera uno de los dos sueldos?
 </details>
 
 <details><summary>Pista 5 · Cómo sumar sin repetir</summary>
@@ -384,7 +384,7 @@ HAVING COUNT(*) >= 2;
     (5, 'Sofía Castro', 2)
 ```
 
-6 filas. No pasa porque el `HAVING` se revisa una vez por grupo, después de agrupar, y `a.status` no está en el `GROUP BY` ni dentro de una función de agregado: es una columna suelta, como la del lab 2.4, y SQLite toma el valor de una de las filas del grupo. Con estos datos, Ana Quispe sale con sus 3 postulaciones, la rechazada incluida, y Sofía Castro sale aunque una de sus dos postulaciones fue rechazada; Luis Ramírez (6), con la misma mezcla que Sofía, no sale. Qué fila mira SQLite no está garantizado, y en las tres versiones probadas fue la misma. La condición sobre cada postulación tiene que quitar las rechazadas antes de agrupar, en el `WHERE`, y el `HAVING` cuenta lo que quedó:
+6 filas. No pasa porque el `HAVING` se revisa una vez por grupo, después de agrupar, y `a.status` no está en el `GROUP BY` ni dentro de una función de agregado: es una columna suelta, como la del lab 2.4, y SQLite toma el valor de una de las filas del grupo. Con estos datos, Ana Quispe sale con sus 3 postulaciones, la rechazada incluida, y Sofía Castro sale aunque una de sus dos postulaciones fue rechazada; Luis Ramírez (6), con la misma mezcla que Sofía, no sale. Qué fila mira SQLite no está garantizado: estas filas salieron en las tres versiones probadas, pero otra versión podría dar otras, igual de equivocadas. La condición sobre cada postulación tiene que quitar las rechazadas antes de agrupar, en el `WHERE`, y el `HAVING` cuenta lo que quedó:
 
 ```sql
 SELECT c.id, c.name, COUNT(*) AS applications
