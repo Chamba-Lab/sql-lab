@@ -12,6 +12,8 @@ El equipo te hace seis preguntas. Respondes cada una con **una consulta** en un 
 
 **Hoy es el 30 de noviembre de 2026** en todas las preguntas. Escríbelo como texto, `'2026-11-30'`: así las respuestas no cambian según el día en que corras las pruebas. No uses `DATE('now')`: devuelve el día real, y tus resultados cambiarían de un día a otro.
 
+Los pedidos guardan el día **y la hora** en que se hicieron: `ordered_at` es un texto como `'2026-09-05 10:20'`.
+
 ## Dominio
 
 ### Las reglas
@@ -156,7 +158,7 @@ Tu entrega es una carpeta `my-queries/`, junto a `acceptance/` y `reference/`, c
 |---|---|---|---|
 | `01_order_totals.sql` | Para contabilidad: el total de cada venta, con el nombre de quien compró (`'Invitado'` si compró sin registrarse) | `order_id`, `customer`, `total` | Por `order_id`, de menor a mayor |
 | `02_no_purchases.sql` | Para la campaña «tu primera compra»: los clientes registrados que no tienen ninguna venta | `id`, `name`, `email` | Por `id`, de menor a mayor |
-| `03_categories.sql` | Las categorías que más venden: por categoría, cuántas ventas distintas tienen al menos un producto de ella (`orders`), cuántas unidades se vendieron (`units`) y la suma de los importes de esas líneas (`revenue`, sin envío). Solo las categorías con `revenue` de 100 soles o más | `category`, `orders`, `units`, `revenue` | De mayor a menor `revenue`; empates por `category` |
+| `03_categories.sql` | Las categorías que más venden: por categoría, cuántas ventas tienen al menos un producto de ella (`orders`), cuántas unidades se vendieron (`units`) y la suma de los importes de esas líneas (`revenue`, sin envío). Solo las categorías con `revenue` de 100 soles o más | `category`, `orders`, `units`, `revenue` | De mayor a menor `revenue`; empates por `category` |
 | `04_big_orders.sql` | Las ventas grandes: las ventas cuyo subtotal es mayor que el subtotal promedio de las ventas | `order_id`, `subtotal` | De mayor a menor `subtotal`; empates por `order_id` |
 | `05_best_sellers.sql` | Los más vendidos del último mes: por producto, las unidades vendidas en las ventas de los últimos 30 días, desde el día que cae 30 días antes de hoy (incluido) hasta hoy, a cualquier hora. Solo los productos que se vendieron en esos días. La web muestra 4 por página: devuelve **la página 2** | `product_id`, `name`, `units` | De más a menos `units`; empates por `name`, de la A a la Z |
 | `06_customers.sql` | **La pregunta del dominio:** cada cliente registrado, también los que no compraron, con cuántas ventas hizo (`orders`) y cuánto gastó en ellas (`spent`: la suma de los totales de sus ventas, con envío; 0 si no compró) | `customer_id`, `name`, `orders`, `spent` | De mayor a menor `spent`, después por `name` de la A a la Z, después por `customer_id` |
@@ -179,16 +181,26 @@ Los nombres de las columnas van tal cual, en inglés y en minúsculas, como en l
 | Una sola consulta por archivo, con las columnas nombradas con `AS` | [Lab 1.2](../../01-query-a-table/02-first-queries/README.md) |
 | Cada unión sigue una clave foránea hasta su clave primaria | [Lab 2.1](../01-table-relationships/README.md), [lab 2.2](../02-join-tables/README.md) |
 | Una pregunta que pide «todos» o «también los que no» no pierde filas al unir | [Lab 2.3](../03-unmatched-rows/README.md) |
-| Cada grupo es lo que la pregunta dice (un pedido, una categoría, un cliente), y cada conteo y cada suma dan lo que darían a mano | [Lab 2.4](../04-group-and-summarize/README.md), [lab 2.5](../05-filter-groups/README.md) |
+| Cada conteo y cada suma se calculan en la consulta, con funciones de agregado | [Lab 2.4](../04-group-and-summarize/README.md), [lab 2.5](../05-filter-groups/README.md) |
 | Un filtro sobre un resumen va donde puede ver el resumen | [Lab 2.5](../05-filter-groups/README.md) |
 | Una pregunta que compara con otro resultado de los mismos datos lo calcula en la misma consulta, no escrito a mano | [Lab 2.6](../06-subqueries/README.md) |
-| Los `NULL` siguen las reglas del dominio, no lo que haga la comparación por defecto | [Lab 1.4](../../01-query-a-table/04-null-values/README.md), [lab 2.6](../06-subqueries/README.md) |
 | Todo orden pedido tiene su desempate, y la paginación da siempre las mismas filas | [Lab 1.5](../../01-query-a-table/05-sort-and-paginate/README.md) |
 | Las fechas se comparan como texto ISO-8601 sin perder las que tienen hora; hoy es `'2026-11-30'`, escrito en la consulta | [Lab 1.6](../../01-query-a-table/06-transform-values/README.md), [proyecto 1.P](../../01-query-a-table/project-shop-catalog/BRIEF.md) |
 
 ## Qué es nuevo aquí
 - **Una clave primaria de dos columnas.** `order_items` no tiene `id`: cada fila se identifica por la pareja `(order_id, product_id)`. Se une igual que en el lab 2.2, cada columna con la tabla a la que apunta.
 - **Varias tablas y varias reglas en una consulta.** Cada lab tenía una idea por tarea; aquí una consulta junta la unión de un lab, el grupo de otro y el filtro de un tercero. Escríbela por partes: primero el `FROM` con sus `JOIN` y el `WHERE`, y mira qué filas salen; después el `GROUP BY` y las columnas calculadas, y al final el `HAVING` y el `ORDER BY`. Para revisar un número, compáralo con la cuenta a mano sobre las tablas de arriba.
+
+### Tu caja de herramientas
+Todo lo que necesitas ya lo viste en los labs. Si no recuerdas una herramienta, vuelve a su sección:
+
+- Unir dos o más tablas: [lab 2.2, *JOIN*](../02-join-tables/README.md#unir-dos-tablas-join) y [más de dos tablas](../02-join-tables/README.md#más-de-dos-tablas).
+- Conservar las filas sin pareja y encontrar lo que falta: [lab 2.3, *LEFT JOIN*](../03-unmatched-rows/README.md#quedarse-también-con-las-filas-sin-pareja-left-join), [*anti-join*](../03-unmatched-rows/README.md#encontrar-lo-que-no-tiene-pareja-anti-join) y [qué hace el `ON` y qué hace el `WHERE`](../03-unmatched-rows/README.md#qué-hace-el-on-y-qué-hace-el-where).
+- Resumir por grupos: [lab 2.4, `GROUP BY`](../04-group-and-summarize/README.md#un-resumen-por-grupo-group-by), [contar cada valor una vez](../04-group-and-summarize/README.md#contar-cada-valor-una-vez-distinct) y [agrupar el resultado de un `JOIN`](../04-group-and-summarize/README.md#agrupar-el-resultado-de-un-join).
+- Filtrar grupos: [lab 2.5, `HAVING`](../05-filter-groups/README.md#quedarte-con-algunos-grupos-having).
+- Resumir en una subconsulta en el `FROM` antes de unir: [lab 2.5](../05-filter-groups/README.md#una-consulta-agrupada-dentro-del-from).
+- Usar el resultado de otra consulta: [lab 2.6, un valor](../06-subqueries/README.md#un-valor-calculado-por-otra-consulta-scalar-subquery), [una lista con `IN` y `NOT IN`](../06-subqueries/README.md#una-lista-calculada-por-otra-consulta-in-y-not-in), [una subconsulta correlacionada](../06-subqueries/README.md#una-subconsulta-que-mira-la-fila-de-afuera-correlated-subquery) y [`EXISTS`](../06-subqueries/README.md#existe-alguna-fila-exists-y-not-exists).
+- Restar días a una fecha, `DATE(fecha, '-N days')`: [proyecto 1.P](../../01-query-a-table/project-shop-catalog/BRIEF.md#qué-es-nuevo-aquí).
 
 ## Fijo y libre
 - **Fijo:** los nombres de los archivos, las columnas y su orden, el orden de las filas, los datos de `seed.sql` y que hoy es `'2026-11-30'`.

@@ -1,6 +1,6 @@
 # 🔍 Revisión · Pedidos de una tienda en línea
 
-Verificado en Windows 11, en PowerShell 5.1, con Python 3.12.16 (SQLite 3.53.1); las mismas consultas dieron las mismas filas con Python 3.15.2 (SQLite 3.53.1), Python 3.14.4 (SQLite 3.50.4) y Python 3.12.7 de Anaconda (SQLite 3.45.3).
+Verificado en Windows 11, en Git Bash, con Python 3.12.16 (SQLite 3.53.1); las mismas consultas dieron las mismas filas con Python 3.15.2 (SQLite 3.53.1), Python 3.14.4 (SQLite 3.50.4) y Python 3.12.7 de Anaconda (SQLite 3.45.3).
 
 ## Orden de lectura
 1. [`BRIEF.md`](BRIEF.md): las reglas del dominio, las tablas y el contrato. Sin ellas, las consultas parecen arbitrarias.
@@ -34,6 +34,7 @@ Verificado en Windows 11, en PowerShell 5.1, con Python 3.12.16 (SQLite 3.53.1);
 - **El promedio quedó entre dos ventas cercanas.** El subtotal promedio es 115.22: el pedido 105 (116) entra y el 106 (115) no. Así se nota un promedio calculado sobre líneas (65.84), sobre todos los pedidos sin la regla de venta (128.52) o sobre los totales con envío (123.84).
 - **Los empates se guardan al revés de su desempate.** SQLite devolvió los grupos en el orden de su clave, así que un desempate que falta solo se ve si ese orden es el contrario: los tres clientes sin ventas (ids 5, 6, 7) van por nombre como 7, 6, 5; en la pregunta 5, Agenda (2), Lapicero (3), Mochila (5) y Cartuchera (6) empatan con 2 unidades y por nombre van Agenda, Cartuchera, Lapicero, Mochila.
 - **La página 2 es la última, y corta.** Seis productos se vendieron en el último mes: la página 2 tiene 2 filas, y cualquier producto de más o de menos la cambia. El borde de la fecha tiene una venta a cada lado: el pedido 105 (2026-10-30, fuera) y el 106 (2026-10-31 20:15, dentro), más la venta de hoy con hora (110).
+- **`DATE('now')` pasa un solo día.** Una consulta con `DATE('now', '-30 days')` en la pregunta 5 falla cualquier día salvo el 2026-11-30 real, cuando da lo mismo que la fecha fija. Ninguna fila puede separarlas ese día; el arnés agrega `Recuerda: hoy es '2026-11-30'…` a todo fallo de una consulta con `'now'`, y el brief pide escribir la fecha como texto.
 - **Un cambio a medias puede pasar.** Usar `p.price` solo en el `HAVING` de la pregunta 3 pasó (las mismas tres categorías superan los 100 soles con los dos precios); usarlo también en `revenue`, como haría quien confunde los precios, falla.
 
 ## 🔨 Rómpelo tú

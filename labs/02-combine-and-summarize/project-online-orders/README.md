@@ -5,7 +5,7 @@
 | 4–6 h construyendo / 1 h revisando | 🏗️ `project` | Bloque 2 · Combinar y resumir | Python 3.12+ · `sqlite3` (SQLite 3.45+) · pytest 9.2.0 |
 
 ## 🎯 Objetivos
-- Responder preguntas de negocio sobre cuatro tablas relacionadas usando todo lo del bloque 2: unir tablas (2.2), conservar las filas sin pareja y encontrar lo que falta (2.3), agrupar y resumir (2.4), filtrar grupos y sumar sin inflar los totales (2.5) y subconsultas (2.6).
+- Responder preguntas de negocio sobre cuatro tablas relacionadas usando todo lo del bloque 2: unir tablas (2.2), conservar las filas sin pareja y encontrar lo que falta (2.3), agrupar y resumir (2.4), filtrar grupos y sumar con varias tablas unidas (2.5) y subconsultas (2.6).
 - Escribir una consulta que junta varias tablas y varias reglas sin que una deshaga a otra.
 - Revisar un resultado con la cuenta a mano sobre los datos, antes de correr las pruebas.
 - Comprobar tu trabajo contra un contrato fijo, como en una prueba técnica.
