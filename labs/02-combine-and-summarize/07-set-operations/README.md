@@ -220,7 +220,7 @@ python -m pytest
 Córrelo ahora, antes de escribir nada: pasa 1 prueba y fallan 4, una por tarea.
 
 ### Tarea 1 · Un directorio de empresas y personas
-**Objetivo:** el nombre y la ciudad de cada empresa y de cada persona, en una sola lista. Columnas `name` y `city`, 15 filas. **Lo valida:** [`TestTask1ContactDirectory`](starter/tests/test_queries.py)
+**Objetivo:** el nombre y la ciudad de cada empresa y de cada persona, en una sola lista. Columnas `name` y `city`. **Lo valida:** [`TestTask1ContactDirectory`](starter/tests/test_queries.py)
 
 🔮 **Predict first:** un compañero escribió esta consulta. ¿Qué crees que pasa: pasa la prueba, devuelve otras filas o da un error? Si devuelve otras filas, ¿cuántas filas devuelve? Escribe tu predicción y después pon la consulta en [`queries/01_contact_directory.sql`](starter/queries/01_contact_directory.sql):
 
@@ -255,7 +255,7 @@ FROM (
 **Criterio de éxito:** `TestTask2TotalEvents` pasa. Con todas las pruebas, 3 pasan y 2 fallan.
 
 ### Tarea 3 · Las ciudades con empresas y con personas
-**Objetivo:** las ciudades donde hay al menos una empresa y al menos una persona, cada ciudad una vez. Columna `city`, 5 filas. **Lo valida:** [`TestTask3SharedCities`](starter/tests/test_queries.py)
+**Objetivo:** las ciudades donde hay al menos una empresa y al menos una persona, cada ciudad una vez. Columna `city`. **Lo valida:** [`TestTask3SharedCities`](starter/tests/test_queries.py)
 
 🔮 **Predict first:** un compañero lo resolvió con `IN` y una subconsulta, como en el lab 2.6. ¿Crees que pasa la prueba? Si no pasa, ¿cuántas filas crees que devuelve? Escribe tu predicción y después pon la consulta en [`queries/03_shared_cities.sql`](starter/queries/03_shared_cities.sql):
 
@@ -363,7 +363,7 @@ UNION
 SELECT name, city FROM candidates;
 ```
 
-También pasa `UNION ALL`: ninguna pareja de nombre y ciudad se repite (los dos Luis Ramírez viven en ciudades distintas), así que las dos formas dan las mismas 15 filas. También pasa escribir primero la consulta de `candidates`. Si una consulta devuelve más columnas que la otra, SQLite responde `SELECTs to the left and right of UNION do not have the same number of result columns`.
+También pasa `UNION ALL`, y aquí la elección no importa: la pregunta pide cada contacto, y ninguna pareja de nombre y ciudad se repite (los dos Luis Ramírez viven en ciudades distintas), así que las dos formas dan las mismas 15 filas. Si una empresa y una persona tuvieran el mismo nombre y la misma ciudad, `UNION ALL` las mostraría como los dos contactos que son, y `UNION` dejaría uno. También pasa escribir primero la consulta de `candidates`. Si una consulta devuelve más columnas que la otra, SQLite responde `SELECTs to the left and right of UNION do not have the same number of result columns`.
 
 ### Tarea 2 · `UNION` quita las fechas repetidas antes de contar
 ```text
