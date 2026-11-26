@@ -90,7 +90,7 @@ ORDER BY company;
 | Pago Fácil |
 
 ### Los primeros y los siguientes (*LIMIT*, *OFFSET*)
-Para un top 3 no quieres todo el resultado, solo sus primeras filas. **`LIMIT n`**, al final de la consulta, devuelve como mucho `n` filas:
+Para un top 3 (los 3 primeros) no quieres todo el resultado, solo sus primeras filas. **`LIMIT n`**, al final de la consulta, devuelve como mucho `n` filas:
 
 ```sql
 SELECT title, salary_usd
@@ -278,7 +278,7 @@ LIMIT 4 OFFSET 2;
 | `ORDER BY a, b` | Ordena por `a`; solo mira `b` cuando dos filas empatan en `a` |
 | `ASC` / `DESC` | De menor a mayor (si no escribes nada) / de mayor a menor |
 | `NULLS FIRST` / `NULLS LAST` | Los `NULL` al comienzo / al final |
-| `ORDER BY alias` | Ordena por un alias del `SELECT`; a diferencia de `WHERE`, funciona en todos los motores |
+| `ORDER BY alias` | Ordena por un alias del `SELECT`, escrito solo y no dentro de una expresión; a diferencia de `WHERE`, funciona en todos los motores |
 | `SELECT DISTINCT …` | Deja una sola copia de cada fila repetida del resultado |
 | `LIMIT n` | Como mucho `n` filas |
 | `OFFSET n` | Salta las primeras `n` filas; va después de `LIMIT` |
@@ -287,8 +287,8 @@ LIMIT 4 OFFSET 2;
 ## 💼 En proyectos reales
 - **Cada página es una consulta aparte, así que el orden tiene que ser único.** Si dos filas empatan justo en el borde de una página, nada obliga a la base a ponerlas igual en las dos consultas: una fila puede salir en dos páginas y otra en ninguna. Termina el `ORDER BY` con una columna que no se repite, como el `id`: `ORDER BY price, id`.
 - **`OFFSET` grande es lento.** Para devolver la página 5000, la base igual recorre las filas que salta. Las aplicaciones grandes paginan desde la última fila mostrada (`WHERE id > 120 ORDER BY id LIMIT 20`), lo que se llama *keyset pagination*.
-- **`LIMIT` no es estándar.** SQLite, PostgreSQL y MySQL lo tienen; el estándar escribe `OFFSET 4 ROWS FETCH FIRST 4 ROWS ONLY`, que PostgreSQL acepta y SQLite no (`near "0": syntax error`). SQLite y MySQL aceptan también `LIMIT 4, 4`, con el salto primero; mejor escribe `OFFSET`, que no se presta a confusión.
-- **El orden alfabético de SQLite compara códigos, no el idioma.** Mayúsculas antes que minúsculas, y las letras con tilde después de todas: `'Beto'`, `'Zoila'`, `'ana'`, `'Ángel'`. En PostgreSQL y MySQL depende de la *collation* (las reglas de comparación de textos del [lab 1.3](../03-filter-rows/README.md)), que suele seguir las del idioma.
+- **`LIMIT` no es estándar.** SQLite, PostgreSQL y MySQL lo tienen; el estándar escribe `OFFSET 4 ROWS FETCH FIRST 4 ROWS ONLY`, que PostgreSQL acepta y SQLite no (`near "OFFSET": syntax error`). SQLite y MySQL aceptan también `LIMIT 4, 3`, con el salto primero: salta 4 y devuelve 3, como `LIMIT 3 OFFSET 4`. Mejor escribe `OFFSET`, que no se presta a confusión.
+- **El orden alfabético de SQLite compara códigos, no el idioma.** Mayúsculas antes que minúsculas, y las letras con tilde después de todas: `'Beto'`, `'Zoila'`, `'ana'`, `'Ángel'`. En PostgreSQL y MySQL depende de la *collation* (las reglas de comparación de textos del [lab 1.3](../03-filter-rows/README.md)), que suele seguir las del idioma (una base de PostgreSQL creada con la *locale* `C` ordena por código, como SQLite).
 
 ## 🆘 Pistas
 <details><summary>Pista 1 · El primer curso es el que tiene menos alumnos</summary>
