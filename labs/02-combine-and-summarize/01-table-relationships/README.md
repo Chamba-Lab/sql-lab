@@ -33,7 +33,7 @@ En el lab 1.1, la tabla `jobs` guardaba el nombre de la empresa en cada oferta:
 | 1 | Analista de datos júnior | Andes Retail | Lima |
 | 4 | Analista de BI | Andes Retail | Lima |
 
-Con dos ofertas no molesta. Pero si Andes Retail publica cincuenta, su nombre y su ciudad se repiten cincuenta veces. Si la empresa se muda, hay que cambiar cincuenta filas, y si se te escapa una, la base dice dos cosas distintas sobre la misma empresa. Si alguien escribe `Andes Retai` en una oferta nueva, para la base es otra empresa. Y no hay dónde guardar una empresa que todavía no publicó ninguna oferta.
+Con dos ofertas no molesta. Pero si Andes Retail publica cincuenta, su nombre y su ciudad se repiten cincuenta veces. Si la empresa se muda, hay que cambiar cincuenta filas, y si se te escapa una, la base dice dos cosas distintas sobre la misma empresa. Si alguien escribe `Andes Retai` en una oferta nueva, para la base es otra empresa.
 
 La salida es guardar cada cosa **una sola vez, en su propia tabla**: las empresas en `companies`, una fila por empresa, y en cada oferta solo un dato que diga cuál es su empresa. Las reglas para decidir cómo repartir los datos (la normalización) son del lab 3.1; aquí aprendes a leer una base que ya está repartida.
 
@@ -86,7 +86,7 @@ Leer `CREATE TABLE` tras `CREATE TABLE` para entender una base es lento. Un **di
 | `}o` u `o{` (círculo y pata de gallo) | cero o muchas |
 | `}\|` o `\|{` (raya y pata de gallo) | una o muchas |
 
-En el diagrama dibujado, cada extremo aparece como un símbolo pegado a la caja que describe: la pata de gallo es la línea que se abre en tres. Una línea con dos rayas junto a `companies` y un círculo con pata de gallo junto a `jobs` se lee así: cada oferta es de exactamente una empresa, y cada empresa tiene cero o muchas ofertas.
+En el diagrama dibujado, cada extremo aparece como un símbolo pegado a la caja que describe: la pata de gallo es la línea que se abre en tres. Por ejemplo, una línea con dos rayas junto a `customers` y una raya con pata de gallo junto a `orders` se lee así: cada pedido es de exactamente un cliente, y cada cliente tiene uno o muchos pedidos.
 
 ## 📚 Documentación
 - [SQLite: la clave primaria en `CREATE TABLE`](https://www.sqlite.org/lang_createtable.html#the_primary_key)
@@ -95,9 +95,9 @@ En el diagrama dibujado, cada extremo aparece como un símbolo pegado a la caja 
 - [Mermaid: diagramas entidad-relación](https://mermaid.js.org/syntax/entityRelationshipDiagram.html#relationship-syntax), con la tabla completa de extremos
 
 ## 🧭 Escenario
-La bolsa de trabajo del lab 1.1 creció: ahora guarda las empresas, sus ofertas, los postulantes y cada postulación. En [`demo/`](demo/) está [`build_db.py`](demo/build_db.py), que crea la base `jobs.db` a partir de [`seed.sql`](demo/seed.sql), el archivo con las instrucciones que crean las tablas y les cargan sus filas. Los dos están terminados; no tienes que cambiarlos. Vas a recorrer la base siguiendo sus referencias a mano, que es justo el trabajo que el lab 2.2 le encarga a SQL con `JOIN`.
+La bolsa de trabajo del lab 1.1 creció: ahora guarda las empresas, sus ofertas, los postulantes y cada postulación. En [`demo/`](demo/) está [`build_db.py`](demo/build_db.py), que crea la base `jobs.db` a partir de [`seed.sql`](demo/seed.sql), el archivo con las instrucciones que crean las tablas y les cargan sus filas. Los dos están terminados; no tienes que cambiarlos. Vas a recorrer la base siguiendo sus referencias a mano, que es justo el trabajo que el lab 2.2 le encarga a SQL con `JOIN` (unir tablas).
 
-Este es el diagrama de la base:
+Este es el diagrama de la base. GitHub lo dibuja como cajas unidas por líneas; si en VS Code ves código en vez de cajas, abre esta guía en GitHub (la vista previa de VS Code no dibuja estos diagramas sin una extensión).
 
 ```mermaid
 erDiagram
@@ -136,10 +136,19 @@ erDiagram
     }
 ```
 
-`referred_by` es el `id` de la persona que recomendó a ese postulante, o `NULL` si nadie lo recomendó: por eso esa línea empieza en "cero o una".
+Si no puedes ver el dibujo, estas son las mismas relaciones en texto:
+
+| Tabla | Clave primaria | Claves foráneas |
+|---|---|---|
+| `companies` | `id` | ninguna |
+| `jobs` | `id` | `company_id` → `companies (id)` |
+| `candidates` | `id` | `referred_by` → `candidates (id)` |
+| `applications` | `id` | `candidate_id` → `candidates (id)`, `job_id` → `jobs (id)` |
+
+`referred_by` es el `id` de la persona que recomendó a ese postulante, o `NULL` si nadie lo recomendó. La línea de `candidates` consigo misma se lee así: cada postulante tiene cero o una persona que lo recomendó (`o|`), y cada persona recomienda a cero o muchas (`o{`).
 
 > [!NOTE]
-> [`demo/tests/`](demo/tests/test_build_db.py) comprueba que la base es tal como la describe esta guía, y [`demo/pyproject.toml`](demo/pyproject.toml) le dice a pytest dónde están esas pruebas. No necesitas abrirlos ni cambiarlos.
+> En `demo/` también hay una carpeta `tests/` y un `pyproject.toml`: son las pruebas con las que comprobamos que la base es la que describe esta guía. No los abras ni los cambies; no los necesitas, y leerlos antes de los experimentos te contaría sus resultados.
 
 ## 🧪 Experimentos
 Antes de cada paso, escribe tu predicción en un papel o en un archivo de notas. Después corre el comando y compara.
@@ -156,7 +165,7 @@ python -m sqlite3 jobs.db
 
 La consola es la misma del lab 1.1: escribes después del prompt `sqlite>` y terminas cada instrucción con `;`.
 
-🔮 **Predict first:** el diagrama tiene cuatro cajas. ¿Cuántas filas devolverá esta consulta, y cuáles?
+🔮 **Predict first:** el diagrama tiene cajas y líneas entre ellas. Cuando listes lo que hay en `sqlite_schema`, ¿aparecerán también las líneas, como filas aparte, o solo las tablas?
 
 ```sql
 SELECT name FROM sqlite_schema;
@@ -164,7 +173,7 @@ SELECT name FROM sqlite_schema;
 
 <details><summary>👀 Qué deberías ver</summary>
 
-`build_db.py` imprime `Listo: jobs.db creado con 4 tablas.`, y la consulta devuelve una fila por tabla:
+`build_db.py` imprime `Listo: jobs.db creado.`, y la consulta devuelve una fila por tabla:
 
 ```text
 ('companies',)
@@ -231,7 +240,7 @@ SELECT id, title FROM jobs WHERE company_id = 6;
 
 Nada: ni filas ni error. Vuelve a aparecer `sqlite>`.
 
-**Nube Andina existe en `companies`, pero ninguna oferta apunta a ella.** El círculo del extremo `o{`, junto a `jobs`, decía justo eso: cada empresa tiene cero o muchas ofertas. Antes de repartir los datos no había dónde guardar a una empresa así; ahora es una fila más de `companies`. Cuando unas tablas en el lab 2.2, esas filas sin pareja desaparecen del resultado, y el lab 2.3 enseña a recuperarlas.
+**Nube Andina existe en `companies`, pero ninguna oferta apunta a ella.** El círculo del extremo `o{`, junto a `jobs`, decía justo eso: cada empresa tiene cero o muchas ofertas. Con todo en una sola tabla de ofertas, no habría dónde guardar a una empresa así; repartida, es una fila más de `companies`. Cuando unes las tablas en el lab 2.2, esas filas sin pareja desaparecen del resultado, y el lab 2.3 enseña a recuperarlas.
 </details>
 
 ### Experimento 4 · Dos personas con el mismo nombre
@@ -269,7 +278,7 @@ SELECT * FROM candidates WHERE id = 4;
 
 Y Jorge, a su vez, fue recomendado por la persona 1. En la salida de la consola, `NULL` se ve como `None`, como en las pruebas del bloque 1.
 
-Ahora intenta agregar una persona nueva con un `id` que ya existe. `INSERT INTO … VALUES (…)` agrega una fila con esos valores, en el orden de las columnas; lo practicarás en el bloque 3.
+Ahora intenta agregar una persona nueva. `INSERT INTO … VALUES (…)` agrega una fila con esos valores, en el orden de las columnas; lo practicarás en el bloque 3.
 
 🔮 **Predict first:** ¿la base aceptará a Rosa Medina con el `id` 6, que ya es del Luis de Lima, o la rechazará?
 
@@ -282,6 +291,8 @@ INSERT INTO candidates VALUES (6, 'Rosa Medina', 'Cusco', 1.0, NULL);
 ```text
 IntegrityError (SQLITE_CONSTRAINT_PRIMARYKEY): UNIQUE constraint failed: candidates.id
 ```
+
+Ese texto lo escribe SQLite al correr la instrucción (la documentación habla de *constraint violation* sin citar el mensaje), así que otro motor lo dirá con otras palabras.
 
 **La base rechaza la fila: la clave primaria no se puede repetir.** *UNIQUE constraint failed* quiere decir que se rompió la regla de valor único de `candidates.id`, y `IntegrityError` es la familia de errores de las reglas que protegen los datos (en inglés, *integrity* es integridad). La tabla sigue igual: si consultas `candidates`, Rosa no está y el `id` 6 sigue siendo del Luis de Lima.
 </details>
@@ -319,7 +330,7 @@ SELECT * FROM applications WHERE candidate_id = 1;
 </details>
 
 ### Experimento 6 · ¿La base revisa las referencias?
-La base también se describe a sí misma con sus claves foráneas. `pragma_foreign_key_list('<tabla>')` es como el `pragma_table_info` del lab 1.1, pero devuelve una fila por cada clave foránea de la tabla. Sus columnas `table`, `from` y `to` dicen a qué tabla apunta, desde qué columna y hacia qué columna. `from` y `to` son palabras de SQL, así que sus nombres van entre comillas dobles, como viste en el lab 1.2:
+La base también se describe a sí misma con sus claves foráneas. `pragma_foreign_key_list('<tabla>')` es como el `pragma_table_info` del lab 1.1, pero devuelve una fila por cada clave foránea de la tabla. Sus columnas `table`, `from` y `to` dicen a qué tabla apunta, desde qué columna y hacia qué columna. En SQL estándar, las comillas dobles encierran nombres (lab 1.2); `table`, `from` y `to` son palabras que SQL ya usa, y por eso necesitan las comillas:
 
 ```sql
 SELECT "table", "from", "to" FROM pragma_foreign_key_list('applications');
@@ -354,7 +365,7 @@ Y la oferta a la que apunta no existe: `SELECT * FROM jobs WHERE id = 99;` no de
 
 **En SQLite, una clave foránea declarada no se revisa a menos que la actives.** La postulación 17 apunta a la nada: es una fila huérfana. SQLite revisa las claves foráneas solo en las conexiones que lo piden con `PRAGMA foreign_keys = ON`; el lab 3.3 enseña a hacerlo. La clave primaria, en cambio, se revisa siempre. Por eso, al seguir una referencia, no des por hecho que la otra fila existe.
 
-Esta consola guarda cada cambio en el archivo apenas lo escribes: la postulación 17 sigue en `jobs.db` aunque cierres la consola. Si quieres la base como al comienzo, sal con `.quit` y vuelve a correr `python build_db.py`.
+Esta consola guarda cada cambio en el archivo apenas lo escribes: la postulación 17 sigue en `jobs.db` aunque cierres la consola. Si quieres la base como al comienzo, sal con `.quit` y vuelve a correr `python build_db.py`. Si la consola sigue abierta, el script falla con `PermissionError` y `WinError 32` en Windows: primero `.quit`.
 </details>
 
 ## 🔍 Command dissection
@@ -369,7 +380,7 @@ Esta consola guarda cada cambio en el archivo apenas lo escribes: la postulació
 
 ## 💼 En proyectos reales
 - **PostgreSQL y MySQL (con su motor InnoDB, el de siempre) sí revisan las claves foráneas** sin que lo pidas: la postulación a la oferta 99 daría un error ([PostgreSQL](https://www.postgresql.org/docs/current/ddl-constraints.html#DDL-CONSTRAINTS-FK)). En SQLite queda apagado por compatibilidad con bases antiguas ([documentación](https://www.sqlite.org/foreignkeys.html#fk_enable)). Si trabajas con una base SQLite, pregunta si las aplicaciones activan `PRAGMA foreign_keys`.
-- **El diagrama ER es la primera foto de una base que no conoces.** Herramientas como DBeaver lo dibujan solas a partir de las claves foráneas declaradas. Si una base no las declara (pasa en bases antiguas), el diagrama sale sin líneas y las relaciones se deducen por los nombres, como `company_id`.
+- **El diagrama ER es la primera foto de una base que no conoces.** Herramientas como DBeaver (un programa gráfico para trabajar con bases de datos) lo dibujan solas a partir de las claves foráneas declaradas. Si una base no las declara (pasa en bases antiguas), el diagrama sale sin líneas y las relaciones se deducen por los nombres, como `company_id`.
 - **En las entrevistas** es común que te pidan explicar la diferencia entre uno a muchos y muchos a muchos con un ejemplo, o dibujar las tablas de un caso (alumnos y cursos, pedidos y productos). La respuesta esperada para muchos a muchos es la tabla intermedia.
 - **Una clave primaria no siempre es un número:** a veces se usa un dato que ya es único, como un código de producto o un correo. Cuándo conviene cada una se ve en el lab 3.1.
 

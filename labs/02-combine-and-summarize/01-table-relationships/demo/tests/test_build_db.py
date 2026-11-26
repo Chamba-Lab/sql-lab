@@ -106,6 +106,20 @@ class TestDatabase:
         assert query(db, "SELECT count(*) FROM applications;") == [(16,)]
 
 
+class TestScript:
+    def test_build_prints_the_quoted_message(self, tmp_path):
+        import shutil
+        from pathlib import Path
+        demo = Path(__file__).resolve().parent.parent
+        for name in ("build_db.py", "seed.sql"):
+            shutil.copy(demo / name, tmp_path / name)
+        result = subprocess.run([sys.executable, "build_db.py"], cwd=tmp_path, capture_output=True,
+                                text=True, encoding="utf-8", timeout=60)
+        assert result.returncode == 0, result.stderr
+        assert result.stdout.splitlines() == ["Listo: jobs.db creado."]
+        assert (tmp_path / "jobs.db").exists()
+
+
 class TestConsole:
     def test_one_shot_query_prints_one_tuple_per_row(self, db):
         result = run_console(db, "SELECT * FROM candidates WHERE name = 'Luis Ramírez';")
@@ -118,7 +132,7 @@ class TestConsole:
     def test_repeated_primary_key_is_rejected(self, db):
         result = run_console(db, "INSERT INTO candidates VALUES (6, 'Rosa Medina', 'Cusco', 1.0, NULL);")
         assert result.returncode == 1
-        assert "UNIQUE constraint failed: candidates.id" in result.stderr
+        assert "IntegrityError (SQLITE_CONSTRAINT_PRIMARYKEY): UNIQUE constraint failed: candidates.id" in result.stderr
         assert query(db, "SELECT name FROM candidates WHERE id = 6;") == [("Luis Ramírez",)]
         assert query(db, "SELECT count(*) FROM candidates;") == [(9,)]
 

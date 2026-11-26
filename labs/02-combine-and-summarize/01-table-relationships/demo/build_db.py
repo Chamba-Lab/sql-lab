@@ -24,4 +24,4 @@ def build(path: Path = DB_PATH) -> None:
 
 if __name__ == "__main__":
     build()
-    print(f"Listo: {DB_PATH.name} creado con 4 tablas.")
+    print(f"Listo: {DB_PATH.name} creado.")
