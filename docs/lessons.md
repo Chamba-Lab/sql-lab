@@ -34,6 +34,7 @@ Measured rules from building and reviewing the labs; read them before building o
 Measured the same in SQLite 3.45.3 and 3.53.1.
 - An unknown double-quoted name becomes text (`"nmae"`, `WHERE district = "Miraflores"` passes), an alias in single quotes works and an alias works in `WHERE`; PostgreSQL rejects all three. The harness cannot see quotes.
 - `STRFTIME` returns text: `STRFTIME('%Y', d) = 2026` is false with no error.
+- A scalar subquery that returns several rows gives its first row, no error (2.6: PostgreSQL rejects it); an unqualified column in a correlated subquery resolves to the inner table first (`company_id = company_id` is always true).
 - `'x' NOT IN ('a', NULL)` is `NULL`; `100 / 0` is `NULL` with no error; integer division truncates (owned by 2.4).
 - `LIKE` folds case only for ASCII letters, and `LOWER` changes only ASCII letters; text sorts by code point.
 - A foreign key is not checked unless `PRAGMA foreign_keys` is on: an `INSERT` that breaks one prints nothing.
