@@ -40,9 +40,9 @@ class TestTask2Interviews:
         ])
 
 
-class TestTask3LuisFromLima:
-    def test_applications_of_luis_from_lima(self, check):
-        check("03_luis_from_lima.sql", columns=["title", "company", "status"], rows=[
+class TestTask3CandidateHistory:
+    def test_history_of_candidate_6(self, check):
+        check("03_candidate_history.sql", columns=["title", "company", "status"], rows=[
             ("Analista de datos júnior", "Andes Retail", "rechazada"),
             ("Practicante de marketing digital", "Andes Retail", "enviada"),
         ])

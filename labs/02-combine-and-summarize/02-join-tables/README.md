@@ -37,7 +37,8 @@ La idea: pedirle a la base que, para cada oferta, busque en `companies` la fila 
 SELECT jobs.title, companies.name, companies.city
 FROM jobs
 JOIN companies ON jobs.company_id = companies.id
-WHERE jobs.mode = 'remoto';
+WHERE jobs.mode = 'remoto'
+ORDER BY jobs.id;
 ```
 
 | title | name | city |
@@ -46,7 +47,7 @@ WHERE jobs.mode = 'remoto';
 | Desarrolladora full stack | Pago Fácil | Bogotá |
 | Analista de calidad (QA) | Clínica Central | Arequipa |
 
-Cada fila trae el título de la oferta, de `jobs`, y el nombre y la ciudad de su empresa, de `companies`. La condición del `ON` es la que seguiste a mano: la clave foránea de una tabla igual a la clave primaria de la otra. El `WHERE` va después del `JOIN` y filtra el resultado ya unido, así que puede usar columnas de las dos tablas.
+Cada fila trae el título de la oferta, de `jobs`, y el nombre y la ciudad de su empresa, de `companies`. La condición del `ON` es la que seguiste a mano: la clave foránea de una tabla igual a la clave primaria de la otra. El `WHERE` va después del `JOIN` y filtra el resultado ya unido, así que puede usar columnas de las dos tablas; el `ORDER BY` sigue al final, como en el [lab 1.5](../../01-query-a-table/05-sort-and-paginate/README.md).
 
 Este `JOIN` se llama también **`INNER JOIN`** (unión interna): `JOIN` solo y `INNER JOIN` son lo mismo. Solo deja las filas que encontraron pareja: Nube Andina, que no tiene ofertas, no sale en ningún `JOIN` de `jobs` con `companies`. Recuperar las filas sin pareja es el tema del lab 2.3.
 
@@ -68,10 +69,11 @@ Repetir `companies.` en cada columna alarga la consulta. Igual que una columna, 
 SELECT j.title, c.name, c.city
 FROM jobs AS j
 JOIN companies AS c ON j.company_id = c.id
-WHERE j.mode = 'remoto';
+WHERE j.mode = 'remoto'
+ORDER BY j.id;
 ```
 
-Devuelve lo mismo que la consulta anterior. Una vez que le pones alias a una tabla, su nombre completo deja de servir en esa consulta: `jobs.title` con `FROM jobs AS j` da `no such column: jobs.title`.
+Devuelve lo mismo que la consulta anterior. Como con las columnas, `AS` es opcional (`FROM jobs j` también funciona), pero escrito se lee mejor. Una vez que le pones alias a una tabla, su nombre completo deja de servir en esa consulta: `jobs.title` con `FROM jobs AS j` da `no such column: jobs.title`.
 
 ### Más de dos tablas
 Cada `JOIN` agrega una tabla con su propio `ON`, que la conecta con alguna de las que ya están. Las postulaciones a las ofertas de Banco Sur necesitan tres tablas: `applications` apunta a `jobs`, y `jobs` apunta a `companies`.
@@ -81,7 +83,8 @@ SELECT a.id, j.title, a.status
 FROM applications AS a
 JOIN jobs AS j ON a.job_id = j.id
 JOIN companies AS c ON j.company_id = c.id
-WHERE c.name = 'Banco Sur';
+WHERE c.name = 'Banco Sur'
+ORDER BY a.id;
 ```
 
 | id | title | status |
@@ -98,7 +101,8 @@ A veces las dos filas que quieres juntar están en la misma tabla. ¿Qué otras 
 SELECT b.id, b.title
 FROM jobs AS a
 JOIN jobs AS b ON b.company_id = a.company_id
-WHERE a.id = 4;
+WHERE a.id = 4
+ORDER BY b.id;
 ```
 
 | id | title |
@@ -111,10 +115,10 @@ La oferta 4 sale también, porque es de su misma empresa. Sin los alias, cada co
 
 ## 📚 Documentación
 - [SQLite: la cláusula `FROM` y los `JOIN`](https://www.sqlite.org/lang_select.html#fromclause)
-- [PostgreSQL: tablas unidas (*joined tables*)](https://www.postgresql.org/docs/current/queries-table-expressions.html#QUERIES-JOIN), con ejemplos de cada tipo de `JOIN`
+- [PostgreSQL: la cláusula `FROM` de `SELECT`](https://www.postgresql.org/docs/current/sql-select.html#SQL-FROM), con la condición que pide cada tipo de `JOIN`
 
 ## 🧭 Escenario
-La bolsa de trabajo del lab 2.1 quiere sus primeros reportes que cruzan tablas: las ofertas con su empresa, las entrevistas de la semana, el historial de un postulante y la red de recomendaciones. Te pide cuatro consultas.
+La bolsa de trabajo del lab 2.1 quiere sus primeros reportes que cruzan tablas: las ofertas con su empresa, las entrevistas, el historial de un postulante y la red de recomendaciones. Te pide cuatro consultas.
 
 ### La base
 Son las cuatro tablas del [lab 2.1](../01-table-relationships/README.md#-escenario), con los mismos datos. Este es su diagrama en texto:
@@ -195,7 +199,7 @@ starter/
 ├── queries/                    tus cuatro consultas, una por tarea
 │   ├── 01_jobs_with_company.sql
 │   ├── 02_interviews.sql
-│   ├── 03_luis_from_lima.sql
+│   ├── 03_candidate_history.sql
 │   └── 04_referrals.sql
 ├── seed.sql                    crea las cuatro tablas y sus filas
 ├── tests/
@@ -237,7 +241,7 @@ JOIN companies;
 ### Tarea 2 · Las entrevistas
 **Objetivo:** las postulaciones en estado `entrevista`, con el nombre de la persona y el título de la oferta. Columnas `candidate` (el nombre de la persona), `title` y `applied_on`. **Lo valida:** [`TestTask2Interviews`](starter/tests/test_queries.py)
 
-🔮 **Predict first:** un compañero escribió esta consulta. ¿Crees que devuelve las 5 entrevistas, cada una con la persona correcta? Escribe tu predicción y después pon la consulta en [`queries/02_interviews.sql`](starter/queries/02_interviews.sql):
+🔮 **Predict first:** un compañero escribió esta consulta. ¿Qué crees que devuelve: cuántas filas, y con qué personas? Escribe tu predicción y después pon la consulta en [`queries/02_interviews.sql`](starter/queries/02_interviews.sql):
 
 ```sql
 SELECT c.name AS candidate, j.title, a.applied_on
@@ -252,10 +256,10 @@ WHERE a.status = 'entrevista';
 
 **Criterio de éxito:** `TestTask2Interviews` pasa. Con todas las pruebas, 3 pasan y 2 fallan.
 
-### Tarea 3 · El historial de Luis Ramírez, el de Lima
-**Objetivo:** las postulaciones de Luis Ramírez, el que vive en Lima, con el título de cada oferta, el nombre de su empresa y el estado. Columnas `title`, `company` y `status`. **Lo valida:** [`TestTask3LuisFromLima`](starter/tests/test_queries.py)
+### Tarea 3 · El historial de un postulante
+**Objetivo:** las postulaciones del postulante con `id` 6, con el título de cada oferta, el nombre de su empresa y el estado. Columnas `title`, `company` y `status`. **Lo valida:** [`TestTask3CandidateHistory`](starter/tests/test_queries.py)
 
-🔮 **Predict first:** un compañero unió las cuatro tablas y filtró por el nombre. ¿Cuántas filas crees que devuelve? Escribe tu predicción y después pon la consulta en [`queries/03_luis_from_lima.sql`](starter/queries/03_luis_from_lima.sql):
+🔮 **Predict first:** un compañero buscó en `candidates` cómo se llama el postulante 6, unió las cuatro tablas y filtró por ese nombre. ¿Cuántas filas crees que devuelve? Escribe tu predicción y después pon la consulta en [`queries/03_candidate_history.sql`](starter/queries/03_candidate_history.sql):
 
 ```sql
 SELECT j.title, co.name AS company, a.status
@@ -269,7 +273,7 @@ WHERE c.name = 'Luis Ramírez';
 - [ ] Corre `python -m pytest -k task3` y compara lo que muestra con tu predicción.
 - [ ] Reemplaza la consulta de la predicción por una que devuelva solo el historial que pide la tarea, y vuelve a correr `python -m pytest -k task3` hasta que la prueba pase.
 
-**Criterio de éxito:** `TestTask3LuisFromLima` pasa. Con todas las pruebas, 4 pasan y 1 falla.
+**Criterio de éxito:** `TestTask3CandidateHistory` pasa. Con todas las pruebas, 4 pasan y 1 falla.
 
 ### Tarea 4 · Quién recomendó a quién
 **Objetivo:** cada postulante que fue recomendado por alguien, con el nombre de quien lo recomendó. Columnas `candidate` (la persona recomendada) y `recommender` (quien la recomendó). Une `candidates` consigo misma. **Lo valida:** [`TestTask4Referrals`](starter/tests/test_queries.py)
@@ -302,7 +306,7 @@ JOIN candidates AS r ON c.id = r.referred_by;
 
 ## 💼 En proyectos reales
 - **La forma antigua con comas.** Vas a ver consultas que unen así: `FROM jobs, companies WHERE jobs.company_id = companies.id`. Da el mismo resultado que el `JOIN … ON`, pero mezcla la condición de la unión con los filtros del `WHERE`, y si se olvida, pasa lo mismo que en la tarea 1. Escribe `JOIN … ON`: cada condición queda junto a la tabla que conecta.
-- **Un `JOIN` sin `ON` no se trata igual en todos los motores.** SQLite y MySQL lo aceptan ([MySQL](https://dev.mysql.com/doc/refman/8.4/en/join.html)); PostgreSQL pide el `ON` (o `USING`) en todo `JOIN` que no sea `CROSS JOIN` o `NATURAL JOIN`, y lo rechaza con un error de sintaxis.
+- **Un `JOIN` sin `ON` no se trata igual en todos los motores de bases de datos** (los programas que guardan y consultan los datos, como SQLite, MySQL y PostgreSQL). SQLite y MySQL lo aceptan ([MySQL](https://dev.mysql.com/doc/refman/8.4/en/join.html)); PostgreSQL exige una condición en todo `JOIN` interno o externo ([PostgreSQL](https://www.postgresql.org/docs/current/sql-select.html#SQL-FROM)): un `ON`, o bien `USING` o `NATURAL`, formas que no usas todavía.
 - **El *self-join* es una pregunta clásica de entrevista:** «una tabla `employees` tiene `manager_id`; lista cada empleado con el nombre de su jefe». Es la tarea 4 con otros nombres.
 - **Antes de unir, mira el diagrama de la base.** El `ON` correcto casi siempre es una clave foránea y la clave primaria a la que apunta. Si una consulta une dos `id` entre sí o dos columnas que no se apuntan, sospecha.
 
@@ -355,10 +359,10 @@ Verificado en Windows 11, en PowerShell 5.1, con Python 3.12.16 (SQLite 3.53.1);
     (1, 'Analista de datos júnior', 'Banco Sur', 'banca')
     (1, 'Analista de datos júnior', 'Nube Andina', 'tecnología')
     (2, 'Desarrollador backend', 'Andes Retail', 'retail')
-    …
+    … (y 44 filas más, en el orden en que las devuelva la base)
 ```
 
-Devuelve filas, sin error: 60, que son 10 ofertas × 6 empresas. Sin una condición, la base junta cada oferta con cada empresa, también con Nube Andina, que no tiene ofertas. A eso se le llama **producto cartesiano** (*cartesian product*): todas las parejas posibles. Así trabaja todo `JOIN` por dentro ([SQLite](https://www.sqlite.org/lang_select.html#fromclause)): arma las parejas y el `ON` se queda con las que cumplen la condición. Las 10 filas correctas están entre las 60, por eso ninguna «esperada» falta. Con el `ON`:
+Devuelve filas, sin error: 60, que son 10 ofertas × 6 empresas. Sin una condición, la base junta cada oferta con cada empresa, también con Nube Andina, que no tiene ofertas. A eso se le llama **producto cartesiano** (*cartesian product*): todas las parejas posibles. Así se define todo `JOIN` (la [documentación de SQLite](https://www.sqlite.org/lang_select.html#fromclause) dice que todos parten del producto cartesiano): conceptualmente, arma todas las parejas y el `ON` se queda con las que cumplen la condición. La base no llega a armar las 60 filas para eso; cómo busca de verdad se ve en el bloque 5. Las 10 filas correctas están entre las 60, por eso ninguna «esperada» falta. Con el `ON`:
 
 ```sql
 SELECT jobs.id, jobs.title, companies.name AS company, companies.sector
@@ -366,7 +370,7 @@ FROM jobs
 JOIN companies ON jobs.company_id = companies.id;
 ```
 
-Si escribiste `id` sin la tabla delante, viste `ambiguous column name: id`: `jobs` y `companies` tienen las dos un `id`, y la tarea pide el de la oferta. Y `ON jobs.id = companies.id` tampoco sirve: devuelve 6 filas, cada oferta con la empresa que tiene su mismo número. Las ofertas 1, 2 y 3 salen con su empresa por casualidad, porque su `company_id` coincide con su `id`; la 4 sale con Agro Norte, que no es la suya, y las ofertas 7 a 10 desaparecen.
+Si escribiste `id` sin la tabla delante, viste `ambiguous column name: id`: `jobs` y `companies` tienen las dos un `id`, y la tarea pide el de la oferta. Y `ON jobs.id = companies.id` tampoco sirve: devuelve 6 filas, cada oferta con la empresa que tiene su mismo número. Las ofertas 1, 2 y 3 salen con su empresa por casualidad, porque su `company_id` coincide con su `id`; las ofertas 4, 5 y 6 salen con otra empresa (la 4, con Agro Norte, aunque es de Andes Retail), y las ofertas 7 a 10 desaparecen.
 
 ### Tarea 2 · Unir por la columna equivocada no da error
 ```text
@@ -396,7 +400,7 @@ WHERE a.status = 'entrevista';
 
 ### Tarea 3 · Un nombre no identifica a una persona
 ```text
-03_luis_from_lima.sql: las columnas están bien, pero las filas no coinciden (el orden de las filas no importa).
+03_candidate_history.sql: las columnas están bien, pero las filas no coinciden (el orden de las filas no importa).
   Filas esperadas: 2; obtenidas: 4
   Esperadas que no salieron:
     (ninguna)
@@ -436,7 +440,7 @@ WHERE c.id = 6;
     ('Sofía Castro', 'Valeria Paredes')
 ```
 
-Carmen sale en `recommender`, al lado de María Torres: al revés. Las 5 parejas son las correctas, pero cada una está dada vuelta. `c.id = r.referred_by` dice que `r` es la persona recomendada por `c`, y el `SELECT` llama `candidate` a `c`. El `ON` tiene que decir lo que la tarea pide: el `referred_by` de la persona (`c`) es el `id` de quien la recomendó (`r`):
+Carmen sale en `recommender`, al lado de María Torres: al revés. Las 5 parejas son las correctas, pero cada pareja está invertida. `c.id = r.referred_by` dice que `r` es la persona recomendada por `c`, y el `SELECT` llama `candidate` a `c`. El `ON` tiene que decir lo que la tarea pide: el `referred_by` de la persona (`c`) es el `id` de quien la recomendó (`r`):
 
 ```sql
 SELECT c.name AS candidate, r.name AS recommender
@@ -456,7 +460,7 @@ Las 4 personas sin `referred_by` no salen como `candidate`: su `NULL` no es igua
 
 <details><summary>Respuestas</summary>
 
-1. 10 000 filas (200 × 50): sin `ON`, cada pedido se junta con cada cliente, el producto cartesiano. Casi nunca es lo que se quiere; lo correcto es `ON orders.customer_id = customers.id`, que da una fila por pedido. En PostgreSQL ni siquiera corre: pide el `ON`.
+1. 10 000 filas (200 × 50): sin `ON`, cada pedido se junta con cada cliente, el producto cartesiano. Casi nunca es lo que se quiere; lo correcto es `ON orders.customer_id = customers.id`, que da una fila por pedido. PostgreSQL ni siquiera lo acepta: exige una condición.
 2. Da `ambiguous column name: id`, porque SQLite no sabe de qué tabla es ese `id`. Se arregla escribiendo la tabla delante: `orders.id` o `customers.id`, según cuál pide la pregunta.
 3. Ninguna: `INNER` es opcional. Los dos dejan solo las filas que tienen pareja en la otra tabla.
 4. `SELECT s.name, c.name FROM enrollments AS e JOIN students AS s ON e.student_id = s.id JOIN courses AS c ON e.course_id = c.id;` (también se puede empezar por `students`, siempre que cada `ON` siga una clave foránea).
