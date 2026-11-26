@@ -222,6 +222,7 @@ Y estos son todos sus datos.
 | 8 | 4 | 1 | 2026-11-05 | enviada |
 | 9 | 4 | 5 | 2026-11-12 | entrevista |
 | 10 | 5 | 7 | 2026-11-19 | entrevista |
+| 11 | 6 | 1 | 2026-11-06 | rechazada |
 | 12 | 6 | 9 | 2026-11-22 | enviada |
 | 13 | 7 | 5 | 2026-11-14 | enviada |
 | 14 | 9 | 4 | 2026-11-12 | entrevista |
@@ -323,7 +324,7 @@ WHERE id NOT IN (SELECT referred_by FROM candidates);
 ```
 
 - [ ] Corre `python -m pytest -k task4` y compara lo que muestra con tu predicción.
-- [ ] Reemplaza la consulta de la predicción por una que dé lo que pide el objetivo, y vuelve a correr `python -m pytest -k task4` hasta que la prueba pase.
+- [ ] Reemplaza la consulta de la predicción por una que use una subconsulta (sin `JOIN`) y dé lo que pide el objetivo, y vuelve a correr `python -m pytest -k task4` hasta que la prueba pase.
 - [ ] Corre todas las pruebas con `python -m pytest -v`.
 
 **Criterio de éxito:** `TestTask4CandidatesWhoReferredNobody` pasa, y con todas las pruebas, pasan las 5.
@@ -341,7 +342,7 @@ WHERE id NOT IN (SELECT referred_by FROM candidates);
 
 ## 💼 En proyectos reales
 - **PostgreSQL rechaza la consulta de la predicción de la tarea 1:** una subconsulta escalar que devuelve más de una fila es un error ([PostgreSQL](https://www.postgresql.org/docs/current/sql-expressions.html#SQL-SYNTAX-SCALAR-SUBQUERIES)); SQLite toma la primera fila sin avisar ([SQLite](https://www.sqlite.org/lang_expr.html#subq)). No se corrió en PostgreSQL: lo dice su documentación. En los dos, una subconsulta con `MAX`, `MIN` o `AVG` y sin `GROUP BY` devuelve siempre una fila.
-- **`NOT IN` con un `NULL` en la lista da lo mismo en PostgreSQL y MySQL** que en SQLite: es la regla del estándar ([PostgreSQL](https://www.postgresql.org/docs/current/functions-subquery.html#FUNCTIONS-SUBQUERY-NOTIN)). Por eso muchos equipos escriben `NOT EXISTS` por costumbre cuando la columna de la subconsulta admite `NULL`.
+- **`NOT IN` con un `NULL` en la lista da lo mismo en PostgreSQL** que en SQLite ([PostgreSQL](https://www.postgresql.org/docs/current/functions-subquery.html#FUNCTIONS-SUBQUERY-NOTIN); no se corrió allí). Por eso muchos equipos escriben `NOT EXISTS` por costumbre cuando la columna de la subconsulta admite `NULL`.
 - **Califica siempre las columnas de una subconsulta correlacionada** con el alias de su tabla (`o.company_id = j.company_id`): como mostró la tarea 3, una columna sin alias se busca primero en la tabla de adentro, y la consulta no avisa si eso no era lo que querías.
 - **Subconsulta o `JOIN`:** si la pregunta pide columnas de la otra tabla, es un `JOIN`; si solo pide saber si hay filas relacionadas, `IN` o `EXISTS` no repiten filas. Cuando las dos formas dan lo mismo, elige la que se lee mejor; cuál es más rápida lo dice el plan de ejecución (*query plan*), que verás en el lab 5.1.
 - **«El segundo sueldo más alto»** es una pregunta clásica de entrevista: `SELECT MAX(salary_usd) FROM jobs WHERE salary_usd < (SELECT MAX(salary_usd) FROM jobs);` (aquí da 2000).
@@ -472,7 +473,7 @@ WHERE NOT EXISTS (
 );
 ```
 
-También pasan `NOT IN` con los `NULL` quitados (`SELECT referred_by FROM candidates WHERE referred_by IS NOT NULL`) y el *anti-join* del [lab 2.3](../03-unmatched-rows/README.md), `LEFT JOIN candidates AS r ON r.referred_by = c.id WHERE r.id IS NULL`. `NOT EXISTS` sin alias (`WHERE referred_by = id`) no pasa, por lo mismo que en la tarea 3: devuelve las 9 personas.
+También pasa `NOT IN` con los `NULL` quitados (`SELECT referred_by FROM candidates WHERE referred_by IS NOT NULL`). Fuera de lo que pide la tarea, el *anti-join* del [lab 2.3](../03-unmatched-rows/README.md), `LEFT JOIN candidates AS r ON r.referred_by = c.id WHERE r.id IS NULL`, también funciona y pasa la prueba. `NOT EXISTS` sin alias (`WHERE referred_by = id`) no pasa, por lo mismo que en la tarea 3: devuelve las 9 personas.
 </details>
 
 ## 🎤 Autoevaluación
