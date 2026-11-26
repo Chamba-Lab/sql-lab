@@ -11,9 +11,7 @@
 - **La pregunta del dominio:** ¿qué puede comprar hoy un cliente, y a qué precio?
 
 ## 📍 Dónde correr los comandos
-Con el entorno virtual activo, desde la carpeta de este proyecto:
-
-PowerShell o Bash, desde la raíz del repositorio:
+Con el entorno virtual activo, entra a la carpeta de este proyecto. PowerShell o Bash, desde la raíz del repositorio:
 
 ```bash
 cd labs/01-query-a-table/project-shop-catalog

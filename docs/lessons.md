@@ -85,3 +85,9 @@ Lessons from building and reviewing the labs of this repository. Read them befor
 - **`python -m pytest --queries ../x` fails with `error: unrecognized arguments: --queries`** and a `rootdir` of `../x`: pytest takes the value as a test path before any conftest registers the option. `--queries=../x` works. A first run also showed that the reference wrapper, passing the path as a separate argument, failed for the same reason.
 - **A `pytest.fail` in a session fixture is repeated as an ERROR in every test;** `pytest.exit` from `pytest_sessionstart` prints the message once (exit code 4 here, set by the harness).
 - **In this agent's Git Bash, a quoted heredoc still turned `\n` inside Python source into a real newline** (twice), breaking an f-string. Write files that contain backslash escapes with a file-writing tool, as StudyForge's quality notes say.
+
+## Project 1.P feedback
+- **A fixed "today" needs to be said where the date is given, and the failure should point at it.** The validator replaced '2026-11-20' with `DATE('now')`: questions 4 to 6 failed with only missing rows. The brief now says it next to the date, and the harness adds a reminder when a query contains `'now'`.
+- **`DATE(added_at) BETWEEN … AND '2026-11-20'` passes**, because `DATE()` drops the time; only the raw column loses today's row. REVIEW.md said it without the qualifier.
+- **PowerShell 5.1 `Get-Content` shows UTF-8 files without BOM garbled** (`CatÃ¡logo`), and `cat` shows the folded `<details>` answers open (a simulated learner read the 1.6 answers that way). The repository README now says to read guides on GitHub or in the VS Code preview.
+- **`Set-Content` in PowerShell 5.1 writes CRLF, and Git warns `CRLF will be replaced by LF`** on `git add`; with `* text=auto eol=lf` the index gets LF (`git ls-files --eol`: `i/lf w/crlf`). Harmless; the README says so instead of changing `.gitattributes`.

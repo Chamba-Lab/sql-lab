@@ -28,7 +28,7 @@ Sacar de una tabla justo los datos que te piden: elegir, filtrar, ordenar y tran
 |---|---|---|---|---|---|
 | 1.1 | [Tu primera base de datos](labs/01-query-a-table/01-first-database/README.md) | 🎯 `core` | 🔭 `exploration` | Abrir una base de datos, recorrer sus tablas, hacer tu primera consulta y explicar qué son una tabla, una fila y una columna | ✅ `done` |
 | 1.2 | [Primeras consultas](labs/01-query-a-table/02-first-queries/README.md) | 🎯 `core` | 🧩 `challenge` | Elegir columnas, calcular valores nuevos y darles nombre; correr las pruebas del curso y leer un fallo | ✅ `done` |
-| 1.3 | [Filtrar filas](labs/01-query-a-table/03-filter-rows/README.md) | 🎯 `core` | 🧩 `challenge` | Quedarte solo con las filas que cumplen una o varias condiciones | 🟨 `built` |
+| 1.3 | [Filtrar filas](labs/01-query-a-table/03-filter-rows/README.md) | 🎯 `core` | 🧩 `challenge` | Quedarte solo con las filas que cumplen una o varias condiciones | ✅ `done` |
 | 1.4 | [El valor NULL](labs/01-query-a-table/04-null-values/README.md) | 🎯 `core` | 🧩 `challenge` | Tratar los datos que faltan sin que te den resultados equivocados | 🟨 `built` |
 | 1.5 | [Ordenar y paginar](labs/01-query-a-table/05-sort-and-paginate/README.md) | 🎯 `core` | 🧩 `challenge` | Ordenar resultados, quitar repetidos y mostrarlos por páginas | 🟨 `built` |
 | 1.6 | [Transformar valores](labs/01-query-a-table/06-transform-values/README.md) | 🎯 `core` | 🧩 `challenge` | Limpiar textos, trabajar con fechas y clasificar filas según reglas | 🟨 `built` |

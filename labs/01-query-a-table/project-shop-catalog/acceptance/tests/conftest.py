@@ -75,9 +75,14 @@ def read_sql(path):
                 "que aparece abajo a la derecha).", pytrace=False)
 
 
+NOW_HINT = ("\n  Recuerda: hoy es '2026-11-20', escrito como texto en la consulta; "
+            "DATE('now') da el día real.")
+
+
 def run_file(con, path):
     """Run one .sql file and return (column names, rows)."""
     sql = read_sql(path)
+    hint = NOW_HINT if "'now'" in sql.lower() else ""
     try:
         cursor = con.execute(sql)
     except sqlite3.Error as error:
@@ -90,7 +95,7 @@ def run_file(con, path):
     if problem:
         pytest.fail(f"{path.name}: tu consulta dio un error.\n  {problem}", pytrace=False)
     columns = [d[0] for d in cursor.description] if cursor.description else []
-    return columns, cursor.fetchall()
+    return columns, cursor.fetchall(), hint
 
 
 def show(rows, indent="    "):
@@ -106,7 +111,7 @@ def check_ordered(db, queries):
     """check_ordered("01_x.sql", columns=[...], rows=[...]): columns, then rows, then their order."""
     def check_ordered(filename, columns, rows):
         path = queries / filename
-        got_columns, got_rows = run_file(db, path)
+        got_columns, got_rows, hint = run_file(db, path)
         if not got_columns:
             pytest.fail(f"{filename}: tu archivo no devolvió ningún resultado "
                         "(¿tiene solo comentarios?).\n"
@@ -124,11 +129,11 @@ def check_ordered(db, queries):
                         "(sin mirar el orden).\n"
                         f"  Filas esperadas: {len(rows)}; obtenidas: {len(got_rows)}\n"
                         f"  Esperadas que no salieron:\n{show(missing)}\n"
-                        f"  Obtenidas que no se esperaban:\n{show(extra)}", pytrace=False)
+                        f"  Obtenidas que no se esperaban:\n{show(extra)}{hint}", pytrace=False)
         if got_rows != rows:
             first = next(n for n, (a, b) in enumerate(zip(rows, got_rows), start=1) if a != b)
             pytest.fail(f"{filename}: las filas son las correctas, pero no están en el orden pedido.\n"
                         f"  La primera fila fuera de lugar es la {first}.\n"
                         f"  Orden esperado:\n{numbered(rows)}\n"
-                        f"  Orden obtenido:\n{numbered(got_rows)}", pytrace=False)
+                        f"  Orden obtenido:\n{numbered(got_rows)}{hint}", pytrace=False)
     return check_ordered

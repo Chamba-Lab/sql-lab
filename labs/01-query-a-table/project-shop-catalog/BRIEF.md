@@ -10,7 +10,7 @@ Conecta es una tienda en línea de tecnología en Lima. Su catálogo vive en una
 
 El equipo de ventas te hace seis preguntas. Respondes cada una con **una consulta** en un archivo `.sql`, y las pruebas de [`acceptance/`](acceptance/) las corren contra los datos de la tienda.
 
-**Hoy es el 20 de noviembre de 2026** en todas las preguntas. Escríbelo como texto, `'2026-11-20'`: así las respuestas no cambian según el día en que corras las pruebas.
+**Hoy es el 20 de noviembre de 2026** en todas las preguntas. Escríbelo como texto, `'2026-11-20'`: así las respuestas no cambian según el día en que corras las pruebas. No uses `DATE('now')`: devuelve el día real, y tus resultados cambiarían de un día a otro.
 
 ## Dominio
 
@@ -78,7 +78,7 @@ Tu entrega es una carpeta `my-queries/`, junto a `acceptance/` y `reference/`, c
 | `01_search.sql` | Un cliente busca «usb» o «bluetooth»: los productos que se pueden vender hoy cuyo nombre menciona `usb` o `bluetooth`, en mayúsculas o minúsculas, en cualquier parte del nombre | `id`, `name` | Por `name`, de la A a la Z |
 | `02_brands.sql` | Las marcas que vendemos hoy: la marca de cada producto que se puede vender hoy, en minúsculas y sin espacios al comienzo ni al final, cada una una sola vez. Los productos sin marca no cuentan | `brand` | De la A a la Z |
 | `03_restock.sql` | Qué reponer: los productos `'activo'` con menos de 5 unidades o con el stock sin contar. `stock_status` dice `'agotado'` si el stock es 0, `'bajo'` si es de 1 a 4, y `'sin contar'` si es `NULL` | `id`, `name`, `stock`, `stock_status` | De menos a más stock (los agotados primero) y los sin contar al final; empates por `name` |
-| `04_promotions.sql` | Para marketing: todas las promociones vigentes hoy, se pueda vender el producto o no. `discount_pct` es el porcentaje de descuento sobre `price`, redondeado a 1 decimal | `id`, `name`, `price`, `promo_price`, `discount_pct` | De mayor a menor `discount_pct`; empates por `name` |
+| `04_promotions.sql` | Para marketing: todas las promociones vigentes hoy, se pueda vender el producto o no. `discount_pct` es el porcentaje de descuento sobre `price`, redondeado a 1 decimal | `id`, `name`, `price`, `promo_price`, `discount_pct` | De mayor a menor `discount_pct`, el redondeado que se muestra; empates por `name` |
 | `05_new_arrivals.sql` | La sección «Novedades» de la tienda: los productos que se pueden vender hoy y que entraron al catálogo en los últimos 30 días, desde el día que cae 30 días antes de hoy (incluido) hasta hoy, a cualquier hora. La web muestra 3 por página: devuelve **la página 2**. `added_on` es el día en que entró, sin la hora | `id`, `name`, `added_on` | Del más nuevo al más antiguo, por `added_at` |
 | `06_catalog.sql` | **La pregunta del dominio:** todo lo que un cliente puede comprar hoy, con su categoría y su precio final | `id`, `name`, `category`, `final_price` | Por `category` de la A a la Z, después por `final_price` de menor a mayor, después por `name` |
 
