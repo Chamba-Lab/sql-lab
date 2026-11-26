@@ -1,0 +1,3 @@
+# Tells pytest where the acceptance tests are. You do not need to change it.
+[tool.pytest]
+testpaths = ["tests"]

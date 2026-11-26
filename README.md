@@ -10,7 +10,7 @@ Todo corre con el SQLite que ya trae Python: no instalas un servidor ni usas con
 
 ## 🚀 Empieza
 1. Instala todo con [SETUP.md](SETUP.md).
-2. Trabaja en tu fork del repositorio, o en tu propia rama (`git switch -c solutions/tu-nombre`).
+2. Trabaja en tu fork del repositorio, o en tu propia rama (`git switch -c solutions/tu-nombre`). Si al hacer `git add` o `git commit` ves `CRLF will be replaced by LF`, no es un error: el repositorio guarda los fines de línea como LF (lo fija `.gitattributes`) y Git convierte tu archivo al guardarlo.
 3. Abre el [SYLLABUS.md](SYLLABUS.md) y empieza por el lab 1.1.
 
 > [!TIP]
@@ -28,7 +28,7 @@ Cada lab presenta primero la idea, con un ejemplo, y después el SQL que la escr
 ¿Terminaste un lab? Abre un issue **Feedback de lab**: qué fue claro, qué costó, qué cambiarías. Tu feedback mejora ese lab y los siguientes.
 
 ## 📖 Leer las guías
-Se ven mejor en GitHub. En local, revisa la nota al final de [SETUP.md](SETUP.md) para ver los diagramas en tu editor.
+Se ven mejor en GitHub o en la vista previa de VS Code. No las leas con `cat` ni `Get-Content`: en la terminal se ven abiertas las respuestas que GitHub pliega, y PowerShell 5.1 muestra mal las tildes y los emojis (`CatÃ¡logo` en vez de `Catálogo`). En local, revisa la nota al final de [SETUP.md](SETUP.md) para ver los diagramas en tu editor.
 
 ---
 Construido con [StudyForge](https://github.com/Chamba-Lab/studyforge) por la comunidad [Chamba Lab](https://chambalab.org).

@@ -44,7 +44,9 @@ python -m pip install -r requirements.txt
 > [!TIP]
 > Si PowerShell dice que la ejecución de scripts está deshabilitada, permítela solo para esta ventana con `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass` y vuelve a activar el entorno.
 
-**Cada vez que abras una terminal nueva**, activa el entorno otra vez (la segunda línea de cada bloque). Sabrás que está activo porque el prompt empieza con `(.venv)`.
+Si al final `pip` dice `[notice] A new release of pip is available`, puedes ignorarlo: avisa que hay una versión nueva de `pip`, y el curso funciona con la que trae tu Python.
+
+**Cada vez que abras una terminal nueva**, activa el entorno otra vez (la segunda línea de cada bloque). El prompt empieza con `(.venv)`, pero eso no prueba que el entorno funcione: la prueba es la última línea del paso 3.
 
 ## 3. Comprueba todo
 
@@ -60,7 +62,17 @@ python -c "import sys; print(sys.prefix)"
 Deberías ver Python 3.12 o superior, una versión de SQLite 3.45 o superior, `pytest 9.2.0` y una ruta que **termina en `.venv`**.
 
 > [!WARNING]
-> Si la última línea no termina en `.venv`, el entorno no está activo y estás usando otro Python, con otras versiones. Pasa, por ejemplo, con Git Bash en máquinas que tienen Anaconda. Usa PowerShell, o llama al Python del entorno directamente: `.venv/Scripts/python` en Windows o `.venv/bin/python` en Linux y macOS.
+> Si la última línea no termina en `.venv`, estás usando otro Python, con otras versiones, aunque el prompt diga `(.venv)`. Pasa, por ejemplo, con Git Bash en máquinas que tienen Anaconda: la activación no encuentra la carpeta del entorno y deja al Python de Anaconda a cargo.
+
+Si te pasa en Git Bash, corre esta línea. Funciona desde cualquier carpeta del repositorio y vale hasta que cierres la terminal:
+
+```bash
+export PATH="$(cd "$(git rev-parse --show-toplevel)" && pwd)/.venv/Scripts:$PATH"
+```
+
+Pone primero en el `PATH` (la lista de carpetas donde la terminal busca los programas) la carpeta `Scripts` del entorno, que es lo que la activación debía hacer. Vuelve a correr `python -c "import sys; print(sys.prefix)"`: ahora tiene que terminar en `.venv`. En cada terminal nueva de Git Bash, corre la activación y después esta línea. Otra salida es usar PowerShell.
+
+En los labs lo notarás así: si la salida de `python -m pytest` tiene una línea que empieza con `plugins:`, o termina con algo como `3 warnings`, no estás usando el Python del entorno. Haz la comprobación de arriba.
 
 ## 4. Guarda tus soluciones
 
