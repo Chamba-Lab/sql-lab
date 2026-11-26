@@ -25,6 +25,7 @@ Measured rules from building and reviewing the labs; read them before building o
 - Do not state in Concepts what a prediction asks; give the tools there and explain the behavior in ✔️.
 - Keep every Concepts sentence true on the trap's data: "basta preguntar por una de ellas" (any column of the right table) was false for a nullable column and would have taught the task 3 trap as a rule (2.3); name the column the example uses instead.
 - Do not name the rows that differ in a prediction; ask for a count (1.4).
+- Read the objectives and the captions of the data tables as part of "above the prediction": a caption ("`salary_usd` is a whole number") or an objective ("recognize when dividing integers loses the decimals") answered one (2.4).
 - Make prediction queries return the task's columns, or the harness stops at "las columnas no coinciden" before showing the rows; keep the trap in the one expression the prediction is about.
 - Put the 🔮 before the command that reveals it, even a command that only opens something (`Connected to …`).
 
