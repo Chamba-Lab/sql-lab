@@ -1,0 +1,1 @@
+-- TODO: write the query of task 6 (see the lab's README).
