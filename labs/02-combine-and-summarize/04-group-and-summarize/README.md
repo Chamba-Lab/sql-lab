@@ -8,8 +8,8 @@
 - Resumir muchas filas en una con las funciones de agregado `COUNT`, `SUM`, `AVG`, `MIN` y `MAX`.
 - Distinguir `COUNT(*)`, `COUNT(columna)` y `COUNT(DISTINCT columna)`, y saber qué hace cada función con un `NULL`.
 - Calcular un resumen por cada grupo con `GROUP BY`, también sobre el resultado de un `JOIN`.
-- Elegir columnas de agrupación que identifiquen de verdad a cada grupo.
-- Comprobar que cada total y cada promedio cuenta justo las filas que el reporte pide.
+- Elegir las columnas del `GROUP BY`.
+- Comprobar un resultado agrupado contra los datos de las tablas.
 
 ## 💡 Por qué importa
 Hasta ahora, cada consulta devolvía filas de las tablas, una por oferta o por postulación. Las preguntas de un reporte suelen ser otras: cuántas postulaciones llegaron, cuánto paga en promedio cada empresa, cuántas postulaciones hizo cada persona. En una hoja de cálculo las responderías con una tabla dinámica; en SQL, con `GROUP BY`. Es de lo más usado en cualquier trabajo con datos, y casi toda entrevista de SQL tiene una pregunta de «cuántos por cada…».
@@ -67,7 +67,7 @@ FROM candidates;
 |---|---|
 | 9 | 5 |
 
-Hay 9 personas, y 5 tienen a alguien en `referred_by`: las 4 con `NULL` no entran en la cuenta. Lo mismo hacen `SUM`, `AVG`, `MIN` y `MAX`: trabajan solo con los valores que no son `NULL`, como si esas filas no estuvieran. Solo `COUNT(*)` mira las filas completas.
+Hay 9 personas, y 5 tienen a alguien en `referred_by`: las 4 con `NULL` no entran en la cuenta. Lo mismo hacen `SUM`, `AVG`, `MIN` y `MAX`: trabajan solo con los valores que no son `NULL`, como si esas filas no estuvieran.
 
 ### Contar cada valor una vez (*DISTINCT*)
 ¿En cuántas ciudades distintas viven los postulantes? Lima aparece en 4 filas, y para esta pregunta cuenta una vez. `DISTINCT` dentro del `COUNT` cuenta cada valor distinto una sola vez:
@@ -86,7 +86,7 @@ Lima, Bogotá, Arequipa, Santiago, Trujillo y Cusco. Como `COUNT(columna)`, `COU
 ### Un resumen por grupo (*GROUP BY*)
 ¿Cuántas ofertas tiene cada empresa en cada modalidad? Una sola fila para toda la tabla ya no alcanza: hace falta una fila por cada combinación de empresa y modalidad.
 
-La idea: repartir las filas en grupos, uno por cada valor distinto de las columnas que elijas, y calcular las funciones de agregado dentro de cada grupo. Eso hace **`GROUP BY`**, que se escribe después del `FROM` (y del `WHERE`, si hay uno):
+La idea: repartir las filas en grupos, uno por cada valor distinto de las columnas que elijas, y calcular las funciones de agregado dentro de cada grupo. Eso hace **`GROUP BY`**, que se escribe después del `FROM` (y del `WHERE`, si hay uno) y antes del `ORDER BY`:
 
 ```sql
 SELECT company_id, mode, COUNT(*) AS jobs
@@ -248,7 +248,7 @@ FROM applications;
 ```
 
 - [ ] Corre `python -m pytest -k task1` y compara lo que muestra con tu predicción.
-- [ ] Reemplaza la consulta de la predicción por una que cuente cada persona y cada oferta una sola vez, y vuelve a correr `python -m pytest -k task1` hasta que la prueba pase.
+- [ ] Reemplaza la consulta de la predicción por una que dé las cifras que pide el objetivo, y vuelve a correr `python -m pytest -k task1` hasta que la prueba pase.
 
 **Criterio de éxito:** `TestTask1ApplicationSummary` pasa. Con todas las pruebas (`python -m pytest`), 2 pasan y 3 fallan.
 
@@ -265,12 +265,12 @@ GROUP BY c.id, c.name;
 ```
 
 - [ ] Corre `python -m pytest -k task2` y compara lo que muestra con tu predicción.
-- [ ] Reemplaza la consulta de la predicción por una que dé el promedio exacto de cada empresa, y vuelve a correr `python -m pytest -k task2` hasta que la prueba pase.
+- [ ] Reemplaza la consulta de la predicción por una que dé lo que pide el objetivo, y vuelve a correr `python -m pytest -k task2` hasta que la prueba pase.
 
 **Criterio de éxito:** `TestTask2SalaryByCompany` pasa. Con todas las pruebas, 3 pasan y 2 fallan.
 
 ### Tarea 3 · Cuántas postulaciones hizo cada persona
-**Objetivo:** cada persona que postuló al menos una vez, con cuántas postulaciones hizo. Columnas `id` y `name` (de la persona) y `applications`, 8 filas. **Lo valida:** [`TestTask3ApplicationsByCandidate`](starter/tests/test_queries.py)
+**Objetivo:** cada persona que postuló al menos una vez, con cuántas postulaciones hizo. Columnas `id` y `name` (de la persona) y `applications`, una fila por persona. **Lo valida:** [`TestTask3ApplicationsByCandidate`](starter/tests/test_queries.py)
 
 🔮 **Predict first:** un compañero escribió esta consulta. ¿Cuántas filas crees que devuelve? Escribe tu predicción y después pon la consulta en [`queries/03_applications_by_candidate.sql`](starter/queries/03_applications_by_candidate.sql):
 
@@ -282,7 +282,7 @@ GROUP BY c.name;
 ```
 
 - [ ] Corre `python -m pytest -k task3` y compara lo que muestra con tu predicción.
-- [ ] Reemplaza la consulta de la predicción por una que devuelva las 8 filas que pide la tarea, y vuelve a correr `python -m pytest -k task3` hasta que la prueba pase.
+- [ ] Reemplaza la consulta de la predicción por una que dé lo que pide el objetivo, y vuelve a correr `python -m pytest -k task3` hasta que la prueba pase.
 
 **Criterio de éxito:** `TestTask3ApplicationsByCandidate` pasa. Con todas las pruebas, 4 pasan y 1 falla.
 
@@ -300,7 +300,7 @@ GROUP BY c.id, c.name;
 ```
 
 - [ ] Corre `python -m pytest -k task4` y compara lo que muestra con tu predicción.
-- [ ] Reemplaza la consulta de la predicción por una que cuente solo las postulaciones de cada empresa, y vuelve a correr `python -m pytest -k task4` hasta que la prueba pase.
+- [ ] Reemplaza la consulta de la predicción por una que dé lo que pide el objetivo, y vuelve a correr `python -m pytest -k task4` hasta que la prueba pase.
 - [ ] Corre todas las pruebas con `python -m pytest -v`.
 
 **Criterio de éxito:** `TestTask4ApplicationsByCompany` pasa, y con todas las pruebas, pasan las 5.
@@ -317,9 +317,9 @@ GROUP BY c.id, c.name;
 
 ## 💼 En proyectos reales
 - **En SQLite y en PostgreSQL, un entero entre otro entero da un entero:** `7 / 2` es `3` en los dos, y los decimales se cortan, no se redondean ([PostgreSQL](https://www.postgresql.org/docs/current/functions-math.html)). En MySQL, `/` da decimales (`3.5000`) y la división entera se escribe `DIV` ([MySQL](https://dev.mysql.com/doc/refman/8.4/en/arithmetic-functions.html)). Una consulta que calcula un porcentaje o un promedio a mano puede dar otro número al cambiar de motor; `AVG` da decimales en los tres.
-- **PostgreSQL no acepta una columna suelta en una consulta con `GROUP BY`:** si el `SELECT` tiene una columna que no está en el `GROUP BY` ni dentro de una función de agregado, da error, salvo que el `GROUP BY` tenga la clave primaria de su tabla ([PostgreSQL](https://www.postgresql.org/docs/current/sql-select.html#SQL-GROUPBY)). MySQL hace lo mismo con su configuración de fábrica (`ONLY_FULL_GROUP_BY`, [MySQL](https://dev.mysql.com/doc/refman/8.4/en/group-by-handling.html)). SQLite la deja pasar y elige el valor de una de las filas del grupo ([SQLite](https://www.sqlite.org/lang_select.html#bareagg)): una consulta que corre en SQLite puede fallar en el servidor.
+- **PostgreSQL no acepta una columna suelta (*bare column*) en una consulta con `GROUP BY`:** si el `SELECT` tiene una columna que no está en el `GROUP BY` ni dentro de una función de agregado, da error, salvo que el `GROUP BY` tenga la clave primaria de su tabla ([PostgreSQL](https://www.postgresql.org/docs/current/sql-select.html#SQL-GROUPBY)). MySQL hace lo mismo con su configuración de fábrica (`ONLY_FULL_GROUP_BY`, [MySQL](https://dev.mysql.com/doc/refman/8.4/en/group-by-handling.html)). SQLite la deja pasar y elige el valor de una de las filas del grupo ([SQLite](https://www.sqlite.org/lang_select.html#bareagg)): una consulta que corre en SQLite puede fallar en el servidor.
 - **Agrupa por la clave, no por el nombre.** En un reporte real hay clientes, productos y empleados con el mismo nombre. `GROUP BY c.id, c.name` agrupa por la persona y muestra su nombre; funciona igual en los tres motores.
-- **«¿Cuántos pedidos tiene cada cliente, incluidos los que no tienen ninguno?»** es una pregunta de entrevista de siempre, y es la tarea 4 con otros nombres: `LEFT JOIN` más `COUNT` de una columna de la tabla de la derecha.
+- **«¿Cuántos pedidos tiene cada cliente, incluidos los que no tienen ninguno?»** es una pregunta de entrevista de siempre, y es la tarea 4 con otros nombres; su trampa es la de la tarea 4.
 
 ## 🆘 Pistas
 <details><summary>Pista 1 · Las personas o las ofertas salen repetidas en la cuenta</summary>
@@ -329,7 +329,7 @@ Ana Quispe postuló tres veces. ¿Cuántas veces la cuenta `COUNT(candidate_id)`
 
 <details><summary>Pista 2 · Un promedio sale sin decimales</summary>
 
-Calcula a mano el promedio de Clínica Central: (825 + 1150) / 2. ¿Qué número sale? ¿Qué número da la consulta? ¿Qué función de Conceptos calcula el promedio sin que tengas que dividir?
+Calcula a mano el promedio de Clínica Central: (825 + 1150) / 2. ¿Qué número sale? ¿Qué número da la consulta? 1975 y 2 son enteros: ¿qué crees que hace SQLite con el resto de la división? ¿Qué función de Conceptos calcula el promedio sin que tengas que dividir?
 </details>
 
 <details><summary>Pista 3 · Andes Retail no tiene el promedio esperado</summary>
