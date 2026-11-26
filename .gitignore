@@ -13,3 +13,6 @@ htmlcov/
 .idea/
 .vscode/
 .env
+
+# Agent worktrees and local settings
+.claude/
