@@ -77,3 +77,11 @@ Lessons from building and reviewing the labs of this repository. Read them befor
 ## Lab 1.6 feedback
 - **An external anchor was guessed** (`lang_expr.html#operators`, which does not exist; the section is `#operators_and_parse_affecting_attributes`). The repository checks only validate internal anchors: open every external link with its anchor before committing.
 - **`STRFTIME` returns text,** so `STRFTIME('%Y', applied_at) = 2026` fails with no error (the validator ran it). Pista 4 of 1.6 now says to compare with `'2026'` in quotes.
+
+## Project 1.P
+- **60 variants (49 wrong, 11 right-but-different) ran against the seed with plain `sqlite3`** on Python 3.12.16 and 3.15.2 (SQLite 3.53.1) and Anaconda 3.12.7 (SQLite 3.45.3); after one data fix every wrong one failed and every right one passed. The fix: `status = 'activo' AND stock < 5 OR stock IS NULL` passed question 3 because the only `NULL` stock belonged to an active product. In a project each rule appears in several queries, and each query needs its own row that breaks it.
+- **A page test only sees the rows on that page.** With 6 new arrivals, page 2 was rows 4–6, and a seventh row let in by a wrong date bound landed on page 3. With 5, page 2 is the last, short page, and any extra or missing row changes it.
+- **The rounded and the unrounded value order differently** (11.09 % and 11.12 % both show as 11.1): ordering by the expression instead of the alias breaks the name tiebreak. Good data for an order test, measured the same in 3.45.3 and 3.53.1.
+- **`python -m pytest --queries ../x` fails with `error: unrecognized arguments: --queries`** and a `rootdir` of `../x`: pytest takes the value as a test path before any conftest registers the option. `--queries=../x` works. A first run also showed that the reference wrapper, passing the path as a separate argument, failed for the same reason.
+- **A `pytest.fail` in a session fixture is repeated as an ERROR in every test;** `pytest.exit` from `pytest_sessionstart` prints the message once (exit code 4 here, set by the harness).
+- **In this agent's Git Bash, a quoted heredoc still turned `\n` inside Python source into a real newline** (twice), breaking an f-string. Write files that contain backslash escapes with a file-writing tool, as StudyForge's quality notes say.

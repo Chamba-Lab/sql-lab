@@ -13,7 +13,7 @@
 ## El camino de un vistazo
 | Bloque | Al terminar podrás… | Estado |
 |---|---|---|
-| 1 · Consultar una tabla | Sacar de una tabla justo los datos que te piden: elegir, filtrar, ordenar y transformar | ⬜ `pending` |
+| 1 · Consultar una tabla | Sacar de una tabla justo los datos que te piden: elegir, filtrar, ordenar y transformar | 🟨 `built` |
 | 2 · Combinar y resumir | Cruzar varias tablas y resumirlas en totales, promedios y conteos | ⬜ `pending` |
 | 3 · Diseñar y crear una base | Diseñar tablas que no se contradigan y cambiar datos sin romper nada | ⬜ `pending` |
 | 4 · Consultas analíticas | Resolver las consultas de reportes y de pruebas técnicas: rankings, acumulados y tablas dinámicas | ⬜ `pending` |
@@ -32,7 +32,7 @@ Sacar de una tabla justo los datos que te piden: elegir, filtrar, ordenar y tran
 | 1.4 | [El valor NULL](labs/01-query-a-table/04-null-values/README.md) | 🎯 `core` | 🧩 `challenge` | Tratar los datos que faltan sin que te den resultados equivocados | 🟨 `built` |
 | 1.5 | [Ordenar y paginar](labs/01-query-a-table/05-sort-and-paginate/README.md) | 🎯 `core` | 🧩 `challenge` | Ordenar resultados, quitar repetidos y mostrarlos por páginas | 🟨 `built` |
 | 1.6 | [Transformar valores](labs/01-query-a-table/06-transform-values/README.md) | 🎯 `core` | 🧩 `challenge` | Limpiar textos, trabajar con fechas y clasificar filas según reglas | 🟨 `built` |
-| 1.P | Proyecto: catálogo de una tienda | 🎯 `core` | 🏗️ `project` | Responder desde cero las preguntas del equipo de ventas sobre el catálogo de una tienda, con todo lo del bloque 1 | ⬜ `pending` |
+| 1.P | [Proyecto: catálogo de una tienda](labs/01-query-a-table/project-shop-catalog/README.md) | 🎯 `core` | 🏗️ `project` | Responder desde cero las preguntas del equipo de ventas sobre el catálogo de una tienda, con todo lo del bloque 1 | 🟨 `built` |
 
 ## Bloque 2 · Combinar y resumir
 Cruzar varias tablas y resumirlas en totales, promedios y conteos.
@@ -105,7 +105,7 @@ Usar SQL desde Python de forma rápida y segura.
 | 1.4 | `NULL` (not `0`, not `'`), `IS [NOT] NULL`, three-valued logic (comparisons with `NULL` are unknown, `NOT`/`<>` do not bring `NULL` rows back, the `AND`/`OR` table), `NULL` in arithmetic, `COALESCE`, `NULLIF`, `SELECT` without `FROM` to try an expression, `IS DISTINCT FROM`/`IFNULL` as portability notes | 1.3 | Minimal app: one-table seed (`members`, 10 rows, `NULL` and `'` on purpose) + `.sql` files with TODO + the harness of 1.2, unchanged |
 | 1.5 | `ORDER BY` (several keys, one direction per key, `ASC` by default, ties), where NULLs sort (`NULLS FIRST`/`NULLS LAST`, SQLite vs PostgreSQL and MySQL, `x IS NULL` as the portable form), `DISTINCT` (whole row, NULLs count as equal), `LIMIT`/`OFFSET` pagination (`OFFSET (n − 1) × k`), top N with ties | 1.3, 1.4 | Minimal app: one-table seed (`courses`, 12 rows, ties and `NULL` on purpose) + `.sql` files with TODO + the harness of 1.2 plus `check_ordered` |
 | 1.6 | Text functions (`lower`, `upper`, `trim`, `substr` counting from 1, `replace`), `\|\|` (and `NULL` in it), `+` on text as a trap, dates as ISO-8601 text (date-time text compared with a day, `date` and its modifiers, `strftime`), searched `CASE` (first true `WHEN` wins, `NULL` falls to `ELSE`) | 1.3, 1.4 | Minimal app: one-table seed (`applications`, 10 rows, messy text, date-times and `NULL` on purpose) + `.sql` files with TODO + the harness of 1.5, unchanged |
-| 1.P | — | 1.1–1.6 | From scratch (brief + seed data) |
+| 1.P | Combining the rules of 1.2–1.6 in one query; `DISTINCT` over an expression and `DATE(…, '-30 days')` are listed as new in `BRIEF.md` | 1.1–1.6 | From scratch: `BRIEF.md` + `acceptance/seed.sql` (`products`, 17 rows) + an acceptance harness that runs any folder of `.sql` files (`my-queries/` by default, `--queries=<folder>`) |
 | 2.1 | Primary and foreign keys as ideas, one-to-many and many-to-many (join table), reading an entity-relationship diagram | 1.1 | Minimal app: a small multi-table demo database |
 | 2.2 | `INNER JOIN … ON`, table aliases, joining three tables and through a join table, self-join | 2.1 | Minimal app |
 | 2.3 | `LEFT JOIN`, `ON` vs `WHERE` with outer joins, anti-join (rows with no match), a mention of `RIGHT`/`FULL`/`CROSS JOIN` | 2.2, 1.4 | Minimal app |
@@ -163,4 +163,6 @@ Usar SQL desde Python de forma rápida y segura.
 - **El 🔮 va antes del comando que lo revela,** también cuando el comando solo abre algo (el `Connected to …` de la consola ya responde la predicción).
 - **Explica cada palabra o archivo nuevo que el aprendiz ve,** aunque no lo use: un *pragma*, un `pyproject.toml`, el saludo de la consola. Una línea basta ("no lo toques, es para las pruebas").
 - **En las exploraciones, la línea de versiones verificadas va al comienzo de 🧪 Experimentos,** y no hay sección ✔️ si cada 👀 ya responde su predicción (como en el 1.1).
+- **El proyecto 1.P fija el patrón de los proyectos SQL** (bloques 2 y 4): `acceptance/` tiene `seed.sql`, `tests/conftest.py` (el arnés del 1.5 en un solo fixture, `check_ordered`, más la carpeta bajo prueba: `my-queries/` por defecto o `--queries=<carpeta>`, y un mensaje en español si falta la carpeta o un archivo) y `tests/test_*.py`; `reference/` tiene `queries/` y una sola prueba que corre `acceptance/` contra ellas, para que `tools/verify.py` y el CI comprueben la referencia sin pasos nuevos. La opción va siempre con `=`: con un espacio, pytest toma la carpeta como ruta de pruebas (`error: unrecognized arguments: --queries`).
+- **En un proyecto, cada regla del dominio necesita una fila que la delate en cada consulta que la usa,** no solo en una: en el 1.P, la precedencia del `OR` de la pregunta 3 pasaba hasta que un producto no activo tuvo el stock en `NULL`. Corre la batería de variantes (equivocadas y correctas pero distintas) sobre todas las preguntas, y pon la paginación de modo que la página pedida sea la última y corta, para que una fila de más o de menos la cambie.
 - **Di "hoja de cálculo", no "planilla":** en Perú, "planilla" es la nómina de sueldos.
