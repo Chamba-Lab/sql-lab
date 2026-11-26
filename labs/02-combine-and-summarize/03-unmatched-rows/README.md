@@ -59,55 +59,57 @@ Las 9 personas salen. Las 5 que tienen pareja salen como en el lab 2.2; las otra
 En los mensajes de las pruebas, ese `NULL` se ve como `None`, igual que en el [lab 1.4](../../01-query-a-table/04-null-values/README.md).
 
 ### Encontrar lo que no tiene pareja (*anti-join*)
-¿Qué ofertas no recibieron ninguna postulación? La respuesta son filas de `jobs` que no tienen pareja en `applications`, y un `JOIN` justo las quita.
+¿Quiénes no recomendaron a nadie? La respuesta son personas de `candidates` que no aparecen como `referred_by` de nadie: filas sin pareja, y un `JOIN` justo las quita.
 
-La idea: unir con `LEFT JOIN`, para que las ofertas sin postulaciones queden en el resultado, y después quedarse solo con las filas donde la parte de `applications` salió vacía. En una fila sin pareja todas las columnas de `applications` son `NULL`, así que se pregunta con `IS NULL` por una columna de `applications` (aquí, `a.id`), como en el [lab 1.4](../../01-query-a-table/04-null-values/README.md):
+La idea: unir con `LEFT JOIN`, para que esas personas queden en el resultado, y después quedarse solo con las filas donde la parte de la derecha salió vacía, preguntando con `IS NULL`, como en el [lab 1.4](../../01-query-a-table/04-null-values/README.md). Aquí `c` es cada persona y `r`, alguien a quien `c` recomendó:
 
 ```sql
-SELECT j.id, j.title
-FROM jobs AS j
-LEFT JOIN applications AS a ON a.job_id = j.id
-WHERE a.id IS NULL;
+SELECT c.id, c.name
+FROM candidates AS c
+LEFT JOIN candidates AS r ON r.referred_by = c.id
+WHERE r.id IS NULL;
 ```
 
-| id | title |
+| id | name |
 |---|---|
-| 10 | Analista de riesgos |
+| 2 | Luis Ramírez |
+| 6 | Luis Ramírez |
+| 7 | Carmen Rojas |
+| 8 | Diego Flores |
+| 9 | Valeria Paredes |
 
-La oferta 10, de Banco Sur, es la única a la que nadie postuló. A esta forma de buscar lo que falta se le llama ***anti-join***: las filas de una tabla que **no** tienen pareja en la otra. No es una palabra de SQL, es el nombre del patrón: `LEFT JOIN` más `WHERE … IS NULL`.
+Ana, María, Jorge y Sofía recomendaron a alguien; estas 5 personas, a nadie. A esta forma de buscar lo que falta se le llama ***anti-join***: las filas de una tabla que **no** tienen pareja en la otra. No es una palabra de SQL, es el nombre del patrón: `LEFT JOIN` más `WHERE … IS NULL`.
 
 ### Más de una condición en el `ON`
-El `ON` es una condición como las del `WHERE`, así que puede llevar varias unidas con `AND`. Las postulaciones a ofertas remotas, emparejando cada postulación solo con su oferta si esa oferta es remota:
+El `ON` es una condición como las del `WHERE`, así que puede llevar varias unidas con `AND`. Las postulaciones a ofertas de 2000 dólares o más, emparejando cada postulación con su oferta solo si el sueldo llega a 2000:
 
 ```sql
 SELECT a.id, j.title
 FROM applications AS a
-JOIN jobs AS j ON a.job_id = j.id AND j.mode = 'remoto'
+JOIN jobs AS j ON a.job_id = j.id AND j.salary_usd >= 2000
 ORDER BY a.id;
 ```
 
 | id | title |
 |---|---|
-| 4 | Desarrollador backend |
 | 5 | Desarrolladora full stack |
-| 7 | Analista de calidad (QA) |
+| 10 | Administrador de bases de datos |
+| 15 | Administrador de bases de datos |
 | 16 | Desarrolladora full stack |
 
-Con un `JOIN` de los de siempre, poner `j.mode = 'remoto'` en el `ON` o en un `WHERE` da las mismas 4 filas.
+Con un `JOIN` de los de siempre, poner `j.salary_usd >= 2000` en el `ON` o en un `WHERE` da las mismas 4 filas.
 
 ### Qué hace el `ON` y qué hace el `WHERE`
 Con un `LEFT JOIN`, las dos partes trabajan en momentos distintos:
 
-1. **El `ON` arma las parejas.** Para cada fila de la izquierda, busca las filas de la derecha que cumplen **toda** la condición del `ON`. Si ninguna la cumple, la fila de la izquierda sale igual, completada con `NULL`.
+1. **El `ON` arma las parejas.** Para cada fila de la izquierda, busca las filas de la derecha que cumplen **toda** la condición del `ON`.
 2. **El `WHERE` filtra después**, sobre ese resultado ya unido y completado, y deja solo las filas que cumplen su condición. Igual que en el lab 2.2, puede usar columnas de las dos tablas.
-
-Ten presentes los dos pasos en las tareas: dónde escribes cada condición cambia qué filas quedan.
 
 ### Los otros `JOIN`
 Vas a encontrar tres más. Los tres funcionan en las versiones de SQLite de este curso, pero no los necesitas para las tareas:
 
-- **`RIGHT JOIN`** conserva todas las filas de la tabla de la **derecha**. `FROM applications AS a RIGHT JOIN jobs AS j ON a.job_id = j.id` da las mismas 17 filas que `FROM jobs AS j LEFT JOIN applications AS a ON a.job_id = j.id`: es un `LEFT JOIN` con las tablas escritas al revés.
-- **`FULL JOIN`** (o `FULL OUTER JOIN`) conserva las filas sin pareja de los **dos** lados.
+- **`RIGHT JOIN`** (*right* es derecha) conserva todas las filas de la tabla de la **derecha**. `FROM applications AS a RIGHT JOIN jobs AS j ON a.job_id = j.id` da las mismas 17 filas que `FROM jobs AS j LEFT JOIN applications AS a ON a.job_id = j.id`: es un `LEFT JOIN` con las tablas escritas al revés.
+- **`FULL JOIN`** (o `FULL OUTER JOIN`, unión externa completa) conserva las filas sin pareja de los **dos** lados.
 - **`CROSS JOIN`** junta cada fila de una tabla con cada fila de la otra, sin `ON`: es el producto cartesiano de la tarea 1 del lab 2.2, escrito a propósito. `FROM jobs CROSS JOIN companies` da 60 filas.
 
 ## 📚 Documentación
@@ -255,7 +257,7 @@ JOIN jobs AS j ON a.job_id = j.id;
 ### Tarea 3 · Las empresas sin ofertas
 **Objetivo:** las empresas que no publicaron ninguna oferta. Columnas `id` y `name`. **Lo valida:** [`TestTask3CompaniesWithoutJobs`](starter/tests/test_queries.py)
 
-🔮 **Predict first:** un compañero escribió este *anti-join*, preguntando por el sueldo. ¿Cuántas filas crees que devuelve? Escribe tu predicción y después pon la consulta en [`queries/03_companies_without_jobs.sql`](starter/queries/03_companies_without_jobs.sql):
+🔮 **Predict first:** un compañero escribió este *anti-join* con otra columna. ¿Cuántas filas crees que devuelve? Escribe tu predicción y después pon la consulta en [`queries/03_companies_without_jobs.sql`](starter/queries/03_companies_without_jobs.sql):
 
 ```sql
 SELECT c.id, c.name
@@ -285,7 +287,7 @@ WHERE j.mode = 'remoto';
 - [ ] Reemplaza la consulta de la predicción por una que devuelva las 7 filas que pide la tarea, y vuelve a correr `python -m pytest -k task4` hasta que la prueba pase.
 - [ ] Corre todas las pruebas con `python -m pytest -v`.
 
-**Criterio de éxito:** `TestTask4RemoteJobsByCompany` pasa: las 5 pruebas pasan.
+**Criterio de éxito:** `TestTask4RemoteJobsByCompany` pasa, y con todas las pruebas, pasan las 5.
 
 ## 🔍 Command dissection
 | Parte | Qué hace |
@@ -396,7 +398,7 @@ LEFT JOIN jobs AS j ON j.company_id = c.id
 WHERE j.id IS NULL;
 ```
 
-`WHERE j.company_id IS NULL` y `WHERE j.title IS NULL` también pasan con estos datos; la primera es igual de segura, porque es la columna del `ON`, y la segunda solo mientras ninguna oferta llegue sin título. Si escribiste `WHERE j.id = NULL`, no salió ninguna fila: una comparación con `NULL` nunca es verdadera ([lab 1.4](../../01-query-a-table/04-null-values/README.md)).
+`WHERE j.company_id IS NULL` también pasa y es igual de segura, porque es la columna del `ON`. Cualquier otra columna de `jobs` que no esté en `NULL` en ninguna oferta (`title`, `mode`, `posted_on`) también pasa con estos datos, pero solo mientras no llegue una oferta con ese dato vacío. Si escribiste `WHERE j.id = NULL`, no salió ninguna fila: una comparación con `NULL` nunca es verdadera ([lab 1.4](../../01-query-a-table/04-null-values/README.md)).
 
 ### Tarea 4 · Un filtro de la tabla derecha va en el `ON`
 ```text
@@ -434,7 +436,7 @@ LEFT JOIN jobs AS j ON j.company_id = c.id AND j.mode = 'remoto';
 1. 210 con `LEFT JOIN`: una fila por pedido (200) más una por cada cliente sin pedidos (10), con las columnas de `orders` en `NULL`. Con `JOIN`, 200: los 10 clientes sin pedidos no salen.
 2. `SELECT c.id, c.name FROM customers AS c LEFT JOIN orders AS o ON o.customer_id = c.id WHERE o.id IS NULL;`
 3. Ninguna: `OUTER` es opcional. El orden de las tablas sí importa: `LEFT JOIN` conserva todas las filas de la tabla escrita antes, así que `FROM a LEFT JOIN b` conserva las de `a` y `FROM b LEFT JOIN a`, las de `b`.
-4. En el `ON`: `LEFT JOIN orders AS o ON o.customer_id = c.id AND o.ordered_on >= '2026-01-01'`. En el `WHERE`, los clientes sin pedidos de 2026 desaparecen, porque su fila completada con `NULL` no cumple la condición.
+4. En el `ON`: `LEFT JOIN orders AS o ON o.customer_id = c.id AND o.ordered_on >= '2026-01-01' AND o.ordered_on < '2027-01-01'`. En el `WHERE`, los clientes sin pedidos de 2026 desaparecen, porque su fila completada con `NULL` no cumple la condición.
 5. Porque devuelve también a los clientes que sí tienen pedidos, si alguno de esos pedidos no tiene descuento. Un *anti-join* pregunta por una columna que solo es `NULL` cuando no hubo pareja, como `o.id`.
 </details>
 
