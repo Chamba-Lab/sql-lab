@@ -72,3 +72,4 @@ Measured the same in SQLite 3.45.3 and 3.53.1.
 ## Links
 - Open every external link with its anchor before committing: the repository checks validate only internal anchors (1.6 guessed `lang_expr.html#operators`).
 - Link only documentation that teaches the lab's topic.
+- dev.mysql.com answers `curl` with 403 (2.7): a MySQL claim needs another checked source, or leave it out; do not write it from memory.
