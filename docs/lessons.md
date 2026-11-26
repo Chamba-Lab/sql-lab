@@ -23,6 +23,7 @@ Measured rules from building and reviewing the labs; read them before building o
 - Read every file the README links before a prediction, not only the README: a comment in `seed.sql` answered one (2.1).
 - Run every Concepts example and read its raw output before choosing what to show: an output can answer a later prediction (1.2: `1200 * 3.7413` prints `4489.5599999999995`).
 - Do not state in Concepts what a prediction asks; give the tools there and explain the behavior in ✔️.
+- Keep every Concepts sentence true on the trap's data: "basta preguntar por una de ellas" (any column of the right table) was false for a nullable column and would have taught the task 3 trap as a rule (2.3); name the column the example uses instead.
 - Do not name the rows that differ in a prediction; ask for a count (1.4).
 - Make prediction queries return the task's columns, or the harness stops at "las columnas no coinciden" before showing the rows; keep the trap in the one expression the prediction is about.
 - Put the 🔮 before the command that reveals it, even a command that only opens something (`Connected to …`).
