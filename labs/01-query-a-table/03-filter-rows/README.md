@@ -23,6 +23,8 @@ PowerShell o Bash, desde la raíz del repositorio:
 cd labs/01-query-a-table/03-filter-rows/starter
 ```
 
+Si la salida de `python -m pytest` tiene una línea que empieza con `plugins:`, o termina con algo como `3 warnings`, no estás usando el Python del entorno, aunque el prompt diga `(.venv)`: sigue el [paso 3 de SETUP.md](../../../SETUP.md#3-comprueba-todo).
+
 ## 🧠 Conceptos
 Como en el lab 1.2, los ejemplos usan la tabla `jobs` de la bolsa de trabajo del [lab 1.1](../01-first-database/README.md). Esta vez se muestran todas las filas de cada resultado.
 
@@ -190,8 +192,8 @@ FROM apartments
 WHERE district = 'miraflores';
 ```
 
-- [ ] Corre `python -m pytest -k task1` y lee el fallo. Compáralo con tu predicción.
-- [ ] Corrige la consulta para que devuelva los departamentos de Miraflores, y vuelve a correr `python -m pytest -k task1`.
+- [ ] Corre `python -m pytest -k task1` y compara lo que muestra con tu predicción.
+- [ ] Deja en el archivo una consulta que devuelva los departamentos de Miraflores, y vuelve a correr `python -m pytest -k task1` hasta que la prueba pase.
 
 **Criterio de éxito:** `TestTask1Miraflores` pasa. Con todas las pruebas (`python -m pytest`), 2 pasan y 4 fallan.
 
@@ -206,8 +208,8 @@ FROM apartments
 WHERE rent BETWEEN 1800 AND 1200;
 ```
 
-- [ ] Corre `python -m pytest -k task2` y compara el fallo con tu predicción.
-- [ ] Corrige la consulta y vuelve a correr `python -m pytest -k task2`.
+- [ ] Corre `python -m pytest -k task2` y compara lo que muestra con tu predicción.
+- [ ] Deja en el archivo una consulta que devuelva el rango que pide la tarea, y vuelve a correr `python -m pytest -k task2` hasta que la prueba pase.
 
 **Criterio de éxito:** `TestTask2RentRange` pasa. Con todas las pruebas, 3 pasan y 3 fallan.
 
@@ -222,9 +224,9 @@ FROM apartments
 WHERE district = 'Miraflores' OR district = 'Barranco' AND rent < 2000;
 ```
 
-- [ ] Corre `python -m pytest -k task3` y compara las filas que sobran o faltan con las que anotaste.
-- [ ] Corrige la consulta con paréntesis y vuelve a correr `python -m pytest -k task3`.
-- [ ] Escríbela otra vez con `IN` en lugar de los dos `=`, y comprueba que la prueba sigue pasando.
+- [ ] Corre `python -m pytest -k task3` y compara lo que muestra con las filas que anotaste.
+- [ ] Deja en el archivo una consulta que devuelva lo que pide la tarea, y vuelve a correr `python -m pytest -k task3` hasta que la prueba pase.
+- [ ] En esa misma consulta, cambia las dos comparaciones del distrito por un solo `IN`, y comprueba que la prueba sigue pasando.
 
 **Criterio de éxito:** `TestTask3TwoDistricts` pasa. Con todas las pruebas, 4 pasan y 2 fallan.
 
@@ -256,8 +258,8 @@ FROM apartments
 WHERE district NOT LIKE 'San%';
 ```
 
-- [ ] Corre `python -m pytest -k task5` y compara el fallo con tu predicción.
-- [ ] Corrige el patrón y vuelve a correr `python -m pytest -k task5`.
+- [ ] Corre `python -m pytest -k task5` y compara lo que muestra con tu predicción.
+- [ ] Deja en el archivo una consulta que siga la regla de la sucursal (cambia solo el patrón, si hace falta), y vuelve a correr `python -m pytest -k task5` hasta que la prueba pase.
 - [ ] Corre todas las pruebas con `python -m pytest -v`.
 
 **Criterio de éxito:** `TestTask5OtherBranch` pasa: las 6 pruebas pasan.
@@ -266,8 +268,6 @@ WHERE district NOT LIKE 'San%';
 | Parte | Qué hace |
 |---|---|
 | `SELECT … FROM t WHERE <condición>;` | Devuelve solo las filas de `t` donde la condición es verdadera |
-| `=` · `<>` o `!=` | Igual · distinto |
-| `<` · `<=` · `>` · `>=` | Menor · menor o igual · mayor · mayor o igual |
 | `A AND B` | Verdadera si las dos lo son |
 | `A OR B` | Verdadera si al menos una lo es |
 | `NOT A` | Verdadera si `A` es falsa |
@@ -293,9 +293,16 @@ Lee la condición en voz alta y pregúntate si alguna fila de la tabla la cumple
 Mira las filas que sobran. ¿Cumplen la condición del precio? Si no, el motor no unió las condiciones como tú pensabas: ponle paréntesis a las dos condiciones del distrito.
 </details>
 
-<details><summary>Pista 3 · El patrón atrapa de más</summary>
+<details><summary>Pista 3 · <code>near ","</code>: syntax error con <code>IN</code></summary>
+
+Como viste en el lab 1.2, el problema está justo antes de lo que aparece en `near`. Compara tu `IN` con el ejemplo de Conceptos: ¿qué rodea a la lista de valores?
+</details>
+
+<details><summary>Pista 4 · El patrón atrapa de más</summary>
 
 `%` acepta cualquier cosa, incluso letras pegadas a las que escribiste. ¿Qué hay justo después de la palabra «San» en «San Isidro», y qué hay en «Santiago»?
+
+Ojo: `_` no es un espacio. Es exactamente un carácter cualquiera, también una letra, así que `'San_%'` atrapa lo mismo que `'San%'`. Un espacio dentro del patrón es un espacio.
 </details>
 
 ## ✔️ Respuestas verificadas
@@ -404,7 +411,7 @@ Faltan los dos de Santiago de Surco. `'San%'` significa «empieza con las letras
 2. Todos los libros, de cualquier precio, más la música de más de 50: `AND` se resuelve antes que `OR`. Para lo pedido: `WHERE category IN ('libros', 'música') AND price > 50`, o con paréntesis alrededor de las dos condiciones de la categoría.
 3. Las dos personas entran: `BETWEEN` incluye los extremos (`age >= 18 AND age <= 25`). Al revés no entra nadie, porque ninguna edad es a la vez mayor o igual que 25 y menor o igual que 18.
 4. En PostgreSQL, `LIKE` distingue mayúsculas, así que `'ana%'` ya no encuentra «Ana». Se puede usar `ILIKE`, que es solo de PostgreSQL, o comparar los dos textos pasados a minúsculas, que funciona en cualquier motor.
-5. `'A___'`: una `A` y tres `_`, cada uno exactamente un carácter. `'A%'` acepta cualquier cantidad de caracteres después de la `A`, así que también trae `A1` o `A12345`.
+5. `'A___'`: una `A` y tres `_`, cada uno exactamente un carácter. `'A%'` acepta cualquier cantidad de caracteres después de la `A`, así que también trae `A1` o `A12345`. En SQLite, `'A___'` también trae `abcd`, porque `LIKE` ignora mayúsculas (tarea 4); si el código tiene que empezar con `A` mayúscula, esa diferencia importa.
 </details>
 
 La solución completa está en [`solution/`](solution/).

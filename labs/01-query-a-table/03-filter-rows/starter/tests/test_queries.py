@@ -50,7 +50,7 @@ class TestTask4Parking:
 
 
 class TestTask5OtherBranch:
-    def test_districts_not_starting_with_the_word_san(self, check):
+    def test_districts_of_the_other_branch(self, check):
         check("05_other_branch.sql", columns=["id", "district"], rows=[
             (1, "Miraflores"),
             (2, "Miraflores"),

@@ -23,6 +23,8 @@ PowerShell o Bash, desde la raíz del repositorio:
 cd labs/01-query-a-table/02-first-queries/starter
 ```
 
+Si la salida de `python -m pytest` tiene una línea que empieza con `plugins:`, o termina con algo como `3 warnings`, no estás usando el Python del entorno, aunque el prompt diga `(.venv)`: sigue el [paso 3 de SETUP.md](../../../SETUP.md#3-comprueba-todo).
+
 ## 🧠 Conceptos
 Los ejemplos usan la tabla `jobs` de la bolsa de trabajo del [lab 1.1](../01-first-database/README.md), con sus columnas `title`, `city` y `salary_usd` (el sueldo mensual en dólares). Cada resultado muestra sus primeras filas.
 
@@ -198,8 +200,8 @@ SELECT 'name', category, price
 FROM menu_items;
 ```
 
-- [ ] Corre las pruebas y lee el fallo de `TestTask1Menu`. Compáralo con tu predicción.
-- [ ] Corrige la consulta para que devuelva lo que pide la tarea, y vuelve a correr las pruebas.
+- [ ] Corre las pruebas y busca lo que dicen de `TestTask1Menu`. Compáralo con tu predicción.
+- [ ] Deja en el archivo una consulta que devuelva lo que pide la tarea, y vuelve a correr las pruebas hasta que `TestTask1Menu` pase.
 
 **Criterio de éxito:** `TestTask1Menu` pasa: 2 pruebas pasan y 3 fallan.
 
@@ -213,7 +215,7 @@ SELECT name price
 FROM menu_items;
 ```
 
-- [ ] Corre solo la prueba de esta tarea con `python -m pytest -k task2`. `-k` elige las pruebas cuyo nombre contiene ese texto; la última línea dice `1 failed, 4 deselected`, es decir, 1 falló y 4 no se eligieron. Lee el fallo y compáralo con tu predicción.
+- [ ] Corre solo la prueba de esta tarea con `python -m pytest -k task2`. `-k` elige las pruebas cuyo nombre contiene ese texto; la última línea dice `1 failed, 4 deselected`, es decir, 1 falló y 4 no se eligieron. Lee lo que muestra y compáralo con tu predicción.
 - [ ] Reemplaza la consulta de la predicción por la de la tarea, con la resta y su alias, y vuelve a correr `python -m pytest -k task2`.
 
 **Criterio de éxito:** `TestTask2Profit` pasa. Con todas las pruebas (`python -m pytest`), 3 pasan y 2 fallan.
@@ -228,8 +230,8 @@ SELECT name, price * 1.18 AS price_with_tax
 FROM menu_items;
 ```
 
-- [ ] Corre `python -m pytest -k task3` y lee el fallo de `TestTask3PriceWithTax`, fila por fila.
-- [ ] Redondea el precio final a dos decimales y vuelve a correr `python -m pytest -k task3`.
+- [ ] Corre `python -m pytest -k task3`, lee lo que muestra fila por fila y compáralo con tu predicción.
+- [ ] Deja en el archivo una consulta que devuelva el precio final como lo pide la tarea, y vuelve a correr `python -m pytest -k task3` hasta que la prueba pase.
 
 **Criterio de éxito:** `TestTask3PriceWithTax` pasa. Con todas las pruebas, 4 pasan y 1 falla.
 
@@ -245,7 +247,7 @@ SELECT name, price - cost AS profit, ROUND(profit * 100 / price, 1) AS margin_pc
 FROM menu_items;
 ```
 
-- [ ] Corre `python -m pytest -k task4` y lee el fallo de `TestTask4Margin`.
+- [ ] Corre `python -m pytest -k task4` y compara lo que muestra con tu predicción.
 - [ ] Reemplaza la consulta de la predicción por la de la tarea, solo con las columnas `name` y `margin_pct`, y vuelve a correr `python -m pytest -k task4`. Si te salen márgenes negativos, revisa en qué orden se hacen las operaciones.
 - [ ] Corre todas las pruebas con `python -m pytest -v`: `-v` muestra una línea por prueba, con su nombre y `PASSED` o `FAILED`.
 

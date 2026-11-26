@@ -17,7 +17,7 @@ Casi toda empresa guarda sus datos en bases de datos, no en hojas de cálculo, y
 ## 📍 Dónde correr los comandos
 Los comandos se escriben en una **terminal**: la ventana donde escribes una orden y presionas Enter. En VS Code, ábrela con el menú *Terminal → Nuevo terminal* (*Terminal → New Terminal* si VS Code está en inglés); se abre en la carpeta del repositorio. Si nunca la usaste, la [guía de la terminal de VS Code](https://code.visualstudio.com/docs/terminal/basics) explica lo básico en cinco minutos.
 
-1. Activa el entorno virtual como en el paso 2 de [SETUP.md](../../../SETUP.md). El prompt empieza con `(.venv)`.
+1. Activa el entorno virtual como en el paso 2 de [SETUP.md](../../../SETUP.md). El prompt empieza con `(.venv)`, pero la prueba de que funciona es otra: `python -c "import sys; print(sys.prefix)"` tiene que mostrar una ruta que termina en `.venv`. Si no, sigue el [paso 3 de SETUP.md](../../../SETUP.md#3-comprueba-todo).
 2. Entra a la carpeta `demo/` de este lab.
 
 PowerShell o Bash:
