@@ -12,6 +12,7 @@ Measured rules from building and reviewing the labs; read them before building o
 - SQLite returns tied rows in insertion order (3.45.3 and 3.53.1), so a missing tiebreak passes when the insertion order already matches it. Store every tied pair opposite to its tiebreak, and run the other tasks' tiebreaks and plausible ones (`title`, `price`, `id`) as mutations of every ordering test.
 - A `DISTINCT` fix passes when no two values in a group are equal: to show that `SUM(DISTINCT)` does not undo a fan-out, seed two equal values on different rows of one group (2.5: a second 600 job at Agro Norte).
 - Break coincidences: a wrong query that is right on every row passes. A wrong join key must match on some rows and not others (2.2: `a.id = c.id` gets application 1 right), and in a project each rule needs a row that breaks it in every query that uses it (1.P: the only `NULL` stock belonged to an active product, so a missing parenthesis passed).
+- A rule with two sides needs a row that has both: a customer with a sale and a cancelled order (2.P: order 111) separates "has no sale" from "has a non-sale order or none", and a quantity above 1 on the page under test separates `SUM(quantity)` from `COUNT(*)`.
 - A page test only sees its page: make the requested page the last, short one, so one extra or missing row changes it.
 - When the tests cannot tell a right-but-worse answer apart (`substr(x, 0, 4)`, a `NOT IN` list instead of a pattern, a double-quoted value), accept it and say in ✔️ why it passed and what to write instead.
 
