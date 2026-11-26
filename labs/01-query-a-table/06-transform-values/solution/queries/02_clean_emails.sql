@@ -1,2 +1,2 @@
-SELECT id, lower(trim(email)) AS email
+SELECT id, LOWER(TRIM(email)) AS email
 FROM applications;

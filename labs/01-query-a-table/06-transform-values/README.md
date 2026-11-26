@@ -5,8 +5,8 @@
 | 1–2 h | 🧩 `challenge` | 🎯 `core` | Python 3.12+ · `sqlite3` (SQLite 3.45+) · pytest 9.2.0 |
 
 ## 🎯 Objetivos
-- Unir textos con `||` y limpiar los que llegan desordenados con `lower`, `upper` y `trim`.
-- Sacar una parte de un texto con `substr` y cambiar un pedazo por otro con `replace`.
+- Unir textos con `||` y limpiar los que llegan desordenados con `LOWER`, `UPPER` y `TRIM`.
+- Sacar una parte de un texto con `SUBSTR` y cambiar un pedazo por otro con `REPLACE`.
 - Trabajar con fechas guardadas como texto: quedarte con el día, sumar días y filtrar un mes sin perder filas.
 - Clasificar filas según reglas con `CASE`.
 - Responder las preguntas de entrevista sobre fechas como texto, `NULL` en un texto unido y el orden de un `CASE`.
@@ -26,7 +26,7 @@ cd labs/01-query-a-table/06-transform-values/starter
 Si la salida de `python -m pytest` tiene una línea que empieza con `plugins:`, o termina con algo como `3 warnings`, no estás usando el Python del entorno, aunque el prompt diga `(.venv)`: sigue el [paso 3 de SETUP.md](../../../SETUP.md#3-comprueba-todo).
 
 ## 🧠 Conceptos
-Los ejemplos usan la tabla `jobs` del [lab 1.1](../01-first-database/README.md) o un `SELECT` sin `FROM` (del [lab 1.4](../04-null-values/README.md)). No hace falta correrlos; si quieres probarlos, abre su base con la consola de ese lab. Los nombres de las funciones no distinguen mayúsculas (`LOWER` y `lower` son la misma); aquí van en minúscula, como en la documentación de SQLite.
+Los ejemplos usan la tabla `jobs` del [lab 1.1](../01-first-database/README.md) o un `SELECT` sin `FROM` (del [lab 1.4](../04-null-values/README.md)). No hace falta correrlos; si quieres probarlos, abre su base con la consola de ese lab. Los nombres de las funciones van en mayúscula, como `ROUND` y `COALESCE` en los labs anteriores; SQLite los acepta también en minúscula (`lower`), como los escribe su documentación.
 
 ### Unir textos (*concatenar*)
 Para armar un texto con varias columnas, se pegan con **`||`**, dos barras verticales. Unir textos así se llama **concatenar**:
@@ -46,23 +46,23 @@ WHERE city = 'Lima';
 El espacio no aparece solo: va dentro del texto `' en '`.
 
 ### Mayúsculas y espacios (*lower*, *upper*, *trim*)
-Una **función** recibe valores entre paréntesis y devuelve otro valor, como `ROUND` del [lab 1.2](../02-first-queries/README.md). Tres funciones ordenan un texto desprolijo: **`lower`** lo pasa a minúsculas, **`upper`** a mayúsculas y **`trim`** le quita los espacios del comienzo y del final (no los del medio):
+Una **función** recibe valores entre paréntesis y devuelve otro valor, como `ROUND` del [lab 1.2](../02-first-queries/README.md). Tres funciones ordenan un texto desprolijo: **`LOWER`** lo pasa a minúsculas, **`UPPER`** a mayúsculas y **`TRIM`** le quita los espacios del comienzo y del final (no los del medio):
 
 ```sql
-SELECT upper('remoto'), lower('Banco Sur'), trim('  Lima  ');
+SELECT UPPER('remoto'), LOWER('Banco Sur'), TRIM('  Lima  ');
 ```
 
-| upper('remoto') | lower('Banco Sur') | trim('  Lima  ') |
+| UPPER('remoto') | LOWER('Banco Sur') | TRIM('  Lima  ') |
 |---|---|---|
 | REMOTO | banco sur | Lima |
 
-Una función puede ir dentro de otra: `upper(trim(x))` primero quita los espacios y después pasa a mayúsculas. Ojo: en SQLite, `lower` y `upper` solo cambian las letras sin tilde (`lower('ÑANDÚ')` da `'ÑandÚ'`); para correos y códigos alcanza.
+Una función puede ir dentro de otra: `UPPER(TRIM(x))` primero quita los espacios y después pasa a mayúsculas. Ojo: en SQLite, `LOWER` y `UPPER` solo cambian las letras sin tilde (`LOWER('ÑANDÚ')` da `'ÑandÚ'`); para correos y códigos alcanza.
 
 ### Partes de un texto (*substr*, *replace*)
-**`substr(texto, inicio, cuántos)`** devuelve un pedazo del texto: desde la posición `inicio`, `cuántos` caracteres. Las posiciones se cuentan desde la primera letra, que es la posición 1. Sin el tercer valor, devuelve hasta el final:
+**`SUBSTR(texto, inicio, cuántos)`** devuelve un pedazo del texto: desde la posición `inicio`, `cuántos` caracteres. Las posiciones se cuentan desde la primera letra, que es la posición 1. Sin el tercer valor, devuelve hasta el final:
 
 ```sql
-SELECT company, substr(company, 1, 4) AS start, substr(company, 6) AS rest
+SELECT company, SUBSTR(company, 1, 4) AS start, SUBSTR(company, 6) AS rest
 FROM jobs
 WHERE city = 'Lima';
 ```
@@ -75,28 +75,28 @@ WHERE city = 'Lima';
 
 `rest` de *Andes Retail* empieza con un espacio: la posición 6 es el espacio después de *Andes*.
 
-**`replace(texto, buscado, nuevo)`** cambia cada aparición de `buscado` por `nuevo`, distinguiendo mayúsculas: `replace('Analista de BI', 'BI', 'datos')` da `'Analista de datos'`.
+**`REPLACE(texto, buscado, nuevo)`** cambia cada aparición de `buscado` por `nuevo`, distinguiendo mayúsculas: `REPLACE('Analista de BI', 'BI', 'datos')` da `'Analista de datos'`.
 
 ### Fechas como texto (*ISO-8601*, *date*, *strftime*)
 SQLite no tiene un tipo de dato para fechas: las guarda como texto. Para que funcionen, se escriben en el formato **ISO-8601**: año, mes y día con ceros a la izquierda, y la hora después de un espacio, si la hay: `'2026-11-20'` o `'2026-11-20 18:45'`. Así, comparar dos fechas como textos, carácter por carácter, da el mismo resultado que compararlas como fechas, y también funcionan `ORDER BY` y `BETWEEN`.
 
 Dos funciones leen ese texto:
 
-- **`date(fecha)`** devuelve solo el día, `'AAAA-MM-DD'`. Después de la fecha acepta **modificadores** (*modifiers*), textos que la mueven: `'+15 days'` suma 15 días y `'start of month'` va al primer día del mes.
-- **`strftime(formato, fecha)`** escribe la fecha con el formato que le das: `%Y` es el año, `%m` el mes y `%d` el día, siempre con dos cifras.
+- **`DATE(fecha)`** devuelve solo el día, `'AAAA-MM-DD'`. Después de la fecha acepta **modificadores** (*modifiers*), textos que la mueven: `'+15 days'` suma 15 días y `'start of month'` va al primer día del mes.
+- **`STRFTIME(formato, fecha)`** escribe la fecha con el formato que le das: `%Y` es el año, `%m` el mes y `%d` el día, siempre con dos cifras.
 
 ```sql
-SELECT date('2026-11-20 18:45'),
-       strftime('%Y-%m', '2026-11-20 18:45'),
-       date('2026-11-20', '+15 days'),
-       date('2026-11-20', 'start of month');
+SELECT DATE('2026-11-20 18:45'),
+       STRFTIME('%Y-%m', '2026-11-20 18:45'),
+       DATE('2026-11-20', '+15 days'),
+       DATE('2026-11-20', 'start of month');
 ```
 
-| date('2026-11-20 18:45') | strftime('%Y-%m', '2026-11-20 18:45') | date('2026-11-20', '+15 days') | date('2026-11-20', 'start of month') |
+| DATE('2026-11-20 18:45') | STRFTIME('%Y-%m', '2026-11-20 18:45') | DATE('2026-11-20', '+15 days') | DATE('2026-11-20', 'start of month') |
 |---|---|---|---|
 | 2026-11-20 | 2026-11 | 2026-12-05 | 2026-11-01 |
 
-`date` sabe cuántos días tiene cada mes: 20 de noviembre más 15 días cae en diciembre.
+`DATE` sabe cuántos días tiene cada mes: 20 de noviembre más 15 días cae en diciembre.
 
 ### Clasificar según reglas (*CASE*)
 En una hoja de cálculo lo harías con `SI(…)`. En SQL, **`CASE`** revisa condiciones y devuelve el valor de la que se cumple, como una columna más:
@@ -121,8 +121,8 @@ WHERE city = 'Lima';
 Cada `WHEN` lleva una condición, como las del `WHERE`, y su `THEN` el valor que devuelve. Si no se cumple ninguna, `CASE` devuelve lo del `ELSE`, y sin `ELSE`, `NULL`. Termina siempre con `END`.
 
 ## 📚 Documentación
-- [SQLite: funciones de texto](https://www.sqlite.org/lang_corefunc.html) (`lower`, `upper`, `trim`, `substr`, `replace`) y [el operador `||`](https://www.sqlite.org/lang_expr.html#operators)
-- [SQLite: funciones de fecha y hora](https://www.sqlite.org/lang_datefunc.html), con sus modificadores y los formatos de `strftime`
+- [SQLite: funciones de texto](https://www.sqlite.org/lang_corefunc.html) (`LOWER`, `UPPER`, `TRIM`, `SUBSTR`, `REPLACE`) y [el operador `||`](https://www.sqlite.org/lang_expr.html#operators_and_parse_affecting_attributes)
+- [SQLite: funciones de fecha y hora](https://www.sqlite.org/lang_datefunc.html), con sus modificadores y los formatos de `STRFTIME`
 - [SQLite: `CASE`](https://www.sqlite.org/lang_expr.html#the_case_expression)
 
 ## 🧭 Escenario
@@ -208,7 +208,7 @@ FROM applications;
 🔮 **Predict first:** ¿crees que la prueba pasa con esta consulta? Escribe tu predicción y después pon la consulta en [`queries/02_clean_emails.sql`](starter/queries/02_clean_emails.sql):
 
 ```sql
-SELECT id, lower(email) AS email
+SELECT id, LOWER(email) AS email
 FROM applications;
 ```
 
@@ -223,7 +223,7 @@ FROM applications;
 🔮 **Predict first:** un compañero que viene de Python, donde se cuenta desde 0, escribió esta consulta (todavía sin arreglar los códigos). ¿Qué área crees que sale para `DAT-104`? Escribe tu predicción y después pon la consulta en [`queries/03_job_area.sql`](starter/queries/03_job_area.sql):
 
 ```sql
-SELECT id, job_code, substr(job_code, 0, 3) AS area
+SELECT id, job_code, SUBSTR(job_code, 0, 3) AS area
 FROM applications;
 ```
 
@@ -255,8 +255,8 @@ WHERE applied_at BETWEEN '2026-03-01' AND '2026-03-31';
 
 ```sql
 SELECT id,
-       date(applied_at) AS applied_on,
-       date(applied_at) + 7 AS reply_by
+       DATE(applied_at) AS applied_on,
+       DATE(applied_at) + 7 AS reply_by
 FROM applications;
 ```
 
@@ -292,19 +292,19 @@ FROM applications;
 | Parte | Qué hace |
 |---|---|
 | `a \|\| b` | Une dos textos en uno |
-| `lower(x)` / `upper(x)` | `x` en minúsculas / en mayúsculas (solo letras sin tilde) |
-| `trim(x)` | Quita los espacios del comienzo y del final de `x` |
-| `substr(x, inicio, n)` | `n` caracteres de `x` desde la posición `inicio`; la primera es la 1 |
-| `replace(x, buscado, nuevo)` | Cambia cada `buscado` por `nuevo`, distinguiendo mayúsculas |
-| `date(fecha, '+7 days')` | El día de `fecha`, `'AAAA-MM-DD'`, movido por los modificadores que siguen |
-| `strftime('%Y-%m', fecha)` | La fecha escrita con ese formato: `'2026-03'` |
+| `LOWER(x)` / `UPPER(x)` | `x` en minúsculas / en mayúsculas (solo letras sin tilde) |
+| `TRIM(x)` | Quita los espacios del comienzo y del final de `x` |
+| `SUBSTR(x, inicio, n)` | `n` caracteres de `x` desde la posición `inicio`; la primera es la 1 |
+| `REPLACE(x, buscado, nuevo)` | Cambia cada `buscado` por `nuevo`, distinguiendo mayúsculas |
+| `DATE(fecha, '+7 days')` | El día de `fecha`, `'AAAA-MM-DD'`, movido por los modificadores que siguen |
+| `STRFTIME('%Y-%m', fecha)` | La fecha escrita con ese formato: `'2026-03'` |
 | `CASE WHEN … THEN … ELSE … END` | El valor del `THEN` de la condición que se cumple; si ninguna, el del `ELSE` (o `NULL`) |
 
 ## 💼 En proyectos reales
-- **Fechas que no están en ISO-8601 no funcionan.** `date('2026-3-05')` y `date('15/03/2026')` dan `NULL`, sin error, y como texto `'2026-12-01' < '2026-3-05'` es verdadero. Si importas datos de una hoja de cálculo, conviértelos a `'AAAA-MM-DD'` antes de guardarlos.
-- **PostgreSQL y MySQL tienen tipos de fecha de verdad** (`DATE`, `TIMESTAMP`, `DATETIME`) y sus propias funciones para sumar días o sacar el mes. El razonamiento es el mismo, pero las funciones de fechas son lo que más cambia de un motor a otro; `date` y `strftime` son de SQLite.
-- **`||` no une textos en MySQL:** ahí es el `OR` lógico, salvo que se cambie la configuración del servidor. MySQL usa `CONCAT(a, b)`. PostgreSQL acepta `||`, como SQLite.
-- **`concat` existe también en SQLite (en todas las versiones que pide el curso), pero trata `NULL` como un texto vacío:** `concat('Ana', ' ', NULL)` da `'Ana '`, con el espacio al final. Cada motor decide qué hace `concat` con `NULL`; comprueba el tuyo antes de confiar en él.
+- **Fechas que no están en ISO-8601 no funcionan.** `DATE('2026-3-05')` y `DATE('15/03/2026')` dan `NULL`, sin error, y como texto `'2026-12-01' < '2026-3-05'` es verdadero. Si importas datos de una hoja de cálculo, conviértelos a `'AAAA-MM-DD'` antes de guardarlos.
+- **PostgreSQL y MySQL tienen tipos de fecha de verdad** (PostgreSQL: `DATE` y `TIMESTAMP`; MySQL: `DATE`, `DATETIME` y `TIMESTAMP`) y sus propias funciones para sumar días o sacar el mes. El razonamiento es el mismo, pero las funciones de fechas son lo que más cambia de un motor a otro; las funciones `DATE(…)` y `STRFTIME(…)` de este lab son de SQLite.
+- **`||` no une textos en MySQL:** ahí es el `OR` lógico, salvo que se active el modo `PIPES_AS_CONCAT`. MySQL usa `CONCAT(a, b)`. PostgreSQL acepta `||`, como SQLite.
+- **`CONCAT` existe también en SQLite (en todas las versiones que pide el curso), pero trata `NULL` como un texto vacío:** `CONCAT('Ana', ' ', NULL)` da `'Ana '`, con el espacio al final. Cada motor decide qué hace `CONCAT` con `NULL`; comprueba el tuyo antes de confiar en él.
 - **Limpia al guardar, no solo al consultar.** Si los correos se guardan ya en minúsculas y sin espacios, ninguna consulta tiene que acordarse de limpiarlos. Lo que se guarda y cómo se valida es del bloque 3.
 
 ## 🆘 Pistas
@@ -325,12 +325,12 @@ En SQLite, ¿cuál es la posición de la primera letra? Para el código, ¿qué 
 
 <details><summary>Pista 4 · Falta una postulación de marzo, o sobra una de otro mes</summary>
 
-Las fechas son textos que se comparan carácter por carácter. ¿Es `'2026-03-31 18:20'` menor o mayor que `'2026-03-31'`? Y si comparas solo el mes, ¿qué pasa con marzo de 2025? Puedes comparar solo el día, con `date`, o el año y el mes juntos, con `strftime`.
+Las fechas son textos que se comparan carácter por carácter. ¿Es `'2026-03-31 18:20'` menor o mayor que `'2026-03-31'`? Y si comparas solo el mes, ¿qué pasa con marzo de 2025? Puedes comparar solo el día, con `DATE`, o el año y el mes juntos, con `STRFTIME`. `STRFTIME` devuelve texto: compáralo con `'2026'` o `'03'`, entre comillas.
 </details>
 
 <details><summary>Pista 5 · El día límite sale como un número</summary>
 
-`+` suma números, y la fecha es un texto. ¿Qué modificador de `date` suma días?
+`+` suma números, y la fecha es un texto. ¿Qué modificador de `DATE` suma días?
 </details>
 
 <details><summary>Pista 6 · Un sueldo cae en el rango equivocado, o sale <code>near "FROM": syntax error</code></summary>
@@ -357,7 +357,7 @@ Verificado en Windows 11, en PowerShell 5.1, con Python 3.12.16 (SQLite 3.53.1);
 
 `0`. En SQLite, `+` solo suma números: SQLite convierte cada texto en número, y un texto que no empieza con un número vale `0`, así que `'Ana' + ' ' + 'Torres'` da `0`, sin error. Para unir textos se usa `||`.
 
-Con `first_name || ' ' || last_name` queda un error más: Diego sale como `None`. Unir un texto con `NULL` da `NULL`, como cualquier operación con `NULL` (lab 1.4). Si falta el apellido, el nombre completo es solo el nombre: `SELECT id, COALESCE(first_name || ' ' || last_name, first_name) AS full_name FROM applications;`. También pasan `first_name || COALESCE(' ' || last_name, '')` y `trim(first_name || ' ' || COALESCE(last_name, ''))`.
+Con `first_name || ' ' || last_name` queda un error más: Diego sale como `None`. Unir un texto con `NULL` da `NULL`, como cualquier operación con `NULL` (lab 1.4). Si falta el apellido, el nombre completo es solo el nombre: `SELECT id, COALESCE(first_name || ' ' || last_name, first_name) AS full_name FROM applications;`. También pasan `first_name || COALESCE(' ' || last_name, '')` y `TRIM(first_name || ' ' || COALESCE(last_name, ''))`.
 
 ### Tarea 2 · Los espacios no se ven, pero cuentan
 ```text
@@ -375,7 +375,7 @@ Con `first_name || ' ' || last_name` queda un error más: Diego sale como `None`
     (10, 'pedro.vargas@gmail.com ')
 ```
 
-No. `lower` arregló las mayúsculas, pero cuatro correos traen espacios, y `' ana.torres@gmail.com'` no es igual a `'ana.torres@gmail.com'`: una búsqueda con `=` no los encontraría. Hace falta también `trim`: `SELECT id, lower(trim(email)) AS email FROM applications;`. El orden de las dos funciones no importa aquí (`trim(lower(email))` da lo mismo). El correo de Jorge sigue siendo `NULL`: `lower` y `trim` de `NULL` dan `NULL`, que es lo que pide la tarea.
+No. `LOWER` arregló las mayúsculas, pero cuatro correos traen espacios, y `' ana.torres@gmail.com'` no es igual a `'ana.torres@gmail.com'`: una búsqueda con `=` no los encontraría. Hace falta también `TRIM`: `SELECT id, LOWER(TRIM(email)) AS email FROM applications;`. El orden de las dos funciones no importa aquí (`TRIM(LOWER(email))` da lo mismo). El correo de Jorge sigue siendo `NULL`: `LOWER` y `TRIM` de `NULL` dan `NULL`, que es lo que pide la tarea.
 
 ### Tarea 3 · En SQLite se cuenta desde 1
 ```text
@@ -388,16 +388,16 @@ No. `lower` arregló las mayúsculas, pero cuatro correos traen espacios, y `' a
     …
 ```
 
-`'DA'`, dos letras. La primera letra es la posición 1, y la posición 0 está antes del texto: `substr(job_code, 0, 3)` toma 3 posiciones desde ahí, y la primera está vacía. No da error, solo un carácter menos. Para las tres primeras letras: `substr(job_code, 1, 3)`. El código se arregla cambiando el espacio por un guion:
+`'DA'`, dos letras. La primera letra es la posición 1, y la posición 0 está antes del texto: `SUBSTR(job_code, 0, 3)` toma 3 posiciones desde ahí, y la primera está vacía. No da error, solo un carácter menos. Para las tres primeras letras: `SUBSTR(job_code, 1, 3)`. El código se arregla cambiando el espacio por un guion:
 
 ```sql
 SELECT id,
-       replace(job_code, ' ', '-') AS job_code,
-       substr(job_code, 1, 3) AS area
+       REPLACE(job_code, ' ', '-') AS job_code,
+       SUBSTR(job_code, 1, 3) AS area
 FROM applications;
 ```
 
-`substr(job_code, 0, 4)` también da `'DAT'` y pasa la prueba, pero se lee como un error: escribe la posición real.
+`SUBSTR(job_code, 0, 4)` también da `'DAT'` y pasa la prueba, pero se lee como un error: escribe la posición real.
 
 ### Tarea 4 · Una fecha con hora es mayor que el mismo día sin hora
 ```text
@@ -409,9 +409,9 @@ FROM applications;
     (ninguna)
 ```
 
-4, no 5: falta la del 31 de marzo a las 18:20. Las fechas son textos, y `'2026-03-31 18:20'` es más largo que `'2026-03-31'` con el mismo comienzo, así que es mayor y queda fuera del `BETWEEN`. Es una trampa clásica, también en otros motores, cuando la columna guarda fecha y hora. Compara el año y el mes: `SELECT id, applied_at FROM applications WHERE strftime('%Y-%m', applied_at) = '2026-03';`.
+4, no 5: falta la del 31 de marzo a las 18:20. Las fechas son textos, y `'2026-03-31 18:20'` es más largo que `'2026-03-31'` con el mismo comienzo, así que es mayor y queda fuera del `BETWEEN`. Es una trampa clásica también en otros motores: donde la columna es `TIMESTAMP` o `DATETIME`, la fecha sola vale las 00:00 de ese día. Compara el año y el mes: `SELECT id, applied_at FROM applications WHERE STRFTIME('%Y-%m', applied_at) = '2026-03';`.
 
-También pasan `date(applied_at) BETWEEN '2026-03-01' AND '2026-03-31'` y `applied_at >= '2026-03-01' AND applied_at < '2026-04-01'` (desde el primer día del mes hasta antes del primero del siguiente, la forma que más se usa en proyectos reales). `strftime('%m', applied_at) = '03'` no pasa: trae también la de marzo de 2025.
+También pasan `DATE(applied_at) BETWEEN '2026-03-01' AND '2026-03-31'`, `applied_at LIKE '2026-03%'` y `applied_at >= '2026-03-01' AND applied_at < '2026-04-01'` (desde el primer día del mes hasta antes del primero del siguiente, la forma que más se usa en proyectos reales). `STRFTIME('%m', applied_at) = '03'` no pasa: trae también la de marzo de 2025.
 
 ### Tarea 5 · Para sumar días, un modificador
 ```text
@@ -425,7 +425,7 @@ También pasan `date(applied_at) BETWEEN '2026-03-01' AND '2026-03-31'` y `appli
     …
 ```
 
-`2033`, un número. Como en la tarea 1, `+` convierte el texto en número: SQLite lee el comienzo, `2026`, ignora el resto y suma 7. La fecha se mueve con un modificador: `SELECT id, date(applied_at) AS applied_on, date(applied_at, '+7 days') AS reply_by FROM applications;`. `date` sabe dónde termina cada mes: el 31 de marzo más 7 días es el `2026-04-07`, y el 28 de febrero de 2026, el `2026-03-07`. Con `datetime` en vez de `date` sale también la hora, y la prueba no pasa.
+`2033`, un número. Como en la tarea 1, `+` convierte el texto en número: SQLite lee el comienzo, `2026`, ignora el resto y suma 7. La fecha se mueve con un modificador: `SELECT id, DATE(applied_at) AS applied_on, DATE(applied_at, '+7 days') AS reply_by FROM applications;`. `DATE` sabe dónde termina cada mes: el 31 de marzo más 7 días es el `2026-04-07`, y el 28 de febrero de 2026, el `2026-03-07`. Con `DATETIME` en vez de `DATE` sale también la hora, y la prueba no pasa.
 
 ### Tarea 6 · `CASE` se queda con el primer `WHEN` que se cumple
 ```text
@@ -467,10 +467,10 @@ Cuidado con el `NULL`: sin el primer `WHEN`, Diego cae en el `ELSE` y sale como 
 
 <details><summary>Respuestas</summary>
 
-1. Que el correo esté guardado tal cual se escribió: con espacios o mayúsculas. Limpiando los dos lados: `WHERE lower(trim(email)) = 'ana@gmail.com'`. Mejor aún, guardarlo ya limpio.
+1. Que el correo esté guardado tal cual se escribió: con espacios o mayúsculas. Limpiando los dos lados: `WHERE LOWER(TRIM(email)) = 'ana@gmail.com'`. Mejor aún, guardarlo ya limpio.
 2. `NULL`: unir con `NULL` da `NULL`. Con `COALESCE`, por ejemplo `COALESCE('Ana' || ' ' || last_name, 'Ana')`.
 3. Porque `'2026-03-31 18:20'` es mayor que `'2026-03-31'` como texto. Desde el primer día del mes hasta antes del primero del siguiente: `fecha >= '2026-03-01' AND fecha < '2026-04-01'`.
-4. Porque en ISO-8601 van del dato más grande al más chico (año, mes, día, hora), con ceros a la izquierda, y así el orden de los textos es el de las fechas. `'5/3/2026'` se compara por su primer carácter, `'5'`, y queda después de todas las fechas que empiezan con `'2'`; `date('5/3/2026')` da `NULL`.
+4. Porque en ISO-8601 van del dato más grande al más chico (año, mes, día, hora), con ceros a la izquierda, y así el orden de los textos es el de las fechas. `'5/3/2026'` se compara por su primer carácter, `'5'`, y queda después de todas las fechas que empiezan con `'2'`; `DATE('5/3/2026')` da `NULL`.
 5. No: toda nota de 18 o más ya cumple `>= 11` y sale como aprobado. Se pone primero el `WHEN` más exigente: `WHEN nota >= 18 THEN 'excelente' WHEN nota >= 11 THEN 'aprobado'`.
 </details>
 
