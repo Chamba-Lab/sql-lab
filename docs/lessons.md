@@ -55,3 +55,9 @@ Lessons from building and reviewing the labs of this repository. Read them befor
 - **The harness compares `None` with `None` as equal,** so a test can expect a `NULL` cell (task 2 expects two rows with `district` `None`). Every wrong variant still failed because the data has a `NULL` and a non-`NULL` row on each side of each rule.
 - **35 beginner variants ran through the real harness before commit** on the three Pythons above: every wrong one failed only its own test, every right-but-different one passed. What made them separable: a `NULL` and a `0` discount (`monthly_fee - NULLIF(discount, 0)` fails), `NULL` and `''` emails (`COALESCE(email, …)` alone fails), and no `''` phone (task 1 stays about `IS NULL` only). Placing `COALESCE` outside the subtraction (`COALESCE(fee - discount, 0)`) is the likeliest wrong fix; the verified answer names it.
 - **Anaconda's pytest is about ten times slower per run here** (plugins load on each start): a 70-run battery took minutes. Run batteries in the background, or check the variants with plain `sqlite3` and keep pytest for the prediction outputs.
+
+## Lab 1.4 feedback
+- **The builder missed a syllabus note it had read** (after a 🔮 that puts a query in the file, the next step says "Reemplaza la consulta de la predicción …"); the validator caught it in all four tasks. Before committing, check every step that follows a 🔮 against the notes on predictions, one by one.
+- **A prediction that names the two rows that differ hints the answer.** Task 4 asked about Lucía ('') and Miguel (NULL); it now asks in how many members `sin correo` appears (2 of the 4 expected).
+- **Concept examples need a word on whether to run them** when the lab never opens the console: 1.4 now says it is not needed and points to the console of 1.1.
+- **A documentation link must teach the lab's topic.** SQLite's `nulls.html` is a 2002 comparison about `DISTINCT`/`UNIQUE`; it was dropped.

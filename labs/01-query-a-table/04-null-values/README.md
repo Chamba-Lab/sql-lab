@@ -26,7 +26,7 @@ cd labs/01-query-a-table/04-null-values/starter
 Si la salida de `python -m pytest` tiene una línea que empieza con `plugins:`, o termina con algo como `3 warnings`, no estás usando el Python del entorno, aunque el prompt diga `(.venv)`: sigue el [paso 3 de SETUP.md](../../../SETUP.md#3-comprueba-todo).
 
 ## 🧠 Conceptos
-La tabla `jobs` de los labs anteriores tiene todos sus datos, así que esta vez los ejemplos no usan una tabla: un `SELECT` sin `FROM` calcula sus expresiones una sola vez y devuelve una fila. Sirve para probar una expresión suelta, y también funciona en PostgreSQL y MySQL. Como el resultado no tiene alias, cada columna se llama como la expresión que la calculó.
+La tabla `jobs` de los labs anteriores tiene todos sus datos, así que esta vez los ejemplos no usan una tabla: un `SELECT` sin `FROM` calcula sus expresiones una sola vez y devuelve una fila. Sirve para probar una expresión suelta, y también funciona en PostgreSQL y MySQL. Como el resultado no tiene alias, cada columna se llama como la expresión que la calculó. No hace falta correr estos ejemplos; si quieres probarlos, abre la consola del [lab 1.1](../01-first-database/README.md) (`python -m sqlite3`) y escribe el `SELECT` con su `;` al final.
 
 ### Un dato que falta (*NULL*)
 Una persona se inscribe en un gimnasio y no da su teléfono. ¿Qué guardas en la columna `phone`? Un texto vacío (`''`) diría que su teléfono es un texto sin letras, y un `0` en una columna de descuento diría que su descuento es cero soles. Ninguno dice lo que pasó: **no hay dato**.
@@ -77,7 +77,6 @@ Así el relleno vuelve a ser lo que significaba: un dato que falta.
 ## 📚 Documentación
 - [SQLite: los operadores, entre ellos `IS` e `IS NOT`](https://www.sqlite.org/lang_expr.html#operators_and_parse_affecting_attributes)
 - [SQLite: `coalesce`](https://www.sqlite.org/lang_corefunc.html#coalesce) y [`nullif`](https://www.sqlite.org/lang_corefunc.html#nullif)
-- [SQLite: cómo tratan `NULL` los distintos motores](https://www.sqlite.org/nulls.html)
 
 ## 🧭 Escenario
 Un gimnasio de Lima pasó a una base de datos las fichas de inscripción de sus socios. Muchas fichas estaban incompletas, y el gimnasio te pide cuatro consultas para ordenar sus datos de contacto y sus cobros.
@@ -151,7 +150,7 @@ WHERE phone = NULL;
 ```
 
 - [ ] Corre `python -m pytest -k task1` y compara lo que muestra con tu predicción.
-- [ ] Deja en el archivo una consulta que devuelva los socios sin teléfono, y vuelve a correr `python -m pytest -k task1` hasta que la prueba pase.
+- [ ] Reemplaza la consulta de la predicción por una que devuelva los socios sin teléfono, y vuelve a correr `python -m pytest -k task1` hasta que la prueba pase.
 
 **Criterio de éxito:** `TestTask1NoPhone` pasa. Con todas las pruebas (`python -m pytest`), 2 pasan y 3 fallan.
 
@@ -167,7 +166,7 @@ WHERE district <> 'Miraflores';
 ```
 
 - [ ] Corre `python -m pytest -k task2` y compara lo que muestra con tu predicción.
-- [ ] Deja en el archivo una consulta que devuelva todos los socios que pide la tarea, y vuelve a correr `python -m pytest -k task2` hasta que la prueba pase.
+- [ ] Reemplaza la consulta de la predicción por una que devuelva todos los socios que pide la tarea, y vuelve a correr `python -m pytest -k task2` hasta que la prueba pase.
 
 **Criterio de éxito:** `TestTask2NewBranch` pasa. Con todas las pruebas, 3 pasan y 2 fallan.
 
@@ -182,14 +181,14 @@ FROM members;
 ```
 
 - [ ] Corre `python -m pytest -k task3` y compara lo que muestra con tu predicción.
-- [ ] Deja en el archivo una consulta que devuelva lo que paga cada socio, y vuelve a correr `python -m pytest -k task3` hasta que la prueba pase.
+- [ ] Reemplaza la consulta de la predicción por una que devuelva lo que paga cada socio, y vuelve a correr `python -m pytest -k task3` hasta que la prueba pase.
 
 **Criterio de éxito:** `TestTask3AmountToPay` pasa. Con todas las pruebas, 4 pasan y 1 falla.
 
 ### Tarea 4 · La lista de contacto
 **Objetivo:** la recepción quiere la lista de correos de todos los socios para su boletín. Donde no hay correo quiere leer `sin correo`. Al pasar las fichas a la base, unos correos que faltaban quedaron como `NULL` y otros como texto vacío (`''`). Columnas `id`, `name` y `email`, con los 10 socios. **Lo valida:** [`TestTask4ContactList`](starter/tests/test_queries.py)
 
-🔮 **Predict first:** esta consulta usa `COALESCE` como en Conceptos. Mirando la tabla de datos, ¿qué crees que muestra en `email` para Lucía (3) y para Miguel (4)? Escribe tu predicción y después pon la consulta en [`queries/04_contact_list.sql`](starter/queries/04_contact_list.sql):
+🔮 **Predict first:** esta consulta usa `COALESCE` como en Conceptos. Mirando la tabla de datos, ¿en cuántos socios crees que muestra `sin correo`? Escribe tu predicción y después pon la consulta en [`queries/04_contact_list.sql`](starter/queries/04_contact_list.sql):
 
 ```sql
 SELECT id, name, COALESCE(email, 'sin correo') AS email
@@ -197,7 +196,7 @@ FROM members;
 ```
 
 - [ ] Corre `python -m pytest -k task4` y compara lo que muestra con tu predicción.
-- [ ] Deja en el archivo una consulta que muestre `sin correo` en todos los socios sin correo, y vuelve a correr `python -m pytest -k task4` hasta que la prueba pase.
+- [ ] Reemplaza la consulta de la predicción por una que muestre `sin correo` en todos los socios sin correo, y vuelve a correr `python -m pytest -k task4` hasta que la prueba pase.
 - [ ] Corre todas las pruebas con `python -m pytest -v`.
 
 **Criterio de éxito:** `TestTask4ContactList` pasa: las 5 pruebas pasan.
@@ -232,7 +231,7 @@ La condición tiene que ser verdadera para ellos, y una comparación con un dato
 ¿En qué socios pasa? Mira su descuento en la tabla de datos. Si para el cálculo un descuento que falta vale `0`, ¿qué función de Conceptos lo reemplaza?
 </details>
 
-<details><summary>Pista 4 · Algunos socios siguen sin <code>sin correo</code></summary>
+<details><summary>Pista 4 · Algunos correos vacíos no salen como <code>sin correo</code></summary>
 
 `COALESCE` solo reemplaza `NULL`. Antes de pasarle el correo, convierte el texto vacío en `NULL`: una función puede ir dentro de otra, como `ROUND(…)` en el lab 1.2.
 </details>
@@ -311,14 +310,14 @@ Fíjate en dónde va el `COALESCE`. `COALESCE(monthly_fee - discount, 0)` llega 
     (7, 'Fiorella Chávez', '')
 ```
 
-Miguel (4) muestra `sin correo`, pero Lucía (3) muestra un texto vacío. `COALESCE` solo reemplaza `NULL`, y `''` es un dato: un texto sin letras. Primero `NULLIF` convierte el texto vacío en `NULL`, y después `COALESCE` reemplaza todos los `NULL`: `SELECT id, name, COALESCE(NULLIF(email, ''), 'sin correo') AS email FROM members;`. El orden importa: `NULLIF(COALESCE(email, ''), '')` deja `NULL` donde faltaba el correo, en vez de `sin correo`.
+Solo Miguel (4) y Camila (9) muestran `sin correo`; Lucía (3) y Fiorella (7) muestran un texto vacío. `COALESCE` solo reemplaza `NULL`, y `''` es un dato: un texto sin letras. Primero `NULLIF` convierte el texto vacío en `NULL`, y después `COALESCE` reemplaza todos los `NULL`: `SELECT id, name, COALESCE(NULLIF(email, ''), 'sin correo') AS email FROM members;`. El orden importa: `NULLIF(COALESCE(email, ''), '')` deja `NULL` donde faltaba el correo, en vez de `sin correo`.
 </details>
 
 ## 🎤 Autoevaluación
 1. En una entrevista te preguntan qué devuelven `NULL = NULL` y `NULL IS NULL`. ¿Qué respondes, y por qué son distintas?
 2. Una tabla de pedidos tiene una columna `status` que a veces es `NULL`. ¿Qué pedidos faltan en el resultado de `WHERE status <> 'cancelado'`, y cómo los incluirías?
 3. ¿Qué devuelve `price * quantity` en una fila donde `quantity` es `NULL`? ¿Cómo harías que esa fila cuente como cantidad cero?
-4. Sin correr nada: ¿qué valen `NULL AND FALSE` y `NULL OR TRUE`? ¿Por qué no son desconocidas?
+4. Sin correr nada: ¿qué valen `NULL AND FALSE` y `NULL OR TRUE`? ¿Por qué no son desconocidas? (Usa la tabla de la tarea 2 en ✔️.)
 5. ¿En qué se diferencian `COALESCE` y `NULLIF`? Da un caso para cada una.
 
 <details><summary>Respuestas</summary>
