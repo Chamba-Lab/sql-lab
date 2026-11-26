@@ -145,16 +145,16 @@ Estos son todos sus datos. Los correos van entre comillas para que se vean sus e
 
 | id | first_name | last_name | email | job_code | applied_at | expected_salary |
 |---|---|---|---|---|---|---|
-| 1 | Ana | Torres | `' Ana.Torres@Gmail.com'` | DAT-104 | 2026-03-12 10:30 | 1800 |
-| 2 | Luis | Quispe | `'luis.quispe@hotmail.com '` | DEV 310 | 2026-02-28 23:50 | 2500 |
-| 3 | Rosa | Mamani | `'ROSA.MAMANI@GMAIL.COM'` | SOP-007 | 2026-03-01 08:15 | 1200 |
-| 4 | Diego | `NULL` | `'diego.r@gmail.com'` | DAT 221 | 2026-04-01 00:05 | `NULL` |
-| 5 | Carla | Huamán | `'carla.huaman@outlook.com'` | DEV-118 | 2026-03-31 18:20 | 3200 |
+| 1 | Ana | Torres | `' Ana.Torres@Example.com'` | DAT-104 | 2026-03-12 10:30 | 1800 |
+| 2 | Luis | Quispe | `'luis.quispe@example.net '` | DEV 310 | 2026-02-28 23:50 | 2500 |
+| 3 | Rosa | Mamani | `'ROSA.MAMANI@EXAMPLE.COM'` | SOP-007 | 2026-03-01 08:15 | 1200 |
+| 4 | Diego | `NULL` | `'diego.r@example.com'` | DAT 221 | 2026-04-01 00:05 | `NULL` |
+| 5 | Carla | Huamán | `'carla.huaman@example.org'` | DEV-118 | 2026-03-31 18:20 | 3200 |
 | 6 | Jorge | Salazar | `NULL` | SOP 015 | 2025-03-20 09:00 | 1500 |
-| 7 | Valeria | Ríos | `' vale.rios@gmail.com '` | DAT-104 | 2026-01-15 14:00 | 1450 |
-| 8 | Miguel | Paredes | `'Miguel.Paredes@gmail.com'` | DEV-310 | 2026-03-20 16:45 | 2200 |
-| 9 | Lucía | Fernández | `'lucia.fdz@yahoo.com'` | DAT-221 | 2026-03-05 09:10 | 1000 |
-| 10 | Pedro | Vargas | `'pedro.vargas@gmail.com '` | SOP-007 | 2026-02-10 11:00 | 2800 |
+| 7 | Valeria | Ríos | `' vale.rios@example.com '` | DAT-104 | 2026-01-15 14:00 | 1450 |
+| 8 | Miguel | Paredes | `'Miguel.Paredes@example.com'` | DEV-310 | 2026-03-20 16:45 | 2200 |
+| 9 | Lucía | Fernández | `'lucia.fdz@example.org'` | DAT-221 | 2026-03-05 09:10 | 1000 |
+| 10 | Pedro | Vargas | `'pedro.vargas@example.com '` | SOP-007 | 2026-02-10 11:00 | 2800 |
 
 ### Tus archivos
 ```text
@@ -364,18 +364,18 @@ Con `first_name || ' ' || last_name` queda un error más: Diego sale como `None`
 02_clean_emails.sql: las columnas están bien, pero las filas no coinciden (el orden de las filas no importa).
   Filas esperadas: 10; obtenidas: 10
   Esperadas que no salieron:
-    (1, 'ana.torres@gmail.com')
-    (2, 'luis.quispe@hotmail.com')
-    (7, 'vale.rios@gmail.com')
-    (10, 'pedro.vargas@gmail.com')
+    (1, 'ana.torres@example.com')
+    (2, 'luis.quispe@example.net')
+    (7, 'vale.rios@example.com')
+    (10, 'pedro.vargas@example.com')
   Obtenidas que no se esperaban:
-    (1, ' ana.torres@gmail.com')
-    (2, 'luis.quispe@hotmail.com ')
-    (7, ' vale.rios@gmail.com ')
-    (10, 'pedro.vargas@gmail.com ')
+    (1, ' ana.torres@example.com')
+    (2, 'luis.quispe@example.net ')
+    (7, ' vale.rios@example.com ')
+    (10, 'pedro.vargas@example.com ')
 ```
 
-No. `LOWER` arregló las mayúsculas, pero cuatro correos traen espacios, y `' ana.torres@gmail.com'` no es igual a `'ana.torres@gmail.com'`: una búsqueda con `=` no los encontraría. Hace falta también `TRIM`: `SELECT id, LOWER(TRIM(email)) AS email FROM applications;`. El orden de las dos funciones no importa aquí (`TRIM(LOWER(email))` da lo mismo). El correo de Jorge sigue siendo `NULL`: `LOWER` y `TRIM` de `NULL` dan `NULL`, que es lo que pide la tarea.
+No. `LOWER` arregló las mayúsculas, pero cuatro correos traen espacios, y `' ana.torres@example.com'` no es igual a `'ana.torres@example.com'`: una búsqueda con `=` no los encontraría. Hace falta también `TRIM`: `SELECT id, LOWER(TRIM(email)) AS email FROM applications;`. El orden de las dos funciones no importa aquí (`TRIM(LOWER(email))` da lo mismo). El correo de Jorge sigue siendo `NULL`: `LOWER` y `TRIM` de `NULL` dan `NULL`, que es lo que pide la tarea.
 
 ### Tarea 3 · En SQLite se cuenta desde 1
 ```text
@@ -459,7 +459,7 @@ Cuidado con el `NULL`: sin el primer `WHEN`, Diego cae en el `ELSE` y sale como 
 </details>
 
 ## 🎤 Autoevaluación
-1. Una búsqueda por correo, `WHERE email = 'ana@gmail.com'`, no encuentra a una persona que sí está en la tabla. ¿Qué revisarías primero, y cómo escribirías la búsqueda?
+1. Una búsqueda por correo, `WHERE email = 'ana@example.com'`, no encuentra a una persona que sí está en la tabla. ¿Qué revisarías primero, y cómo escribirías la búsqueda?
 2. ¿Qué devuelve `'Ana' || ' ' || last_name` cuando `last_name` es `NULL`? ¿Cómo lo evitas?
 3. Una columna guarda fecha y hora, como `'2026-03-31 18:20'`. ¿Por qué `WHERE fecha <= '2026-03-31'` pierde filas, y cómo pedirías todo marzo?
 4. ¿Por qué SQLite puede comparar y ordenar fechas guardadas como texto? ¿Qué pasa si una se guardó como `'5/3/2026'`?
@@ -467,7 +467,7 @@ Cuidado con el `NULL`: sin el primer `WHEN`, Diego cae en el `ELSE` y sale como 
 
 <details><summary>Respuestas</summary>
 
-1. Que el correo esté guardado tal cual se escribió: con espacios o mayúsculas. Limpiando los dos lados: `WHERE LOWER(TRIM(email)) = 'ana@gmail.com'`. Mejor aún, guardarlo ya limpio.
+1. Que el correo esté guardado tal cual se escribió: con espacios o mayúsculas. Limpiando los dos lados: `WHERE LOWER(TRIM(email)) = 'ana@example.com'`. Mejor aún, guardarlo ya limpio.
 2. `NULL`: unir con `NULL` da `NULL`. Con `COALESCE`, por ejemplo `COALESCE('Ana' || ' ' || last_name, 'Ana')`.
 3. Porque `'2026-03-31 18:20'` es mayor que `'2026-03-31'` como texto. Desde el primer día del mes hasta antes del primero del siguiente: `fecha >= '2026-03-01' AND fecha < '2026-04-01'`.
 4. Porque en ISO-8601 van del dato más grande al más chico (año, mes, día, hora), con ceros a la izquierda, y así el orden de los textos es el de las fechas. `'5/3/2026'` se compara por su primer carácter, `'5'`, y queda después de todas las fechas que empiezan con `'2'`; `DATE('5/3/2026')` da `NULL`.

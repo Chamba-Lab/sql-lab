@@ -30,16 +30,16 @@ class TestTask1FullName:
 class TestTask2CleanEmails:
     def test_clean_emails(self, check):
         check("02_clean_emails.sql", columns=["id", "email"], rows=[
-            (1, "ana.torres@gmail.com"),
-            (2, "luis.quispe@hotmail.com"),
-            (3, "rosa.mamani@gmail.com"),
-            (4, "diego.r@gmail.com"),
-            (5, "carla.huaman@outlook.com"),
+            (1, "ana.torres@example.com"),
+            (2, "luis.quispe@example.net"),
+            (3, "rosa.mamani@example.com"),
+            (4, "diego.r@example.com"),
+            (5, "carla.huaman@example.org"),
             (6, None),
-            (7, "vale.rios@gmail.com"),
-            (8, "miguel.paredes@gmail.com"),
-            (9, "lucia.fdz@yahoo.com"),
-            (10, "pedro.vargas@gmail.com"),
+            (7, "vale.rios@example.com"),
+            (8, "miguel.paredes@example.com"),
+            (9, "lucia.fdz@example.org"),
+            (10, "pedro.vargas@example.com"),
         ])
 
 
