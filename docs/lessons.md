@@ -91,3 +91,9 @@ Lessons from building and reviewing the labs of this repository. Read them befor
 - **`DATE(added_at) BETWEEN … AND '2026-11-20'` passes**, because `DATE()` drops the time; only the raw column loses today's row. REVIEW.md said it without the qualifier.
 - **PowerShell 5.1 `Get-Content` shows UTF-8 files without BOM garbled** (`CatÃ¡logo`), and `cat` shows the folded `<details>` answers open (a simulated learner read the 1.6 answers that way). The repository README now says to read guides on GitHub or in the VS Code preview.
 - **`Set-Content` in PowerShell 5.1 writes CRLF, and Git warns `CRLF will be replaced by LF`** on `git add`; with `* text=auto eol=lf` the index gets LF (`git ls-files --eol`: `i/lf w/crlf`). Harmless; the README says so instead of changing `.gitattributes`.
+
+## Lab 2.1
+- **The `python -m sqlite3` console commits each statement as soon as it runs:** an `INSERT` typed in the console was still in the file after `.quit` and a reopen (3.12.16, 3.15.2). A guide that inserts rows says how to get the original database back (`python build_db.py`).
+- **The console output of the whole guide was identical in Python 3.12.16, 3.15.2 (SQLite 3.53.1) and Anaconda 3.12.7 (SQLite 3.45.3)**, apart from the version line and the 3.15 prompt's terminal color codes. Measured: a repeated primary key gives `IntegrityError (SQLITE_CONSTRAINT_PRIMARYKEY): UNIQUE constraint failed: candidates.id`; an `INSERT` that breaks a declared foreign key prints nothing and the row stays; `pragma_foreign_key_list('applications')` lists the keys in the reverse order of their declaration (`jobs` first).
+- **A comment in a seed can answer a prediction.** The first `seed.sql` said that SQLite does not check `REFERENCES` unless foreign keys are on, and the guide links that file before experiment 6 asks exactly that. Read every file the README links before a prediction, not only the README.
+
