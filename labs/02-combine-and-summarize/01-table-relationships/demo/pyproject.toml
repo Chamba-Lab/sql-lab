@@ -1,0 +1,4 @@
+# Checks that build_db.py builds the database this lab's guide describes.
+[tool.pytest]
+testpaths = ["tests"]
+pythonpath = ["."]

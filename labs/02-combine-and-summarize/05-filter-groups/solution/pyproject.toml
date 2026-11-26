@@ -1,0 +1,4 @@
+# Tells pytest where this lab's tests are. You do not need to change it.
+[tool.pytest]
+testpaths = ["tests"]
+pythonpath = ["."]
