@@ -340,7 +340,7 @@ Verificado en Windows 11, en PowerShell 5.1 y Git Bash, con Python 3.12.16, 3.13
 
 Sin error, pero la primera columna dice `name` en todas las filas. **Las comillas simples escriben un valor de texto** (un *literal*), no el nombre de una columna: `'name'` es la palabra "name", y SQLite la repite en cada fila. En `pragma_table_info('jobs')` las comillas estaban bien porque ahí se pasa el nombre de la tabla como un texto. Los nombres de columnas se escriben sin comillas: `SELECT name, category, price FROM menu_items;`.
 
-El SQL estándar usa comillas dobles para nombres (`"name"` es la columna) y simples para textos. SQLite tiene una excepción: si escribes mal un nombre entre comillas dobles, como `"nmae"`, no da error y lo toma como el texto `'nmae'` ([es una rareza conocida de SQLite](https://www.sqlite.org/quirks.html#dblquote)). Por eso, mejor nombres sin comillas.
+El SQL estándar usa comillas dobles para nombres (`"name"` es la columna) y simples para textos. SQLite tiene una excepción: si escribes mal un nombre entre comillas dobles, como `"nmae"`, no da error y lo toma como el texto `'nmae'` ([es una rareza conocida de SQLite](https://www.sqlite.org/quirks.html#dblquote)). Las pruebas del curso apagan esa excepción, así que ahí `"nmae"` o `"Lima"` dan `no such column`; la consola `python -m sqlite3` la mantiene. Por eso, mejor nombres sin comillas y textos siempre entre comillas simples.
 
 ### Tarea 2 · Una coma olvidada crea un alias
 ```text

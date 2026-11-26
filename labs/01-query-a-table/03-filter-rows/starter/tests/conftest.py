@@ -26,6 +26,11 @@ if hasattr(sys.__stdout__, "reconfigure"):
 def db():
     """A new database in memory, with the lab's data, for one test."""
     con = sqlite3.connect(":memory:")
+    # Double quotes name a column ("name") and single quotes write a text ('Lima').
+    # SQLite takes an unknown "Lima" as the text 'Lima', so a wrong query would pass;
+    # the tests switch that quirk off and answer "no such column" instead.
+    con.setconfig(sqlite3.SQLITE_DBCONFIG_DQS_DML, False)
+    con.setconfig(sqlite3.SQLITE_DBCONFIG_DQS_DDL, False)
     con.executescript(SEED.read_text(encoding="utf-8"))
     yield con
     con.close()
