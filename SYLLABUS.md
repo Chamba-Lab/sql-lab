@@ -14,7 +14,7 @@
 | Bloque | Al terminar podrás… | Estado |
 |---|---|---|
 | 1 · Consultar una tabla | Sacar de una tabla justo los datos que te piden: elegir, filtrar, ordenar y transformar | 🟨 `built` |
-| 2 · Combinar y resumir | Cruzar varias tablas y resumirlas en totales, promedios y conteos | ⬜ `pending` |
+| 2 · Combinar y resumir | Cruzar varias tablas y resumirlas en totales, promedios y conteos | 🟨 `built` |
 | 3 · Diseñar y crear una base | Diseñar tablas que no se contradigan y cambiar datos sin romper nada | ⬜ `pending` |
 | 4 · Consultas analíticas | Resolver las consultas de reportes y de pruebas técnicas: rankings, acumulados y tablas dinámicas | ⬜ `pending` |
 | 5 · SQL en una aplicación | Usar SQL desde Python de forma rápida y segura | ⬜ `pending` |
