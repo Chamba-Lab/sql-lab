@@ -305,6 +305,27 @@ Como viste en el lab 1.2, el problema está justo antes de lo que aparece en `ne
 Ojo: `_` no es un espacio. Es exactamente un carácter cualquiera, también una letra, así que `'San_%'` atrapa lo mismo que `'San%'`. Un espacio dentro del patrón es un espacio.
 </details>
 
+## 🎤 Autoevaluación
+1. Una consulta para un reporte devuelve cero filas y ningún error. ¿Qué revisarías antes de concluir que no hay datos?
+2. En una entrevista te muestran `WHERE category = 'libros' OR category = 'música' AND price > 50`. ¿Qué filas devuelve, y cómo la escribirías si se pedían los libros y la música de más de 50?
+3. ¿Qué devuelve `WHERE age BETWEEN 18 AND 25` para alguien de 18 y para alguien de 25? ¿Y `WHERE age BETWEEN 25 AND 18`?
+4. Tu consulta usa `WHERE name LIKE 'ana%'` y en SQLite encuentra a «Ana Quispe». Tu equipo la pasa a PostgreSQL. ¿Qué cambia, y cómo lo resolverías?
+5. Te piden los códigos de producto que tienen exactamente cuatro caracteres y empiezan con `A`. ¿Qué patrón usas, y por qué `'A%'` no sirve?
+
+<details><summary>Respuestas</summary>
+
+1. Que la condición coincida con los datos tal como están guardados: mayúsculas y minúsculas, espacios, el orden de los números de un `BETWEEN`. Cero filas puede ser la respuesta correcta, pero también es el síntoma de casi todos los filtros mal escritos.
+2. Todos los libros, de cualquier precio, más la música de más de 50: `AND` se resuelve antes que `OR`. Para lo pedido: `WHERE category IN ('libros', 'música') AND price > 50`, o con paréntesis alrededor de las dos condiciones de la categoría.
+3. Las dos personas entran: `BETWEEN` incluye los extremos (`age >= 18 AND age <= 25`). Al revés no entra nadie, porque ninguna edad es a la vez mayor o igual que 25 y menor o igual que 18.
+4. En PostgreSQL, `LIKE` distingue mayúsculas, así que `'ana%'` ya no encuentra «Ana». Se puede usar `ILIKE`, que es solo de PostgreSQL, o comparar los dos textos pasados a minúsculas, que funciona en cualquier motor.
+5. `'A___'`: una `A` y tres `_`, cada uno exactamente un carácter. `'A%'` acepta cualquier cantidad de caracteres después de la `A`, así que también trae `A1` o `A12345`. En SQLite, `'A___'` también trae `abcd`, porque `LIKE` ignora mayúsculas (tarea 4); si el código tiene que empezar con `A` mayúscula, esa diferencia importa.
+</details>
+
+## 🔁 Retrospectiva
+- ¿Qué entendí?
+- ¿Qué me costó?
+- ¿Qué debería reforzar?
+
 ## ✔️ Respuestas verificadas
 <details><summary>Abre esta sección solo después de terminar las tareas</summary>
 
@@ -398,25 +419,4 @@ Faltan los dos de Santiago de Surco. `'San%'` significa «empieza con las letras
 `district NOT IN ('San Isidro', 'San Borja', 'San Miguel')` también pasa la prueba, pero no sigue la regla de la sucursal: si mañana llega un anuncio en San Juan de Miraflores, la lista no lo quita y el patrón sí.
 </details>
 
-## 🎤 Autoevaluación
-1. Una consulta para un reporte devuelve cero filas y ningún error. ¿Qué revisarías antes de concluir que no hay datos?
-2. En una entrevista te muestran `WHERE category = 'libros' OR category = 'música' AND price > 50`. ¿Qué filas devuelve, y cómo la escribirías si se pedían los libros y la música de más de 50?
-3. ¿Qué devuelve `WHERE age BETWEEN 18 AND 25` para alguien de 18 y para alguien de 25? ¿Y `WHERE age BETWEEN 25 AND 18`?
-4. Tu consulta usa `WHERE name LIKE 'ana%'` y en SQLite encuentra a «Ana Quispe». Tu equipo la pasa a PostgreSQL. ¿Qué cambia, y cómo lo resolverías?
-5. Te piden los códigos de producto que tienen exactamente cuatro caracteres y empiezan con `A`. ¿Qué patrón usas, y por qué `'A%'` no sirve?
-
-<details><summary>Respuestas</summary>
-
-1. Que la condición coincida con los datos tal como están guardados: mayúsculas y minúsculas, espacios, el orden de los números de un `BETWEEN`. Cero filas puede ser la respuesta correcta, pero también es el síntoma de casi todos los filtros mal escritos.
-2. Todos los libros, de cualquier precio, más la música de más de 50: `AND` se resuelve antes que `OR`. Para lo pedido: `WHERE category IN ('libros', 'música') AND price > 50`, o con paréntesis alrededor de las dos condiciones de la categoría.
-3. Las dos personas entran: `BETWEEN` incluye los extremos (`age >= 18 AND age <= 25`). Al revés no entra nadie, porque ninguna edad es a la vez mayor o igual que 25 y menor o igual que 18.
-4. En PostgreSQL, `LIKE` distingue mayúsculas, así que `'ana%'` ya no encuentra «Ana». Se puede usar `ILIKE`, que es solo de PostgreSQL, o comparar los dos textos pasados a minúsculas, que funciona en cualquier motor.
-5. `'A___'`: una `A` y tres `_`, cada uno exactamente un carácter. `'A%'` acepta cualquier cantidad de caracteres después de la `A`, así que también trae `A1` o `A12345`. En SQLite, `'A___'` también trae `abcd`, porque `LIKE` ignora mayúsculas (tarea 4); si el código tiene que empezar con `A` mayúscula, esa diferencia importa.
-</details>
-
 La solución completa está en [`solution/`](solution/).
-
-## 🔁 Retrospectiva
-- ¿Qué entendí?
-- ¿Qué me costó?
-- ¿Qué debería reforzar?

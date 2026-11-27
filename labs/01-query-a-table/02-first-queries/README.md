@@ -322,6 +322,27 @@ Lee las dos líneas `Esperadas:` y `Obtenidas:` del fallo. El nombre y el orden 
 No puedes usar el alias `profit`, pero sí puedes repetir la resta. Usa paréntesis para que la resta se haga antes que la multiplicación: `(price - cost) * 100 / price`, y redondea todo eso a un decimal.
 </details>
 
+## 🎤 Autoevaluación
+1. Un compañero dice que `SELECT *` "es más fácil y trae lo mismo". ¿En qué casos le darías la razón y en cuáles no?
+2. En una entrevista te muestran `SELECT name category FROM products;` y te preguntan qué devuelve. ¿Qué respondes?
+3. ¿Qué devuelve `SELECT 'price' FROM products;` en una tabla de 3 filas, y por qué?
+4. Una consulta de facturación suma `0.1 + 0.2` y el total no es igual a `0.3`. ¿Por qué pasa, y cómo lo evitarías al guardar montos de dinero?
+5. Quieres el precio con impuesto y, en otra columna, ese mismo precio por 2. ¿Por qué falla `SELECT price * 1.18 AS final, final * 2 FROM products;`, y cómo lo escribes para que funcione?
+
+<details><summary>Respuestas</summary>
+
+1. Para explorar una tabla que no conoces, `*` está bien. En un reporte o en el código de una aplicación, no: trae columnas que nadie pidió, y si la tabla gana una columna, tu resultado cambia sin que toques la consulta.
+2. Una sola columna, llamada `category`, con los nombres de los productos: falta una coma, y como `AS` es opcional, `category` queda como alias de `name`. No da error.
+3. Tres filas con el texto `price`: las comillas simples escriben un texto, no el nombre de una columna. La columna se llama `'price'`.
+4. Los números con decimales se guardan en binario, y 0.1 y 0.2 no tienen una forma exacta en binario: la suma da 0.30000000000000004. Para dinero se usa un tipo decimal exacto (`NUMERIC` o `DECIMAL` en PostgreSQL y MySQL) o enteros en céntimos.
+5. Porque el alias `final` nombra una columna del resultado, y no existe mientras se calcula el mismo `SELECT`: SQLite responde `no such column: final`. Se repite el cálculo: `SELECT price * 1.18 AS final, price * 1.18 * 2 AS double_final FROM products;`.
+</details>
+
+## 🔁 Retrospectiva
+- ¿Qué entendí?
+- ¿Qué me costó?
+- ¿Qué debería reforzar?
+
 ## ✔️ Respuestas verificadas
 <details><summary>Abre esta sección solo después de terminar las tareas</summary>
 
@@ -386,25 +407,4 @@ Fallan cuatro filas, por dos razones distintas; las otras cuatro salieron bien. 
 *no such column* (no existe la columna): **el alias le pone nombre a una columna del resultado, y el resultado todavía no existe mientras se calculan sus columnas.** Por eso `profit` no se puede usar en otra columna del mismo `SELECT`, y hay que repetir el cálculo: `SELECT name, ROUND((price - cost) * 100 / price, 1) AS margin_pct FROM menu_items;`. Sin los paréntesis, `price - cost * 100 / price` multiplica y divide `cost` antes de restar, y da márgenes negativos. En el bloque 4 aprenderás a escribir un cálculo una vez y reusarlo.
 </details>
 
-## 🎤 Autoevaluación
-1. Un compañero dice que `SELECT *` "es más fácil y trae lo mismo". ¿En qué casos le darías la razón y en cuáles no?
-2. En una entrevista te muestran `SELECT name category FROM products;` y te preguntan qué devuelve. ¿Qué respondes?
-3. ¿Qué devuelve `SELECT 'price' FROM products;` en una tabla de 3 filas, y por qué?
-4. Una consulta de facturación suma `0.1 + 0.2` y el total no es igual a `0.3`. ¿Por qué pasa, y cómo lo evitarías al guardar montos de dinero?
-5. Quieres el precio con impuesto y, en otra columna, ese mismo precio por 2. ¿Por qué falla `SELECT price * 1.18 AS final, final * 2 FROM products;`, y cómo lo escribes para que funcione?
-
-<details><summary>Respuestas</summary>
-
-1. Para explorar una tabla que no conoces, `*` está bien. En un reporte o en el código de una aplicación, no: trae columnas que nadie pidió, y si la tabla gana una columna, tu resultado cambia sin que toques la consulta.
-2. Una sola columna, llamada `category`, con los nombres de los productos: falta una coma, y como `AS` es opcional, `category` queda como alias de `name`. No da error.
-3. Tres filas con el texto `price`: las comillas simples escriben un texto, no el nombre de una columna. La columna se llama `'price'`.
-4. Los números con decimales se guardan en binario, y 0.1 y 0.2 no tienen una forma exacta en binario: la suma da 0.30000000000000004. Para dinero se usa un tipo decimal exacto (`NUMERIC` o `DECIMAL` en PostgreSQL y MySQL) o enteros en céntimos.
-5. Porque el alias `final` nombra una columna del resultado, y no existe mientras se calcula el mismo `SELECT`: SQLite responde `no such column: final`. Se repite el cálculo: `SELECT price * 1.18 AS final, price * 1.18 * 2 AS double_final FROM products;`.
-</details>
-
 La solución completa está en [`solution/`](solution/).
-
-## 🔁 Retrospectiva
-- ¿Qué entendí?
-- ¿Qué me costó?
-- ¿Qué debería reforzar?

@@ -350,6 +350,27 @@ Suma a mano los sueldos de las ofertas de Agro Norte en `jobs`. ¿Qué tienen en
 El problema es que cada oferta aparece una vez por cada postulación suya. ¿Y si las postulaciones llegaran ya contadas, una fila por oferta? Escribe primero una consulta que cuente las postulaciones de cada oferta, y después úsala dentro del `FROM` como en el último ejemplo de Conceptos. ¿Qué pasa con las ofertas que no tienen postulaciones si la unes con `JOIN`?
 </details>
 
+## 🎤 Autoevaluación
+1. ¿Qué diferencia hay entre `WHERE` y `HAVING`?
+2. En `orders(id, customer_id, total, ordered_on)`, escribe la consulta de los clientes con 3 pedidos o más en 2026, con cuántos tiene cada uno.
+3. ¿Por qué `SELECT customer_id FROM orders WHERE COUNT(*) > 3 GROUP BY customer_id;` da error?
+4. `orders` tiene 2 pedidos de 100 y 300, y `order_lines` tiene 3 líneas del primero y 1 del segundo. Al unirlas, ¿cuánto da `SUM(o.total)`?
+5. ¿Por qué `SUM(DISTINCT o.total)` no arregla la pregunta 4 en general?
+
+<details><summary>Respuestas</summary>
+
+1. `WHERE` decide qué filas entran en los grupos y se revisa antes de agrupar; `HAVING` decide qué grupos quedan, se revisa después y puede usar funciones de agregado.
+2. `SELECT customer_id, COUNT(*) AS orders FROM orders WHERE ordered_on >= '2026-01-01' AND ordered_on < '2027-01-01' GROUP BY customer_id HAVING COUNT(*) >= 3;`
+3. Porque el `WHERE` se revisa fila por fila antes de agrupar, cuando todavía no hay grupos que contar. La condición va en `HAVING COUNT(*) > 3`.
+4. 600: el primer pedido sale en 3 filas y suma 100 tres veces, más 300 del segundo. El total real es 400.
+5. Porque dos pedidos distintos con el mismo total se sumarían una sola vez. Hay que resumir `order_lines` en una subconsulta y unir el resumen, o sumar `o.total` en una consulta sin el `JOIN`.
+</details>
+
+## 🔁 Retrospectiva
+- ¿Qué entendí?
+- ¿Qué me costó?
+- ¿Qué debería reforzar?
+
 ## ✔️ Respuestas verificadas
 <details><summary>Abre esta sección solo después de terminar las tareas</summary>
 
@@ -454,25 +475,4 @@ GROUP BY c.id, c.name;
 `SUM(per_job.applications)` suma las cuentas de las ofertas de cada empresa. El `LEFT JOIN` hace falta: con `JOIN`, las ofertas 10 y 11, que no tienen postulaciones, se pierden con sus sueldos, y Banco Sur sale con 2400 en lugar de 4150. `COUNT(per_job.applications)` en lugar de `SUM` no pasa: cuenta ofertas con postulaciones, no postulaciones. También pasa la versión al revés: sumar los sueldos de cada empresa en una subconsulta sobre `jobs` y contar las postulaciones con los `LEFT JOIN` de la tarea 3.
 </details>
 
-## 🎤 Autoevaluación
-1. ¿Qué diferencia hay entre `WHERE` y `HAVING`?
-2. En `orders(id, customer_id, total, ordered_on)`, escribe la consulta de los clientes con 3 pedidos o más en 2026, con cuántos tiene cada uno.
-3. ¿Por qué `SELECT customer_id FROM orders WHERE COUNT(*) > 3 GROUP BY customer_id;` da error?
-4. `orders` tiene 2 pedidos de 100 y 300, y `order_lines` tiene 3 líneas del primero y 1 del segundo. Al unirlas, ¿cuánto da `SUM(o.total)`?
-5. ¿Por qué `SUM(DISTINCT o.total)` no arregla la pregunta 4 en general?
-
-<details><summary>Respuestas</summary>
-
-1. `WHERE` decide qué filas entran en los grupos y se revisa antes de agrupar; `HAVING` decide qué grupos quedan, se revisa después y puede usar funciones de agregado.
-2. `SELECT customer_id, COUNT(*) AS orders FROM orders WHERE ordered_on >= '2026-01-01' AND ordered_on < '2027-01-01' GROUP BY customer_id HAVING COUNT(*) >= 3;`
-3. Porque el `WHERE` se revisa fila por fila antes de agrupar, cuando todavía no hay grupos que contar. La condición va en `HAVING COUNT(*) > 3`.
-4. 600: el primer pedido sale en 3 filas y suma 100 tres veces, más 300 del segundo. El total real es 400.
-5. Porque dos pedidos distintos con el mismo total se sumarían una sola vez. Hay que resumir `order_lines` en una subconsulta y unir el resumen, o sumar `o.total` en una consulta sin el `JOIN`.
-</details>
-
 La solución completa está en [`solution/`](solution/).
-
-## 🔁 Retrospectiva
-- ¿Qué entendí?
-- ¿Qué me costó?
-- ¿Qué debería reforzar?

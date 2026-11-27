@@ -236,6 +236,27 @@ La condición tiene que ser verdadera para ellos, y una comparación con un dato
 `COALESCE` solo reemplaza `NULL`. Antes de pasarle el correo, convierte el texto vacío en `NULL`: una función puede ir dentro de otra, como `ROUND(…)` en el lab 1.2.
 </details>
 
+## 🎤 Autoevaluación
+1. En una entrevista te preguntan qué devuelven `NULL = NULL` y `NULL IS NULL`. ¿Qué respondes, y por qué son distintas?
+2. Una tabla de pedidos tiene una columna `status` que a veces es `NULL`. ¿Qué pedidos faltan en el resultado de `WHERE status <> 'cancelado'`, y cómo los incluirías?
+3. ¿Qué devuelve `price * quantity` en una fila donde `quantity` es `NULL`? ¿Cómo harías que esa fila cuente como cantidad cero?
+4. Sin correr nada: ¿qué valen `NULL AND FALSE` y `NULL OR TRUE`? ¿Por qué no son desconocidas? (Usa la tabla de la tarea 2 en ✔️.)
+5. ¿En qué se diferencian `COALESCE` y `NULLIF`? Da un caso para cada una.
+
+<details><summary>Respuestas</summary>
+
+1. `NULL = NULL` es desconocida (SQLite muestra `NULL`), porque comparar dos datos que faltan no dice si son iguales. `NULL IS NULL` es verdadera (`1`): `IS NULL` pregunta si falta el dato, y no compara valores.
+2. Faltan los pedidos con `status` en `NULL`, porque la comparación es desconocida para ellos. Para incluirlos: `WHERE status <> 'cancelado' OR status IS NULL`, o `WHERE COALESCE(status, '') <> 'cancelado'`.
+3. `NULL`. Con `price * COALESCE(quantity, 0)`, la fila da `0`. Antes de hacerlo, pregúntate si un dato que falta de verdad significa cero en ese negocio.
+4. `NULL AND FALSE` es falsa: con un lado falso, el `AND` ya es falso, valga lo que valga el otro. `NULL OR TRUE` es verdadera: con un lado verdadero, el `OR` ya es verdadero.
+5. `COALESCE` cambia un `NULL` por un valor (mostrar `sin dato`, contar un descuento que falta como `0`). `NULLIF` cambia un valor por `NULL` (un `''` o un `'-'` que significaba «no hay dato»). Juntas, `COALESCE(NULLIF(x, ''), 'sin dato')` trata igual los dos tipos de hueco.
+</details>
+
+## 🔁 Retrospectiva
+- ¿Qué entendí?
+- ¿Qué me costó?
+- ¿Qué debería reforzar?
+
 ## ✔️ Respuestas verificadas
 <details><summary>Abre esta sección solo después de terminar las tareas</summary>
 
@@ -313,25 +334,4 @@ Fíjate en dónde va el `COALESCE`. `COALESCE(monthly_fee - discount, 0)` llega 
 Solo Miguel (4) y Camila (9) muestran `sin correo`; Lucía (3) y Fiorella (7) muestran un texto vacío. `COALESCE` solo reemplaza `NULL`, y `''` es un dato: un texto sin letras. Primero `NULLIF` convierte el texto vacío en `NULL`, y después `COALESCE` reemplaza todos los `NULL`: `SELECT id, name, COALESCE(NULLIF(email, ''), 'sin correo') AS email FROM members;`. El orden importa: `NULLIF(COALESCE(email, ''), '')` deja `NULL` donde faltaba el correo, en vez de `sin correo`.
 </details>
 
-## 🎤 Autoevaluación
-1. En una entrevista te preguntan qué devuelven `NULL = NULL` y `NULL IS NULL`. ¿Qué respondes, y por qué son distintas?
-2. Una tabla de pedidos tiene una columna `status` que a veces es `NULL`. ¿Qué pedidos faltan en el resultado de `WHERE status <> 'cancelado'`, y cómo los incluirías?
-3. ¿Qué devuelve `price * quantity` en una fila donde `quantity` es `NULL`? ¿Cómo harías que esa fila cuente como cantidad cero?
-4. Sin correr nada: ¿qué valen `NULL AND FALSE` y `NULL OR TRUE`? ¿Por qué no son desconocidas? (Usa la tabla de la tarea 2 en ✔️.)
-5. ¿En qué se diferencian `COALESCE` y `NULLIF`? Da un caso para cada una.
-
-<details><summary>Respuestas</summary>
-
-1. `NULL = NULL` es desconocida (SQLite muestra `NULL`), porque comparar dos datos que faltan no dice si son iguales. `NULL IS NULL` es verdadera (`1`): `IS NULL` pregunta si falta el dato, y no compara valores.
-2. Faltan los pedidos con `status` en `NULL`, porque la comparación es desconocida para ellos. Para incluirlos: `WHERE status <> 'cancelado' OR status IS NULL`, o `WHERE COALESCE(status, '') <> 'cancelado'`.
-3. `NULL`. Con `price * COALESCE(quantity, 0)`, la fila da `0`. Antes de hacerlo, pregúntate si un dato que falta de verdad significa cero en ese negocio.
-4. `NULL AND FALSE` es falsa: con un lado falso, el `AND` ya es falso, valga lo que valga el otro. `NULL OR TRUE` es verdadera: con un lado verdadero, el `OR` ya es verdadero.
-5. `COALESCE` cambia un `NULL` por un valor (mostrar `sin dato`, contar un descuento que falta como `0`). `NULLIF` cambia un valor por `NULL` (un `''` o un `'-'` que significaba «no hay dato»). Juntas, `COALESCE(NULLIF(x, ''), 'sin dato')` trata igual los dos tipos de hueco.
-</details>
-
 La solución completa está en [`solution/`](solution/).
-
-## 🔁 Retrospectiva
-- ¿Qué entendí?
-- ¿Qué me costó?
-- ¿Qué debería reforzar?

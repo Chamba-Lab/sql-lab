@@ -324,6 +324,27 @@ Mira qué ciudad sale dos veces en el resultado del compañero. ¿Cuántas filas
 Lee la consulta del compañero en voz alta, con la definición de `EXCEPT` de Conceptos: «las ciudades de ___ que no están en las ciudades de ___». ¿Es la pregunta del objetivo?
 </details>
 
+## 🎤 Autoevaluación
+1. ¿Qué diferencia hay entre `UNION` y `UNION ALL`? ¿Cuál usarías para juntar los pagos de dos meses y sumarlos?
+2. En `clients_2025(email)` y `clients_2026(email)`, escribe la consulta de los correos que compraron en 2025 y no volvieron en 2026.
+3. Con las mismas tablas, escribe la consulta de los correos que compraron los dos años.
+4. `SELECT name, email FROM clients UNION SELECT email, name FROM suppliers;` no da ningún error. ¿Qué hay de raro en su resultado?
+5. ¿Por qué `A EXCEPT B` y `B EXCEPT A` dan resultados distintos, y `A INTERSECT B` y `B INTERSECT A` no?
+
+<details><summary>Respuestas</summary>
+
+1. `UNION` quita las filas repetidas y `UNION ALL` las deja todas. Para sumar pagos, `UNION ALL`: dos pagos del mismo monto son dos pagos, y `UNION` dejaría uno.
+2. `SELECT email FROM clients_2025 EXCEPT SELECT email FROM clients_2026;`
+3. `SELECT email FROM clients_2025 INTERSECT SELECT email FROM clients_2026;`
+4. Las columnas se juntan por su lugar: los correos de los proveedores quedan en la columna `name` y sus nombres en la columna `email`.
+5. `EXCEPT` quita de la primera consulta lo que está en la segunda, así que importa cuál va primero; `INTERSECT` deja lo que está en las dos, y eso no depende del orden.
+</details>
+
+## 🔁 Retrospectiva
+- ¿Qué entendí?
+- ¿Qué me costó?
+- ¿Qué debería reforzar?
+
 ## ✔️ Respuestas verificadas
 <details><summary>Abre esta sección solo después de terminar las tareas</summary>
 
@@ -429,25 +450,4 @@ SELECT city FROM companies;
 Sale Cusco, donde vive Diego Flores. También pasa `SELECT city FROM candidates WHERE city NOT IN (SELECT city FROM companies)`, porque una sola persona vive en Cusco (con dos, Cusco saldría dos veces), y `NOT EXISTS` con `SELECT DISTINCT`. `INTERSECT` no pasa: da las otras 5 ciudades.
 </details>
 
-## 🎤 Autoevaluación
-1. ¿Qué diferencia hay entre `UNION` y `UNION ALL`? ¿Cuál usarías para juntar los pagos de dos meses y sumarlos?
-2. En `clients_2025(email)` y `clients_2026(email)`, escribe la consulta de los correos que compraron en 2025 y no volvieron en 2026.
-3. Con las mismas tablas, escribe la consulta de los correos que compraron los dos años.
-4. `SELECT name, email FROM clients UNION SELECT email, name FROM suppliers;` no da ningún error. ¿Qué hay de raro en su resultado?
-5. ¿Por qué `A EXCEPT B` y `B EXCEPT A` dan resultados distintos, y `A INTERSECT B` y `B INTERSECT A` no?
-
-<details><summary>Respuestas</summary>
-
-1. `UNION` quita las filas repetidas y `UNION ALL` las deja todas. Para sumar pagos, `UNION ALL`: dos pagos del mismo monto son dos pagos, y `UNION` dejaría uno.
-2. `SELECT email FROM clients_2025 EXCEPT SELECT email FROM clients_2026;`
-3. `SELECT email FROM clients_2025 INTERSECT SELECT email FROM clients_2026;`
-4. Las columnas se juntan por su lugar: los correos de los proveedores quedan en la columna `name` y sus nombres en la columna `email`.
-5. `EXCEPT` quita de la primera consulta lo que está en la segunda, así que importa cuál va primero; `INTERSECT` deja lo que está en las dos, y eso no depende del orden.
-</details>
-
 La solución completa está en [`solution/`](solution/).
-
-## 🔁 Retrospectiva
-- ¿Qué entendí?
-- ¿Qué me costó?
-- ¿Qué debería reforzar?

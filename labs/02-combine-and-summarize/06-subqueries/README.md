@@ -368,6 +368,27 @@ Corre sola la subconsulta: ¿da el promedio de una empresa o el de todas? Dentro
 Corre sola la subconsulta del compañero y mira todos los valores que devuelve. ¿Qué resultado da `2 NOT IN` con esa lista, si uno de los valores es desconocido? Repasa qué hace `NULL` en una comparación en el [lab 1.4](../../01-query-a-table/04-null-values/README.md#un-dato-que-falta-null). ¿Qué forma de Conceptos pregunta si existe una fila, sin armar una lista?
 </details>
 
+## 🎤 Autoevaluación
+1. ¿Qué diferencia hay entre una subconsulta escalar y una correlacionada?
+2. En `products(id, name, price)`, escribe la consulta de los productos que cuestan más que el promedio.
+3. En `customers(id, name)` y `orders(id, customer_id, total)`, escribe la consulta de los clientes que nunca hicieron un pedido, sin `JOIN`.
+4. ¿Por qué `WHERE id NOT IN (SELECT manager_id FROM employees)` puede devolver 0 filas aunque haya empleados que no son jefes de nadie?
+5. ¿Cuándo usarías `IN` en lugar de un `JOIN`?
+
+<details><summary>Respuestas</summary>
+
+1. La escalar devuelve un solo valor y no depende de la fila de afuera, así que se calcula una vez; la correlacionada usa columnas de la fila de afuera y se calcula una vez por cada fila. Una correlacionada también puede ser escalar, como la del `SELECT` en Conceptos.
+2. `SELECT id, name, price FROM products WHERE price > (SELECT AVG(price) FROM products);`
+3. `SELECT c.id, c.name FROM customers AS c WHERE NOT EXISTS (SELECT 1 FROM orders AS o WHERE o.customer_id = c.id);`
+4. Porque quien no tiene jefe tiene `manager_id` `NULL`, y con un `NULL` en la lista `NOT IN` nunca es verdadero. Se usa `NOT EXISTS` o se quitan los `NULL` en la subconsulta.
+5. Cuando solo necesito saber si hay filas relacionadas y no quiero columnas de la otra tabla: `IN` no repite la fila cuando hay varias relacionadas.
+</details>
+
+## 🔁 Retrospectiva
+- ¿Qué entendí?
+- ¿Qué me costó?
+- ¿Qué debería reforzar?
+
 ## ✔️ Respuestas verificadas
 <details><summary>Abre esta sección solo después de terminar las tareas</summary>
 
@@ -476,25 +497,4 @@ WHERE NOT EXISTS (
 También pasa `NOT IN` con los `NULL` quitados (`SELECT referred_by FROM candidates WHERE referred_by IS NOT NULL`). Fuera de lo que pide la tarea, el *anti-join* del [lab 2.3](../03-unmatched-rows/README.md), `LEFT JOIN candidates AS r ON r.referred_by = c.id WHERE r.id IS NULL`, también funciona y pasa la prueba. `NOT EXISTS` sin alias (`WHERE referred_by = id`) no pasa, por lo mismo que en la tarea 3: devuelve las 9 personas.
 </details>
 
-## 🎤 Autoevaluación
-1. ¿Qué diferencia hay entre una subconsulta escalar y una correlacionada?
-2. En `products(id, name, price)`, escribe la consulta de los productos que cuestan más que el promedio.
-3. En `customers(id, name)` y `orders(id, customer_id, total)`, escribe la consulta de los clientes que nunca hicieron un pedido, sin `JOIN`.
-4. ¿Por qué `WHERE id NOT IN (SELECT manager_id FROM employees)` puede devolver 0 filas aunque haya empleados que no son jefes de nadie?
-5. ¿Cuándo usarías `IN` en lugar de un `JOIN`?
-
-<details><summary>Respuestas</summary>
-
-1. La escalar devuelve un solo valor y no depende de la fila de afuera, así que se calcula una vez; la correlacionada usa columnas de la fila de afuera y se calcula una vez por cada fila. Una correlacionada también puede ser escalar, como la del `SELECT` en Conceptos.
-2. `SELECT id, name, price FROM products WHERE price > (SELECT AVG(price) FROM products);`
-3. `SELECT c.id, c.name FROM customers AS c WHERE NOT EXISTS (SELECT 1 FROM orders AS o WHERE o.customer_id = c.id);`
-4. Porque quien no tiene jefe tiene `manager_id` `NULL`, y con un `NULL` en la lista `NOT IN` nunca es verdadero. Se usa `NOT EXISTS` o se quitan los `NULL` en la subconsulta.
-5. Cuando solo necesito saber si hay filas relacionadas y no quiero columnas de la otra tabla: `IN` no repite la fila cuando hay varias relacionadas.
-</details>
-
 La solución completa está en [`solution/`](solution/).
-
-## 🔁 Retrospectiva
-- ¿Qué entendí?
-- ¿Qué me costó?
-- ¿Qué debería reforzar?

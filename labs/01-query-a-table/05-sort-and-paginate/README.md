@@ -316,6 +316,27 @@ En Conceptos, ¿cómo se dice dónde quieres los `NULL`? Va justo después de la
 `OFFSET` cuenta filas, no páginas. Con 4 cursos por página, ¿cuántas filas hay antes de la página 2? ¿Y antes de la página 3?
 </details>
 
+## 🎤 Autoevaluación
+1. Una aplicación muestra «los últimos pedidos» con `SELECT * FROM orders LIMIT 10`, sin `ORDER BY`. En las pruebas siempre salieron los correctos. ¿Por qué es un error igual?
+2. ¿En qué orden salen las filas de `ORDER BY department, salary DESC`? ¿Qué escribirías para que los departamentos también vayan de la Z a la A?
+3. `SELECT DISTINCT city, district FROM clients` devuelve ciudades repetidas. ¿Es un error de la base? ¿Qué devuelve en realidad?
+4. Te piden «los 3 vendedores con más ventas», y el tercero y el cuarto empatan. ¿Qué devuelve `ORDER BY sales DESC LIMIT 3`, y qué le preguntarías a quien lo pidió?
+5. Pasaste una consulta de SQLite a PostgreSQL y su `ORDER BY rating DESC LIMIT 3` ahora devuelve cursos sin calificación. ¿Por qué, y cómo la escribirías para que dé lo mismo en los dos motores?
+
+<details><summary>Respuestas</summary>
+
+1. Sin `ORDER BY`, la base no promete ningún orden: devuelve las filas como le resulte cómodo, y eso puede cambiar con más datos, un índice nuevo u otra versión. Para «los últimos» hay que ordenar por la fecha, de mayor a menor, con un desempate único: `ORDER BY created_at DESC, id DESC LIMIT 10`.
+2. Los departamentos de la A a la Z (sin dirección, `ASC`) y, dentro de cada uno, los sueldos de mayor a menor. Para invertir los departamentos: `ORDER BY department DESC, salary DESC`.
+3. No. `DISTINCT` quita las filas repetidas, y cada fila tiene ciudad y distrito: Lima sale una vez por cada distrito distinto. Si solo quieres ciudades, pide solo `city`.
+4. Tres filas, y cuál de los dos empatados entra no está definido. Preguntaría qué hacer con los empates: desempatar con otra columna (otra métrica, el nombre) o mostrar a los dos, que se resuelve con funciones de ranking.
+5. PostgreSQL ordena los `NULL` como mayores que cualquier valor, así que con `DESC` van primero; SQLite, al revés. `ORDER BY rating DESC NULLS LAST` funciona en los dos (y `ORDER BY rating IS NULL, rating DESC` también en MySQL).
+</details>
+
+## 🔁 Retrospectiva
+- ¿Qué entendí?
+- ¿Qué me costó?
+- ¿Qué debería reforzar?
+
 ## ✔️ Respuestas verificadas
 <details><summary>Abre esta sección solo después de terminar las tareas</summary>
 
@@ -404,25 +425,4 @@ No: devuelve los cursos 3 a 6. `OFFSET 2` salta 2 filas, no 2 páginas. La pági
 El `title` del `ORDER BY` también trabaja: tres cursos cuestan 49 soles, y la página 1 termina justo entre ellos. Sin desempate, la base decide cuál de los tres queda en cada página. Y una página después del final no da error: `LIMIT 4 OFFSET 20` devuelve cero filas, y así sabe la web que no hay más.
 </details>
 
-## 🎤 Autoevaluación
-1. Una aplicación muestra «los últimos pedidos» con `SELECT * FROM orders LIMIT 10`, sin `ORDER BY`. En las pruebas siempre salieron los correctos. ¿Por qué es un error igual?
-2. ¿En qué orden salen las filas de `ORDER BY department, salary DESC`? ¿Qué escribirías para que los departamentos también vayan de la Z a la A?
-3. `SELECT DISTINCT city, district FROM clients` devuelve ciudades repetidas. ¿Es un error de la base? ¿Qué devuelve en realidad?
-4. Te piden «los 3 vendedores con más ventas», y el tercero y el cuarto empatan. ¿Qué devuelve `ORDER BY sales DESC LIMIT 3`, y qué le preguntarías a quien lo pidió?
-5. Pasaste una consulta de SQLite a PostgreSQL y su `ORDER BY rating DESC LIMIT 3` ahora devuelve cursos sin calificación. ¿Por qué, y cómo la escribirías para que dé lo mismo en los dos motores?
-
-<details><summary>Respuestas</summary>
-
-1. Sin `ORDER BY`, la base no promete ningún orden: devuelve las filas como le resulte cómodo, y eso puede cambiar con más datos, un índice nuevo u otra versión. Para «los últimos» hay que ordenar por la fecha, de mayor a menor, con un desempate único: `ORDER BY created_at DESC, id DESC LIMIT 10`.
-2. Los departamentos de la A a la Z (sin dirección, `ASC`) y, dentro de cada uno, los sueldos de mayor a menor. Para invertir los departamentos: `ORDER BY department DESC, salary DESC`.
-3. No. `DISTINCT` quita las filas repetidas, y cada fila tiene ciudad y distrito: Lima sale una vez por cada distrito distinto. Si solo quieres ciudades, pide solo `city`.
-4. Tres filas, y cuál de los dos empatados entra no está definido. Preguntaría qué hacer con los empates: desempatar con otra columna (otra métrica, el nombre) o mostrar a los dos, que se resuelve con funciones de ranking.
-5. PostgreSQL ordena los `NULL` como mayores que cualquier valor, así que con `DESC` van primero; SQLite, al revés. `ORDER BY rating DESC NULLS LAST` funciona en los dos (y `ORDER BY rating IS NULL, rating DESC` también en MySQL).
-</details>
-
 La solución completa está en [`solution/`](solution/).
-
-## 🔁 Retrospectiva
-- ¿Qué entendí?
-- ¿Qué me costó?
-- ¿Qué debería reforzar?
