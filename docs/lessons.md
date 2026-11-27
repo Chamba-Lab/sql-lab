@@ -55,6 +55,7 @@ Measured the same in SQLite 3.45.3 and 3.53.1.
 - Opening a misspelled file silently creates a 0-byte database; for "my data is gone", ask first for `pwd` and the file size.
 - A step that depends on a file size gives `ls` for PowerShell (`Length` column) and `ls -l` for Bash; plain `ls` in Bash shows names only.
 - The wrong-environment failure in Git Bash depends on the inherited `PATH`, not on Anaconda alone. Tell learners to check `sys.prefix`, never that "Anaconda breaks Git Bash"; the prompt `(.venv)` and the pytest version prove nothing. The signal learners can see is a `plugins:` line or `warnings` in pytest's output.
+- In PowerShell, `[IO.File]` methods resolve relative paths against the process's starting folder, not the one `cd` moved to: an edit with `[IO.File]::ReadAllText('SYLLABUS.md')` after `cd` read nothing and wrote an empty file in another repository. Use full paths, or `Get-Content`/`Set-Content -Encoding utf8`, or edit from Python.
 - In this agent's Git Bash, `cygpath` is Anaconda's (write Windows paths by hand), and a quoted heredoc turned `\n` in Python source into a newline (write files with escapes through a file-writing tool).
 
 ## Harness and pytest
