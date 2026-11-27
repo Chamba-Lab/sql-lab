@@ -1,6 +1,6 @@
 # StudyForge configuration. Read by the workflows and by tools/verify.py.
 # Reference: https://github.com/Chamba-Lab/studyforge/blob/master/skills/studyforge/references/layout.md
-studyforge = "1.6.1"
+studyforge = "1.7.0"
 
 [path]
 title = "SQL con SQLite: de cero a listo para el trabajo"
