@@ -153,8 +153,6 @@ Si no puedes ver el dibujo, estas son las mismas relaciones en texto:
 ## 🧪 Experimentos
 Antes de cada paso, escribe tu predicción en un papel o en un archivo de notas. Después corre el comando y compara.
 
-Las salidas de los 👀 se verificaron en Windows 11 con Python 3.12.16 y 3.15.2 (SQLite 3.53.1) y con Python 3.12.7 de Anaconda (SQLite 3.45.3), con la misma salida en los tres.
-
 ### Experimento 1 · Crear la base y ver sus tablas
 PowerShell o Bash:
 
@@ -172,6 +170,8 @@ SELECT name FROM sqlite_schema;
 ```
 
 <details><summary>👀 Qué deberías ver</summary>
+
+Las salidas de los 👀 se verificaron en Windows 11 con Python 3.12.16 y 3.15.2 (SQLite 3.53.1) y con Python 3.12.7 de Anaconda (SQLite 3.45.3), con la misma salida en los tres.
 
 `build_db.py` imprime `Listo: jobs.db creado.`, y la consulta devuelve una fila por tabla:
 

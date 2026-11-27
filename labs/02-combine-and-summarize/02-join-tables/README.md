@@ -341,6 +341,27 @@ En la tabla de `candidates`, Carmen Rojas tiene `referred_by` 3. ¿Cuál de los 
 Si le pusiste alias a esa tabla, usa el alias: con `FROM jobs AS j`, la columna es `j.title`.
 </details>
 
+## 🎤 Autoevaluación
+1. Una tabla `orders` tiene 200 filas y `customers` tiene 50. ¿Cuántas filas devuelve `SELECT * FROM orders JOIN customers` en SQLite, y por qué es casi seguro un error?
+2. `orders` y `customers` tienen las dos una columna `id`. ¿Qué pasa con `SELECT id, name FROM orders JOIN customers ON orders.customer_id = customers.id`, y cómo lo arreglas?
+3. ¿Qué diferencia hay entre `JOIN` e `INNER JOIN`?
+4. Tienes `students`, `courses` y la tabla intermedia `enrollments (student_id, course_id)`. Escribe la consulta que lista el nombre de cada alumno con el nombre de cada curso que lleva.
+5. Una tabla `employees (id, name, manager_id)` guarda en `manager_id` el `id` del jefe. Escribe la consulta que lista a cada empleado con el nombre de su jefe. ¿Salen los empleados sin jefe?
+
+<details><summary>Respuestas</summary>
+
+1. 10 000 filas (200 × 50): sin `ON`, cada pedido se junta con cada cliente, el producto cartesiano. Casi nunca es lo que se quiere; lo correcto es `ON orders.customer_id = customers.id`, que da una fila por pedido. PostgreSQL ni siquiera lo acepta: exige una condición.
+2. Da `ambiguous column name: id`, porque SQLite no sabe de qué tabla es ese `id`. Se arregla escribiendo la tabla delante: `orders.id` o `customers.id`, según cuál pide la pregunta.
+3. Ninguna: `INNER` es opcional. Los dos dejan solo las filas que tienen pareja en la otra tabla.
+4. `SELECT s.name, c.name FROM enrollments AS e JOIN students AS s ON e.student_id = s.id JOIN courses AS c ON e.course_id = c.id;` (también se puede empezar por `students`, siempre que cada `ON` siga una clave foránea).
+5. `SELECT e.name AS employee, m.name AS manager FROM employees AS e JOIN employees AS m ON e.manager_id = m.id;`. Los empleados sin jefe (con `manager_id` en `NULL`) no salen: el `JOIN` solo deja las filas con pareja. Mostrarlos es el tema del lab 2.3.
+</details>
+
+## 🔁 Retrospectiva
+- ¿Qué entendí?
+- ¿Qué me costó?
+- ¿Qué debería reforzar?
+
 ## ✔️ Respuestas verificadas
 <details><summary>Abre esta sección solo después de terminar las tareas</summary>
 
@@ -451,25 +472,4 @@ JOIN candidates AS r ON c.referred_by = r.id;
 Las 4 personas sin `referred_by` no salen como `candidate`: su `NULL` no es igual a ningún `id`. Y sin los alias, `FROM candidates JOIN candidates` da `ambiguous column name`, porque las dos copias tienen las mismas columnas.
 </details>
 
-## 🎤 Autoevaluación
-1. Una tabla `orders` tiene 200 filas y `customers` tiene 50. ¿Cuántas filas devuelve `SELECT * FROM orders JOIN customers` en SQLite, y por qué es casi seguro un error?
-2. `orders` y `customers` tienen las dos una columna `id`. ¿Qué pasa con `SELECT id, name FROM orders JOIN customers ON orders.customer_id = customers.id`, y cómo lo arreglas?
-3. ¿Qué diferencia hay entre `JOIN` e `INNER JOIN`?
-4. Tienes `students`, `courses` y la tabla intermedia `enrollments (student_id, course_id)`. Escribe la consulta que lista el nombre de cada alumno con el nombre de cada curso que lleva.
-5. Una tabla `employees (id, name, manager_id)` guarda en `manager_id` el `id` del jefe. Escribe la consulta que lista a cada empleado con el nombre de su jefe. ¿Salen los empleados sin jefe?
-
-<details><summary>Respuestas</summary>
-
-1. 10 000 filas (200 × 50): sin `ON`, cada pedido se junta con cada cliente, el producto cartesiano. Casi nunca es lo que se quiere; lo correcto es `ON orders.customer_id = customers.id`, que da una fila por pedido. PostgreSQL ni siquiera lo acepta: exige una condición.
-2. Da `ambiguous column name: id`, porque SQLite no sabe de qué tabla es ese `id`. Se arregla escribiendo la tabla delante: `orders.id` o `customers.id`, según cuál pide la pregunta.
-3. Ninguna: `INNER` es opcional. Los dos dejan solo las filas que tienen pareja en la otra tabla.
-4. `SELECT s.name, c.name FROM enrollments AS e JOIN students AS s ON e.student_id = s.id JOIN courses AS c ON e.course_id = c.id;` (también se puede empezar por `students`, siempre que cada `ON` siga una clave foránea).
-5. `SELECT e.name AS employee, m.name AS manager FROM employees AS e JOIN employees AS m ON e.manager_id = m.id;`. Los empleados sin jefe (con `manager_id` en `NULL`) no salen: el `JOIN` solo deja las filas con pareja. Mostrarlos es el tema del lab 2.3.
-</details>
-
 La solución completa está en [`solution/`](solution/).
-
-## 🔁 Retrospectiva
-- ¿Qué entendí?
-- ¿Qué me costó?
-- ¿Qué debería reforzar?

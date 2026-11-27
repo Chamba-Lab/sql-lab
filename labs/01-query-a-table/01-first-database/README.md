@@ -90,8 +90,6 @@ flowchart LR
 ## 🧪 Experimentos
 Antes de cada paso, escribe tu predicción en un papel o en un archivo de notas. Después corre el comando y compara: lo que importa es entender por qué acertaste o fallaste.
 
-Las salidas de los 👀 se verificaron en Windows 11 con Python 3.12.16 y 3.15.2 (SQLite 3.53.1), en PowerShell 5.1 y Git Bash; los experimentos 1 a 6 se repitieron con SQLite 3.45.3, la versión más antigua que admite el curso, con la misma salida. Donde la salida cambia según la versión de Python, el 👀 lo dice.
-
 ### Experimento 1 · Crear la base
 🔮 **Predict first:** el script crea una base con dos tablas. ¿Qué aparecerá en la carpeta `demo/`: un archivo por tabla, un solo archivo o una carpeta nueva?
 
@@ -114,6 +112,8 @@ ls -l
 ```
 
 <details><summary>👀 Qué deberías ver</summary>
+
+Las salidas de los 👀 se verificaron en Windows 11 con Python 3.12.16 y 3.15.2 (SQLite 3.53.1), en PowerShell 5.1 y Git Bash; los experimentos 1 a 6 se repitieron con SQLite 3.45.3, la versión más antigua que admite el curso, con la misma salida. Donde la salida cambia según la versión de Python, el 👀 lo dice.
 
 ```text
 Listo: jobs.db creado con 2 tablas.

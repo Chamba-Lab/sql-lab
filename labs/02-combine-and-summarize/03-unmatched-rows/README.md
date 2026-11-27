@@ -333,6 +333,27 @@ Mira en la tabla de `jobs` las ofertas de esa empresa. ¿Alguna tiene `NULL` en 
 Repasa en Conceptos qué hace el `WHERE` y en qué momento. En una fila completada con `NULL`, ¿cuánto vale `j.mode = 'remoto'`? ¿Dónde puede ir esa condición para que solo decida qué ofertas se emparejan?
 </details>
 
+## 🎤 Autoevaluación
+1. `customers` tiene 50 filas y `orders` tiene 200, todas de clientes que existen; 10 clientes nunca compraron. ¿Cuántas filas devuelve `SELECT * FROM customers AS c LEFT JOIN orders AS o ON o.customer_id = c.id`? ¿Y con `JOIN`?
+2. Escribe la consulta que lista los clientes que nunca hicieron un pedido.
+3. ¿Qué diferencia hay entre `LEFT JOIN` y `LEFT OUTER JOIN`? ¿Y entre `FROM a LEFT JOIN b` y `FROM b LEFT JOIN a`?
+4. Quieres todos los clientes con sus pedidos de 2026, incluidos los que no compraron en 2026. ¿Dónde va la condición sobre la fecha del pedido, y qué pasa si la pones en el otro lugar?
+5. ¿Por qué `WHERE o.discount IS NULL` es un mal *anti-join*, si `discount` puede estar vacío en un pedido real?
+
+<details><summary>Respuestas</summary>
+
+1. 210 con `LEFT JOIN`: una fila por pedido (200) más una por cada cliente sin pedidos (10), con las columnas de `orders` en `NULL`. Con `JOIN`, 200: los 10 clientes sin pedidos no salen.
+2. `SELECT c.id, c.name FROM customers AS c LEFT JOIN orders AS o ON o.customer_id = c.id WHERE o.id IS NULL;`
+3. Ninguna: `OUTER` es opcional. El orden de las tablas sí importa: `LEFT JOIN` conserva todas las filas de la tabla escrita antes, así que `FROM a LEFT JOIN b` conserva las de `a` y `FROM b LEFT JOIN a`, las de `b`.
+4. En el `ON`: `LEFT JOIN orders AS o ON o.customer_id = c.id AND o.ordered_on >= '2026-01-01' AND o.ordered_on < '2027-01-01'`. En el `WHERE`, los clientes sin pedidos de 2026 desaparecen, porque su fila completada con `NULL` no cumple la condición.
+5. Porque devuelve también a los clientes que sí tienen pedidos, si alguno de esos pedidos no tiene descuento. Un *anti-join* pregunta por una columna que solo es `NULL` cuando no hubo pareja, como `o.id`.
+</details>
+
+## 🔁 Retrospectiva
+- ¿Qué entendí?
+- ¿Qué me costó?
+- ¿Qué debería reforzar?
+
 ## ✔️ Respuestas verificadas
 <details><summary>Abre esta sección solo después de terminar las tareas</summary>
 
@@ -424,25 +445,4 @@ LEFT JOIN jobs AS j ON j.company_id = c.id AND j.mode = 'remoto';
 `WHERE j.mode = 'remoto' OR j.id IS NULL` tampoco sirve: recupera a Nube Andina, que no tiene ofertas, pero no a Andes Retail, Agro Norte ni Banco Sur, que tienen ofertas, ninguna remota. La regla práctica: en un `LEFT JOIN`, una condición sobre la tabla de la izquierda va en el `WHERE`, y una sobre la tabla de la derecha va en el `ON`, salvo el `IS NULL` de un *anti-join*.
 </details>
 
-## 🎤 Autoevaluación
-1. `customers` tiene 50 filas y `orders` tiene 200, todas de clientes que existen; 10 clientes nunca compraron. ¿Cuántas filas devuelve `SELECT * FROM customers AS c LEFT JOIN orders AS o ON o.customer_id = c.id`? ¿Y con `JOIN`?
-2. Escribe la consulta que lista los clientes que nunca hicieron un pedido.
-3. ¿Qué diferencia hay entre `LEFT JOIN` y `LEFT OUTER JOIN`? ¿Y entre `FROM a LEFT JOIN b` y `FROM b LEFT JOIN a`?
-4. Quieres todos los clientes con sus pedidos de 2026, incluidos los que no compraron en 2026. ¿Dónde va la condición sobre la fecha del pedido, y qué pasa si la pones en el otro lugar?
-5. ¿Por qué `WHERE o.discount IS NULL` es un mal *anti-join*, si `discount` puede estar vacío en un pedido real?
-
-<details><summary>Respuestas</summary>
-
-1. 210 con `LEFT JOIN`: una fila por pedido (200) más una por cada cliente sin pedidos (10), con las columnas de `orders` en `NULL`. Con `JOIN`, 200: los 10 clientes sin pedidos no salen.
-2. `SELECT c.id, c.name FROM customers AS c LEFT JOIN orders AS o ON o.customer_id = c.id WHERE o.id IS NULL;`
-3. Ninguna: `OUTER` es opcional. El orden de las tablas sí importa: `LEFT JOIN` conserva todas las filas de la tabla escrita antes, así que `FROM a LEFT JOIN b` conserva las de `a` y `FROM b LEFT JOIN a`, las de `b`.
-4. En el `ON`: `LEFT JOIN orders AS o ON o.customer_id = c.id AND o.ordered_on >= '2026-01-01' AND o.ordered_on < '2027-01-01'`. En el `WHERE`, los clientes sin pedidos de 2026 desaparecen, porque su fila completada con `NULL` no cumple la condición.
-5. Porque devuelve también a los clientes que sí tienen pedidos, si alguno de esos pedidos no tiene descuento. Un *anti-join* pregunta por una columna que solo es `NULL` cuando no hubo pareja, como `o.id`.
-</details>
-
 La solución completa está en [`solution/`](solution/).
-
-## 🔁 Retrospectiva
-- ¿Qué entendí?
-- ¿Qué me costó?
-- ¿Qué debería reforzar?

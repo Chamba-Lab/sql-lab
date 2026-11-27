@@ -30,7 +30,7 @@ This repository is a study path built with [StudyForge](https://github.com/Chamb
 - Check understanding with one question, not a quiz.
 - Say only what changes for the learner; no recap of everything you read or ran.
 - End every reply with the next step: "Tu siguiente paso: …".
-- `TUTOR.md` carries these rules for learners who study in a chat; when one of them changes, change it there too.
+- Full rules: [didactics](https://github.com/Chamba-Lab/studyforge/blob/master/skills/studyforge/references/didactics.md#in-the-conversation) and [learners](https://github.com/Chamba-Lab/studyforge/blob/master/skills/studyforge/references/learners.md#helping-during-a-lab).
 
 ## Repository rules
 - Layout, names and IDs follow StudyForge (`labs/NN-block/NN-slug`, `project-<domain>` last in its block; IDs freeze once `built`).

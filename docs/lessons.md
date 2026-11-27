@@ -57,6 +57,7 @@ Measured the same in SQLite 3.45.3 and 3.53.1.
 - The wrong-environment failure in Git Bash depends on the inherited `PATH`, not on Anaconda alone. Tell learners to check `sys.prefix`, never that "Anaconda breaks Git Bash"; the prompt `(.venv)` and the pytest version prove nothing. The signal learners can see is a `plugins:` line or `warnings` in pytest's output.
 - In PowerShell, `[IO.File]` methods resolve relative paths against the process's starting folder, not the one `cd` moved to: an edit with `[IO.File]::ReadAllText('SYLLABUS.md')` after `cd` read nothing and wrote an empty file in another repository. Use full paths, or `Get-Content`/`Set-Content -Encoding utf8`, or edit from Python.
 - In this agent's Git Bash, `cygpath` is Anaconda's (write Windows paths by hand), and a quoted heredoc turned `\n` in Python source into a newline (write files with escapes through a file-writing tool).
+- Make a script that rewrites many READMEs safe to run twice (it skips a file already in the new shape) and run it with `PYTHONIOENCODING=utf-8`: in the 1.8.0 upgrade, printing a 👀 in cp1252 crashed it after it had written the first file, and a rerun of a non-idempotent move would have moved the solution line into ✔️.
 
 ## Harness and pytest
 - Call `pytest.fail` outside the `except` block, or pytest prints the original exception above the learner's message.

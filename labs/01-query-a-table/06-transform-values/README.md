@@ -338,6 +338,27 @@ Las fechas son textos que se comparan carácter por carácter. ¿Es `'2026-03-31
 `CASE` devuelve el valor del primer `WHEN` que se cumple y no mira los siguientes: ¿en qué orden conviene escribirlos? ¿Y qué rango le toca a quien no dijo su sueldo? Si sale `near "FROM"`, revisa que el `CASE` termine con `END`.
 </details>
 
+## 🎤 Autoevaluación
+1. Una búsqueda por correo, `WHERE email = 'ana@example.com'`, no encuentra a una persona que sí está en la tabla. ¿Qué revisarías primero, y cómo escribirías la búsqueda?
+2. ¿Qué devuelve `'Ana' || ' ' || last_name` cuando `last_name` es `NULL`? ¿Cómo lo evitas?
+3. Una columna guarda fecha y hora, como `'2026-03-31 18:20'`. ¿Por qué `WHERE fecha <= '2026-03-31'` pierde filas, y cómo pedirías todo marzo?
+4. ¿Por qué SQLite puede comparar y ordenar fechas guardadas como texto? ¿Qué pasa si una se guardó como `'5/3/2026'`?
+5. En un `CASE` con `WHEN nota >= 11 THEN 'aprobado' WHEN nota >= 18 THEN 'excelente'`, ¿alguien sale como excelente? ¿Cómo lo arreglas?
+
+<details><summary>Respuestas</summary>
+
+1. Que el correo esté guardado tal cual se escribió: con espacios o mayúsculas. Limpiando los dos lados: `WHERE LOWER(TRIM(email)) = 'ana@example.com'`. Mejor aún, guardarlo ya limpio.
+2. `NULL`: unir con `NULL` da `NULL`. Con `COALESCE`, por ejemplo `COALESCE('Ana' || ' ' || last_name, 'Ana')`.
+3. Porque `'2026-03-31 18:20'` es mayor que `'2026-03-31'` como texto. Desde el primer día del mes hasta antes del primero del siguiente: `fecha >= '2026-03-01' AND fecha < '2026-04-01'`.
+4. Porque en ISO-8601 van del dato más grande al más chico (año, mes, día, hora), con ceros a la izquierda, y así el orden de los textos es el de las fechas. `'5/3/2026'` se compara por su primer carácter, `'5'`, y queda después de todas las fechas que empiezan con `'2'`; `DATE('5/3/2026')` da `NULL`.
+5. No: toda nota de 18 o más ya cumple `>= 11` y sale como aprobado. Se pone primero el `WHEN` más exigente: `WHEN nota >= 18 THEN 'excelente' WHEN nota >= 11 THEN 'aprobado'`.
+</details>
+
+## 🔁 Retrospectiva
+- ¿Qué entendí?
+- ¿Qué me costó?
+- ¿Qué debería reforzar?
+
 ## ✔️ Respuestas verificadas
 <details><summary>Abre esta sección solo después de terminar las tareas</summary>
 
@@ -458,25 +479,4 @@ FROM applications;
 Cuidado con el `NULL`: sin el primer `WHEN`, Diego cae en el `ELSE` y sale como `'bajo'`, porque `NULL >= 2500` es desconocido y ningún `WHEN` se cumple (lab 1.4). Tampoco sirve `WHEN expected_salary = NULL`, que nunca se cumple: va `IS NULL`.
 </details>
 
-## 🎤 Autoevaluación
-1. Una búsqueda por correo, `WHERE email = 'ana@example.com'`, no encuentra a una persona que sí está en la tabla. ¿Qué revisarías primero, y cómo escribirías la búsqueda?
-2. ¿Qué devuelve `'Ana' || ' ' || last_name` cuando `last_name` es `NULL`? ¿Cómo lo evitas?
-3. Una columna guarda fecha y hora, como `'2026-03-31 18:20'`. ¿Por qué `WHERE fecha <= '2026-03-31'` pierde filas, y cómo pedirías todo marzo?
-4. ¿Por qué SQLite puede comparar y ordenar fechas guardadas como texto? ¿Qué pasa si una se guardó como `'5/3/2026'`?
-5. En un `CASE` con `WHEN nota >= 11 THEN 'aprobado' WHEN nota >= 18 THEN 'excelente'`, ¿alguien sale como excelente? ¿Cómo lo arreglas?
-
-<details><summary>Respuestas</summary>
-
-1. Que el correo esté guardado tal cual se escribió: con espacios o mayúsculas. Limpiando los dos lados: `WHERE LOWER(TRIM(email)) = 'ana@example.com'`. Mejor aún, guardarlo ya limpio.
-2. `NULL`: unir con `NULL` da `NULL`. Con `COALESCE`, por ejemplo `COALESCE('Ana' || ' ' || last_name, 'Ana')`.
-3. Porque `'2026-03-31 18:20'` es mayor que `'2026-03-31'` como texto. Desde el primer día del mes hasta antes del primero del siguiente: `fecha >= '2026-03-01' AND fecha < '2026-04-01'`.
-4. Porque en ISO-8601 van del dato más grande al más chico (año, mes, día, hora), con ceros a la izquierda, y así el orden de los textos es el de las fechas. `'5/3/2026'` se compara por su primer carácter, `'5'`, y queda después de todas las fechas que empiezan con `'2'`; `DATE('5/3/2026')` da `NULL`.
-5. No: toda nota de 18 o más ya cumple `>= 11` y sale como aprobado. Se pone primero el `WHEN` más exigente: `WHEN nota >= 18 THEN 'excelente' WHEN nota >= 11 THEN 'aprobado'`.
-</details>
-
 La solución completa está en [`solution/`](solution/).
-
-## 🔁 Retrospectiva
-- ¿Qué entendí?
-- ¿Qué me costó?
-- ¿Qué debería reforzar?

@@ -352,6 +352,27 @@ Mira los nombres de `candidates`. ¿Hay dos personas con el mismo? ¿Qué column
 ¿Usaste `JOIN` en alguno de los dos pasos? Como en la tarea 2 del lab 2.3, un `JOIN` después de un `LEFT JOIN` quita la fila que este conservó.
 </details>
 
+## 🎤 Autoevaluación
+1. `orders` tiene 200 filas; 30 tienen `discount` en `NULL`. ¿Cuánto da `COUNT(*)`? ¿Y `COUNT(discount)`?
+2. ¿Qué diferencia hay entre `COUNT(customer_id)` y `COUNT(DISTINCT customer_id)` en la tabla `orders`?
+3. ¿Cuánto da `SELECT 9 / 4;` en SQLite? ¿Y `SELECT 9 / 4.0;`?
+4. Escribe la consulta que cuenta los pedidos de cada cliente, incluidos los que no tienen ninguno, con `customers(id, name)` y `orders(id, customer_id)`.
+5. ¿Por qué `GROUP BY c.name` es una mala idea para contar los pedidos de cada cliente, si la consulta corre sin error?
+
+<details><summary>Respuestas</summary>
+
+1. 200 y 170: `COUNT(*)` cuenta filas, y `COUNT(discount)`, solo los valores que no son `NULL`.
+2. `COUNT(customer_id)` cuenta los pedidos que tienen cliente: un cliente con 5 pedidos cuenta 5 veces. `COUNT(DISTINCT customer_id)` cuenta los clientes distintos que hicieron al menos un pedido.
+3. `2`: los dos son enteros y la división descarta el resto. `2.25`: basta que uno tenga decimales.
+4. `SELECT c.id, c.name, COUNT(o.id) AS orders FROM customers AS c LEFT JOIN orders AS o ON o.customer_id = c.id GROUP BY c.id, c.name;`
+5. Porque dos clientes con el mismo nombre quedan en un solo grupo y sus pedidos se suman. Se agrupa por la clave, `c.id`, y se agrega el nombre para mostrarlo.
+</details>
+
+## 🔁 Retrospectiva
+- ¿Qué entendí?
+- ¿Qué me costó?
+- ¿Qué debería reforzar?
+
 ## ✔️ Respuestas verificadas
 <details><summary>Abre esta sección solo después de terminar las tareas</summary>
 
@@ -445,25 +466,4 @@ GROUP BY c.id, c.name;
 Es la misma regla del *anti-join* del lab 2.3: la columna que miras tiene que estar en `NULL` solo en la fila sin pareja. `COUNT(a.candidate_id)` y `COUNT(a.job_id)` también pasan, porque nunca son `NULL` en una postulación que existe. `COUNT(j.id)` no pasa: cuenta la fila de la oferta 10, que sí existe, y Banco Sur sale con 3.
 </details>
 
-## 🎤 Autoevaluación
-1. `orders` tiene 200 filas; 30 tienen `discount` en `NULL`. ¿Cuánto da `COUNT(*)`? ¿Y `COUNT(discount)`?
-2. ¿Qué diferencia hay entre `COUNT(customer_id)` y `COUNT(DISTINCT customer_id)` en la tabla `orders`?
-3. ¿Cuánto da `SELECT 9 / 4;` en SQLite? ¿Y `SELECT 9 / 4.0;`?
-4. Escribe la consulta que cuenta los pedidos de cada cliente, incluidos los que no tienen ninguno, con `customers(id, name)` y `orders(id, customer_id)`.
-5. ¿Por qué `GROUP BY c.name` es una mala idea para contar los pedidos de cada cliente, si la consulta corre sin error?
-
-<details><summary>Respuestas</summary>
-
-1. 200 y 170: `COUNT(*)` cuenta filas, y `COUNT(discount)`, solo los valores que no son `NULL`.
-2. `COUNT(customer_id)` cuenta los pedidos que tienen cliente: un cliente con 5 pedidos cuenta 5 veces. `COUNT(DISTINCT customer_id)` cuenta los clientes distintos que hicieron al menos un pedido.
-3. `2`: los dos son enteros y la división descarta el resto. `2.25`: basta que uno tenga decimales.
-4. `SELECT c.id, c.name, COUNT(o.id) AS orders FROM customers AS c LEFT JOIN orders AS o ON o.customer_id = c.id GROUP BY c.id, c.name;`
-5. Porque dos clientes con el mismo nombre quedan en un solo grupo y sus pedidos se suman. Se agrupa por la clave, `c.id`, y se agrega el nombre para mostrarlo.
-</details>
-
 La solución completa está en [`solution/`](solution/).
-
-## 🔁 Retrospectiva
-- ¿Qué entendí?
-- ¿Qué me costó?
-- ¿Qué debería reforzar?
